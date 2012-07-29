@@ -14,7 +14,7 @@ Please follow instructions in README-DEV.md
 ## Social
 
 Follow us on Twitter: https://twitter.com/EfikaPHP
-Follow us on Github: http://mbunge.github.com/Efika_Nova_Framework/
+Follow us on Github: https://github.com/Smooth-Media-Open-Source-Development/Efika_Nova_Framework
 
 ## Smooth Media
 The goal for smooth media is to develop professional web based open source solutions.
