@@ -8,6 +8,25 @@ namespace Efika\Loader;
 
 require_once 'SplLoader.php';
 
+/**
+ * PSR-0 compliant autoloader
+ * Example:
+ *  (new StandardAutoloader)
+ *  ->setNamespace('Efika',__DIR__ . '/../library/Efika')
+ *  ->setNamespace('Zend',__DIR__ . '/../library/Zend')
+ *  ->register();
+ *
+ *  OR
+ *
+ *  (new StandardAutoloader)
+ *  ->setNamespaces(
+ *      [
+ *          'Efika' => __DIR__ . '/../library/Efika',
+ *          'Zend' => __DIR__ . '/../library/Zend'
+ *      ]
+ *  )
+ *  ->register();
+ */
 class StandardAutoloader implements SplLoader
 {
 
@@ -37,10 +56,6 @@ class StandardAutoloader implements SplLoader
     public function autoload($class)
     {
         if (strpos($class, static::NS_SEPERATOR) !== false) {
-            $load = $this->loadClass($class, static::TYPE_NAMESPACE);
-            echo '(Marco)' . __FILE__ . ' (' . __LINE__ . ')' . "\n";
-            var_dump($load);
-
             return $this->loadClass($class, static::TYPE_NAMESPACE);
         }
 
@@ -52,21 +67,36 @@ class StandardAutoloader implements SplLoader
     /**
      * set a bunch of namespace/dir pair
      * @param $namespaces
-     * @return void
+     * @return \Efika\Loader\StandardAutoloader
+     * @throws Exception
      */
     public function setNamespaces($namespaces)
     {
-        $this->namespaces = $namespaces;
+
+        if (!is_array($namespaces) || $namespaces instanceof \Traversable) {
+            require_once 'Exception.php';
+            throw new Exception('Invalid Argument. $prefix must be an array or traversable!');
+            exit(1);
+        }
+
+        foreach ($namespaces as $namespace => $dir) {
+            $this->setNamespace($namespace, $dir);
+        }
+
+        return $this;
     }
 
     /**
      * register a namespace/dir pair
      * @param $namespace
      * @param $dir
+     * @return \Efika\Loader\StandardAutoloader
      */
     public function setNamespace($namespace, $dir)
     {
         $this->namespaces[$namespace] = $this->normalizeDirectory($dir);
+
+        return $this;
     }
 
     /**
@@ -81,20 +111,35 @@ class StandardAutoloader implements SplLoader
     /**
      * set a bunch of prefix/dir pair
      * @param $prefixes
+     * @return \Efika\Loader\StandardAutoloader
+     * @throws Exception
      */
     public function setPrefixes($prefixes)
     {
-        $this->prefixes = $prefixes;
+        if (!is_array($prefixes) || $prefixes instanceof \Traversable) {
+            require_once 'Exception.php';
+            throw new Exception('Invalid Argument. $prefix must be an array or traversable!');
+            exit(1);
+        }
+
+        foreach ($prefixes as $prefix => $dir) {
+            $this->setPrefix($prefix, $dir);
+        }
+
+        return $this;
     }
 
     /**
      * register a prefix/dir pair
      * @param $prefix
      * @param $dir
+     * @return \Efika\Loader\StandardAutoloader
      */
     public function setPrefix($prefix, $dir)
     {
         $this->prefixes[$prefix] = $this->normalizeDirectory($dir);
+
+        return $this;
     }
 
     /**
@@ -122,6 +167,12 @@ class StandardAutoloader implements SplLoader
         return str_replace($dirSeperators, DIRECTORY_SEPARATOR, $dir);
     }
 
+    /**
+     * Load class by type and
+     * @param $className
+     * @param $type
+     * @return bool|mixed
+     */
     protected function loadClass($className, $type)
     {
 
@@ -131,8 +182,6 @@ class StandardAutoloader implements SplLoader
                 $trimmedClass = substr($className, strlen($conversion));
 
                 $filename = $this->transformClassNameToFilename($trimmedClass, $path);
-                echo '(Marco)' . __FILE__ .' (' . __LINE__ . ')'."\n";
-                var_dump(stream_resolve_include_path($filename));
                 if (stream_resolve_include_path($filename)) {
                     return require_once $filename;
                 }
@@ -141,11 +190,10 @@ class StandardAutoloader implements SplLoader
             }
         }
 
-
     }
 
     /**
-     * Transform the class name to a filename
+     * Transform class name to a filename
      *
      * @param string $class
      * @param string $directory

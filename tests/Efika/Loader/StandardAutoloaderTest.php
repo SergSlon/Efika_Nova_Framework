@@ -76,7 +76,7 @@ class StandardAutoloaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Efika\Loader\StandardAutoloader::setNamespaces
+     * @covers Efika\Loader\StandardAutoloader::setNamespace
      * @covers Efika\Loader\StandardAutoloader::autoload
      */
     public function testSetNamespaceAndLoad()
@@ -88,7 +88,8 @@ class StandardAutoloaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers Efika\Loader\StandardAutoloader::setPrefixes
+     * @covers Efika\Loader\StandardAutoloader::setPrefix
+     * @covers Efika\Loader\StandardAutoloader::autoload
      */
     public function testSetPrefixesAndLoad()
     {
