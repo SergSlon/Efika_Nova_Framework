@@ -178,10 +178,11 @@ class StandardAutoloader implements SplLoader
 
         foreach ($this->$type as $conversion => $path) {
 
-            if (strpos($className, $conversion) == 0) {
+            if (strpos($className, $conversion) === 0) {
                 $trimmedClass = substr($className, strlen($conversion));
 
                 $filename = $this->transformClassNameToFilename($trimmedClass, $path);
+
                 if (stream_resolve_include_path($filename)) {
                     return require_once $filename;
                 }
