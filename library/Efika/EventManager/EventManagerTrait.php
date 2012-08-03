@@ -31,7 +31,6 @@ namespace Efika\EventManager;
 
 /**
  * This trait provide reusable event manager. this event manager is based on observer pattern
- * @TODO inject real EventResponse and Event class
  */
 trait EventManagerTrait
 {
@@ -84,6 +83,8 @@ trait EventManagerTrait
         } else {
             $this->eventHandlers[$event] = $callback;
         }
+
+        return $this;
     }
 
     /**
@@ -105,6 +106,8 @@ trait EventManagerTrait
             if (!in_array($handler, $event))
                 $handlers[$handler] = new EventHandlerCallback($callback);
         }
+
+        return $this;
     }
 
     /**
@@ -172,10 +175,12 @@ trait EventManagerTrait
     /**
      * Set an instance of EventResponseInterface
      * @param EventResponseInterface $object
+     * @return \Efika\EventManager\EventManagerTrait
      */
     public function setEventResponseObject(EventResponseInterface $object)
     {
         $this->eventResponseObject = $object;
+        return $this;
     }
 
     /**
@@ -195,10 +200,12 @@ trait EventManagerTrait
     /**
      * Set an instance of EventInterface
      * @param EventInterface $object
+     * @return \Efika\EventManager\EventManagerTrait
      */
     public function setEventObject(EventInterface $object)
     {
         $this->eventObject = $object;
+        return $this;
     }
 
     /**
