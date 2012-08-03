@@ -191,12 +191,20 @@ trait EventManagerTrait
         return $this->eventResponseObject;
     }
 
+
+    /**
+     * Set an instance of EventInterface
+     * @param EventInterface $object
+     */
     public function setEventObject(EventInterface $object)
     {
         $this->eventObject = $object;
     }
 
-
+    /**
+     * Return an instance of EventInterface
+     * @return EventInterface
+     */
     public function getEventObject()
     {
         if(!is_object($this->eventObject)){
