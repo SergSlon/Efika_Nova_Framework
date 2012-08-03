@@ -46,13 +46,24 @@ trait EventManagerTrait
      * Default event class
      * @var string
      */
-    protected $eventClass = 'Efika\EventManager\Event';
+    protected $defaultEventClass = 'Efika\EventManager\Event';
 
     /**
      * Default Response class
      * @var string
      */
-    protected $responseClass = 'Efika\EventManager\EventResponse';
+    protected $defaultEventResponseClass = 'Efika\EventManager\EventResponse';
+    /**
+     * event class object
+     * @var null|object
+     */
+    protected $eventObject = null;
+
+    /**
+     * Response object
+     * @var string
+     */
+    protected $eventResponseObject = null;
 
     /**
      * Attach an handler to an event or attach an event aggregate
@@ -108,7 +119,7 @@ trait EventManagerTrait
     {
         if (is_string($event)) {
             $eventName = $event;
-            $event = (new $this->eventClass)
+            $event = $this->getEventObject()
             ->setName($eventName)
             ->setTarget($this)
             ->setArguments($args);
@@ -135,7 +146,7 @@ trait EventManagerTrait
     protected function triggerHandlers(EventInterface $e, $callback)
     {
 
-        $responses = new $this->responseClass();
+        $responses = $this->getEventResponseObject();
         $responses->setEvent($e);
 
         foreach($this->getEventHandler($e->getName()) as $handler){
@@ -158,25 +169,41 @@ trait EventManagerTrait
 
     }
 
-    public function setResponseClass(EventResponseInterface $responseClass)
+    /**
+     * Set an instance of EventResponseInterface
+     * @param EventResponseInterface $object
+     */
+    public function setEventResponseObject(EventResponseInterface $object)
     {
-        $this->responseClass = $responseClass;
+        $this->eventResponseObject = $object;
     }
 
-    public function getResponseClass()
+    /**
+     * Return an instance of EventResponseInterface
+     * @return EventResponseInterface
+     */
+    public function getEventResponseObject()
     {
-        return $this->responseClass;
+        if(!is_object($this->eventResponseObject)){
+            $class = $this->defaultEventResponseClass;
+            $this->eventResponseObject = new $class;
+        }
+        return $this->eventResponseObject;
     }
 
-    public function setEventClass($eventClass)
+    public function setEventObject(EventInterface $object)
     {
-        $this->eventClass = $eventClass;
+        $this->eventObject = $object;
     }
 
 
-    public function getEventClass()
+    public function getEventObject()
     {
-        return $this->eventClass;
+        if(!is_object($this->eventObject)){
+            $class = $this->defaultEventClass;
+            $this->eventObject = new $class;
+        }
+        return $this->eventObject;
     }
 
     /**
