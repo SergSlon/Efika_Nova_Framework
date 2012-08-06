@@ -30,7 +30,7 @@ interface EventResponseInterface
      * @param $flag
      * @return mixed
      */
-    public function setStopped($flag);
+    public function stop($flag=true);
 
     /**
      * @abstract
