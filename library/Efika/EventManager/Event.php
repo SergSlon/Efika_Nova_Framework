@@ -103,6 +103,7 @@ class Event implements EventInterface
     public function stopPropagation()
     {
         $this->propagation = true;
+        return $this;
     }
 
     /**
