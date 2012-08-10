@@ -13,7 +13,7 @@ namespace Efika\EventManager;
 class EventHandlerCallback
 {
 
-    private $callback;
+    private $callback = null;
 
     public function __construct($callback)
     {
@@ -21,8 +21,25 @@ class EventHandlerCallback
     }
 
     /**
+     * Returns false if ->callback is null otherwise true
+     * @return bool
+     */
+    public function hasCallback(){
+        return $this->callback != null;
+    }
+
+    /**
+     * Check if Callback is callable
+     * @return bool
+     */
+    public function isCallable(){
+        return is_callable($this->callback);
+    }
+
+    /**
      * Execute target handler callback with arguments
      * @param null $arguments
+     * @return mixed
      * @throws Exception
      */
     public function execute($arguments=null)
@@ -32,11 +49,9 @@ class EventHandlerCallback
             $arguments = [$arguments];
 
         if (
-            is_callable($this->callback)
-            || is_array($this->callback)
-            || is_string($this->callback)
+            $this->isCallable()
         ) {
-           call_user_func_array($this->callback,$arguments);
+           return call_user_func_array($this->callback,$arguments);
         }else{
             throw new Exception('Invalid callback!');
         }
