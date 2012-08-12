@@ -97,6 +97,11 @@ trait EventManagerTrait
         return $aggregate->attach($this);
     }
 
+    /**
+     * Detach an event handler.
+     * @param $event
+     * @return EventManagerTrait
+     */
     public function detachEventHandler($event)
     {
         if (!is_array($event))
