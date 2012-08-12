@@ -7,9 +7,9 @@
 namespace Efika\EventManager;
 
 /**
- * empty event manager
+ * Delivers an empty instance of event manager.
  */
-class EventManager
+class EventManager implements EventManagerInterface
 {
     use EventManagerTrait;
 }
