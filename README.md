@@ -1,6 +1,4 @@
-#Efika Nova
-
-Efika Nova is a high performance and modern application development framework.
+**Efika Nova** is a high performance and modern application development framework.
 Efika Nova will be foundation for Smooth Media Open Source Software Efika Libera.
 
 ## Development
@@ -10,9 +8,10 @@ Please follow instructions in [Instructions for developers](https://github.com/S
 ## Milestones
 - design architecture and define interfaces
 - core development
-1. Loader: Load classes and packages on demand, you don't need to use include() or require()
-2. EventManager: supports full [event-driven development](http://en.wikipedia.org/wiki/Event-driven_programming)
-3. DI: manage your dependencies with [dependency injection](http://en.wikipedia.org/wiki/Dependency_injection)
+    1. Loader: Load classes and packages on demand, you don't need to use include() or require()
+    2. EventManager: supports full [event-driven development](https://github.com/Smooth-Media-Open-Source-Development/Efika_Nova_Framework/wiki/Event-driven-development)
+    3. DI: manage your dependencies with [dependency injection](https://github.com/Smooth-Media-Open-Source-Development/Efika_Nova_Framework/wiki/Dependecy-injection)
+- component development
 
 ## Social
 
