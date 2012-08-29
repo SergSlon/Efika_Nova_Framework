@@ -9,13 +9,16 @@ namespace Efika\Di;
 class DiService implements DiServiceInterface
 {
 
+    protected $object = null;
+
+
     /**
      * A new service for object
      * @param $object
      */
     public function __construct($object)
     {
-        // TODO: Implement __construct() method.
+        $this->setObject($object);
     }
 
     /**
@@ -58,5 +61,15 @@ class DiService implements DiServiceInterface
     public function makeInstance()
     {
         // TODO: Implement makeInstance() method.
+    }
+
+    public function setObject($object)
+    {
+        $this->object = $object;
+    }
+
+    public function getObject()
+    {
+        return $this->object;
     }
 }
