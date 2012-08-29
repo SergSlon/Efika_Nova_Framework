@@ -5,9 +5,12 @@
  */
 
 /**
- * This interface will include by classes which should extendable on runtime
+ * This interface will include by classes which should expendable on runtime
  */
-interface DiExtendableInterface
+
+namespace Efika\Di;
+
+interface DiExpendableInterface
 {
 
     /**
