@@ -6,11 +6,13 @@
 
 namespace Efika\Di;
 
+use ReflectionClass;
+
 class DiService implements DiServiceInterface
 {
 
-    protected $object = null;
-
+    protected $reflection = null;
+    protected $injection = [];
 
     /**
      * A new service for object
@@ -18,18 +20,35 @@ class DiService implements DiServiceInterface
      */
     public function __construct($object)
     {
-        $this->setObject($object);
+        $reflection = new ReflectionClass($object);
+        $this->setReflection($reflection);
+
+    }
+
+    public function methodExists($method)
+    {
+        return in_array($method, $this->getReflection()->getMethods());
     }
 
     /**
      * Inject arguments into given method
      * @param string $method
      * @param array $arguments
+     * @throws Exception
      * @return mixed
      */
     public function inject($method, $arguments = [])
     {
-        // TODO: Implement inject() method.
+        if ($this->methodExists($method)) {
+            $this->addInjection(
+                $method,
+                $this->getReflection()->getMethod($method),
+                $arguments
+            );
+        } else {
+            throw new Exception('Requested method "' . $method . '" is does not exists!');
+        }
+
     }
 
     /**
@@ -63,13 +82,44 @@ class DiService implements DiServiceInterface
         // TODO: Implement makeInstance() method.
     }
 
-    public function setObject($object)
+    /**
+     * Invoke a method from object
+     * @param $method
+     * @param $object
+     */
+    public function invokeMethod($method, $object)
     {
-        $this->object = $object;
+        $invokable = $this->getInjection($method);
+        if($invokable !== null){
+            $invokable['reflection']->invoke($object,$invokable['arguments']);
+        }
     }
 
-    public function getObject()
+    public function setReflection($object)
     {
-        return $this->object;
+        $this->reflection = $object;
     }
+
+    public function getReflection()
+    {
+        return $this->reflection;
+    }
+
+    public function addInjection($method, $methodReflection, array $arguments = [])
+    {
+        $this->injection[$method][] = [
+            'reflection' => $methodReflection,
+            'arguments' => $arguments
+        ];
+    }
+
+    public function getInjection($method)
+    {
+        if (array_key_exists($method, $this->injection)) {
+            return $this->injection[$method];
+        } else {
+            return false;
+        }
+    }
+
 }
