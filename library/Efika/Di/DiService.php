@@ -12,7 +12,8 @@ class DiService implements DiServiceInterface
 {
 
     protected $reflection = null;
-    protected $injection = [];
+    protected $injections = [];
+    protected $expansions = [];
 
     /**
      * A new service for object
@@ -49,16 +50,33 @@ class DiService implements DiServiceInterface
 
     /**
      * Removes each injection for given method
-     * @param string $method
+     * @param string $methodName
      * @return mixed
      */
-    public function eject($method)
+    public function eject($methodName)
     {
-        // TODO: Implement eject() method.
+        $injections = $this->getInjections();
+        $editInjections = [];
+        $removed = false;
+
+        foreach ($injections as $name => $options) {
+            if ($methodName != $name) {
+                $editInjections[$name] = $options;
+            } else {
+                $removed = true;
+            }
+        }
+
+        if ($removed) {
+            $this->setInjections($editInjections);
+        }
+
+        return $removed;
+
     }
 
     /**
-     * If object is instance of DiExtendableInterface, given object
+     * If object is instance of DiExpandableInterface, given object
      * could extend with given method.
      * @param string $name
      * @param callable $callback
@@ -66,22 +84,38 @@ class DiService implements DiServiceInterface
      */
     public function expand($name, $callback)
     {
-        if($this->isExpandable()){
-
+        if ($this->isExpandable()) {
+             $this->expansions[$name] = $callback;
         }
     }
 
-    public function isExpandable(){
-        return in_array('DiExpandableInterface',$this->getReflection()->getInterfaceNames());
+    public function isExpandable()
+    {
+        return in_array('DiExpandableInterface', $this->getReflection()->getInterfaceNames());
     }
 
     /**
      * Create an instance of given object
+     * @param array $arguments
      * @return mixed
      */
-    public function makeInstance()
+    public function makeInstance($arguments=[])
     {
-        // TODO: Implement makeInstance() method.
+        $instance = $this->getReflection()->newInstanceArgs($arguments);
+
+        //add injections to instance
+        $injections = $this->getInjections();
+        foreach($injections as $name => $options){
+            $this->invokeMethod($name,$instance);
+        }
+
+        //add expansions to instance
+        $expansions = $this->getExpansions();
+        foreach($expansions as $name => $callback){
+            $instance->$name = $callback;
+        }
+
+        return $instance;
     }
 
     /**
@@ -91,9 +125,9 @@ class DiService implements DiServiceInterface
      */
     public function invokeMethod($method, $object)
     {
-        $invokable = $this->getInjection($method);
-        if($invokable !== null){
-            $invokable['reflection']->invoke($object,$invokable['arguments']);
+        $invokable = $this->getInjections($method);
+        if ($invokable !== null) {
+            $invokable['reflection']->invoke($object, $invokable['arguments']);
         }
     }
 
@@ -109,7 +143,7 @@ class DiService implements DiServiceInterface
 
     public function addInjection($method, $methodReflection, array $arguments = [])
     {
-        $this->injection[$method][] = [
+        $this->injections[$method][] = [
             'reflection' => $methodReflection,
             'arguments' => $arguments
         ];
@@ -117,11 +151,32 @@ class DiService implements DiServiceInterface
 
     public function getInjection($method)
     {
-        if (array_key_exists($method, $this->injection)) {
-            return $this->injection[$method];
+        if (array_key_exists($method, $this->injections)) {
+            return $this->injections[$method];
         } else {
             return false;
         }
     }
+
+    protected function setInjections($injections)
+    {
+        $this->injections = $injections;
+    }
+
+    protected function getInjections()
+    {
+        return $this->injections;
+    }
+
+    protected function setExpansions($expansions)
+    {
+        $this->expansions = $expansions;
+    }
+
+    protected function getExpansions()
+    {
+        return $this->expansions;
+    }
+
 
 }

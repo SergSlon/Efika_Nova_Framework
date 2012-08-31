@@ -27,10 +27,10 @@ interface DiServiceInterface
     /**
      * Removes each injection for given method
      * @abstract
-     * @param string $method
+     * @param string $methodName
      * @return mixed
      */
-    public function eject($method);
+    public function eject($methodName);
 
     /**
      * If object is instance of DiExtendableInterface, given object
@@ -45,8 +45,9 @@ interface DiServiceInterface
     /**
      * Create an instance of given object
      * @abstract
+     * @param array $arguments
      * @return mixed
      */
-    public function makeInstance();
+    public function makeInstance($arguments=[]);
 
 }
