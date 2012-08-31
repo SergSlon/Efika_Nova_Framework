@@ -6,18 +6,15 @@
 
 namespace Efika\Di;
 
+use Efika\Common\SingletonTrait;
+
 class DiContainer implements DiContainerInterface
 {
 
-    /**
-     * Provide singleton pattern
-     * @static
-     * @return DiContainerInterface
-     */
-    public static function getInstance()
-    {
-        // TODO: Implement getInstance() method.
-    }
+    //DiContainer is Singleton
+    use SingletonTrait;
+
+    protected $services = [];
 
     /**
      * Create a new service. $object could be an instance or name of an object.
@@ -28,20 +25,37 @@ class DiContainer implements DiContainerInterface
      */
     public function createService($object, $name = null)
     {
-        // TODO: Implement createService() method.
+        if (is_object($object) && $name == null) {
+            $serviceName = get_class($object);
+        } else if (is_string($object) && $name == null) {
+            $serviceName = $object;
+        } else {
+            $serviceName = $name;
+        }
+
+        $service = new DiService($object);
+        $this->services[$serviceName] = $service;
+
+        return $service;
     }
 
     /**
      * Delivers service an allows to manipulate service.
      * @param string $name
+     * @throws Exception
      * @return DiServiceInterface
      */
     public function getService($name)
     {
-        // TODO: Implement getService() method.
+        if (array_key_exists($name, $this->services)) {
+            return $this->services[$name];
+        } else {
+            throw new Exception('Requested Service "' . $name . '" does not exist!');
+        }
     }
 
     /**
+     * @deprecated
      * returns an instance of given object with injections which happens in DiService
      * @param string $name
      * @return object

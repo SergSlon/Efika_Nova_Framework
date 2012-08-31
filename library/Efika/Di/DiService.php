@@ -14,6 +14,7 @@ class DiService implements DiServiceInterface
     protected $reflection = null;
     protected $injections = [];
     protected $expansions = [];
+    protected $instance = null;
 
     /**
      * A new service for object
@@ -85,7 +86,7 @@ class DiService implements DiServiceInterface
     public function expand($name, $callback)
     {
         if ($this->isExpandable()) {
-             $this->expansions[$name] = $callback;
+            $this->expansions[$name] = $callback;
         }
     }
 
@@ -99,23 +100,34 @@ class DiService implements DiServiceInterface
      * @param array $arguments
      * @return mixed
      */
-    public function makeInstance($arguments=[])
+    public function makeInstance($arguments = [])
     {
         $instance = $this->getReflection()->newInstanceArgs($arguments);
 
         //add injections to instance
         $injections = $this->getInjections();
-        foreach($injections as $name => $options){
-            $this->invokeMethod($name,$instance);
+        foreach ($injections as $name => $options) {
+            $this->invokeMethod($name, $instance);
         }
 
         //add expansions to instance
         $expansions = $this->getExpansions();
-        foreach($expansions as $name => $callback){
+        foreach ($expansions as $name => $callback) {
             $instance->$name = $callback;
         }
 
+        $this->instance = $instance;
+
         return $instance;
+    }
+
+    /**
+     * Get instance of service object
+     * @return null
+     */
+    public function getInstance()
+    {
+        return $this->instance;
     }
 
     /**
