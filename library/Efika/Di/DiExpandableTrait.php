@@ -14,48 +14,6 @@ trait DiExpandableTrait
 {
 
     /**
-     * Add a method with callback at runtime to an object
-     * @param $name
-     * @param $callback
-     * @return mixed
-     */
-    public function addMethod($name, $callback)
-    {
-        // TODO: Implement addMethod() method.
-    }
-
-    /**
-     * Remove an added method from object
-     * @param $name
-     * @return mixed
-     */
-    public function removeMethod($name)
-    {
-        // TODO: Implement removeMethod() method.
-    }
-
-    /**
-     * add a property to object
-     * @param $name
-     * @param $value
-     * @return mixed
-     */
-    public function addProperty($name, $value)
-    {
-        // TODO: Implement addProperty() method.
-    }
-
-    /**
-     * Remove a property from object
-     * @param $name
-     * @return mixed
-     */
-    public function removeProperty($name)
-    {
-        // TODO: Implement removeProperty() method.
-    }
-
-    /**
      * call an added method
      * @param $name
      * @param $arguments
