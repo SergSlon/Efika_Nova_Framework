@@ -21,6 +21,8 @@ trait DiExpandableTrait
      */
     public function __call($name, $arguments)
     {
-        // TODO: Implement __call() method.
+        if(property_exists($this,$name) && is_callable($this->$name)){
+           return call_user_func_array([this,$name],$arguments);
+        }
     }
 }
