@@ -21,13 +21,9 @@ class DiService implements DiServiceInterface
     public function __construct($object)
     {
         $reflection = new ReflectionClass($object);
+
         $this->setReflection($reflection);
 
-    }
-
-    public function methodExists($method)
-    {
-        return in_array($method, $this->getReflection()->getMethods());
     }
 
     /**
@@ -39,14 +35,14 @@ class DiService implements DiServiceInterface
      */
     public function inject($method, $arguments = [])
     {
-        if ($this->methodExists($method)) {
+        if ($this->getReflection()->hasMethod($method)) {
             $this->addInjection(
                 $method,
                 $this->getReflection()->getMethod($method),
                 $arguments
             );
         } else {
-            throw new Exception('Requested method "' . $method . '" is does not exists!');
+            throw new Exception('Requested method "' . $method . '" does not exists!');
         }
 
     }
@@ -68,9 +64,15 @@ class DiService implements DiServiceInterface
      * @param callable $callback
      * @return mixed
      */
-    public function extend($name, $callback)
+    public function expand($name, $callback)
     {
-        // TODO: Implement extend() method.
+        if($this->isExpandable()){
+
+        }
+    }
+
+    public function isExpandable(){
+        return in_array('DiExpandableInterface',$this->getReflection()->getInterfaceNames());
     }
 
     /**

@@ -40,7 +40,7 @@ interface DiServiceInterface
      * @param callable $callback
      * @return mixed
      */
-    public function extend($name,$callback);
+    public function expand($name,$callback);
 
     /**
      * Create an instance of given object
