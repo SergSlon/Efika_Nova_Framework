@@ -143,17 +143,31 @@ class DiService implements DiServiceInterface
         }
     }
 
-    public function setReflection($object)
+    /**
+     * Set reflection of service
+     * @param $object
+     */
+    protected function setReflection($object)
     {
         $this->reflection = $object;
     }
 
+    /**
+     * get reflection of service
+     * @return null
+     */
     public function getReflection()
     {
         return $this->reflection;
     }
 
-    public function addInjection($method, $methodReflection, array $arguments = [])
+    /**
+     * Add injection to service
+     * @param $method
+     * @param $methodReflection
+     * @param array $arguments
+     */
+    protected function addInjection($method, $methodReflection, array $arguments = [])
     {
         $this->injections[$method][] = [
             'reflection' => $methodReflection,
@@ -161,6 +175,11 @@ class DiService implements DiServiceInterface
         ];
     }
 
+    /**
+     * Returns all injections of given method
+     * @param $method
+     * @return bool
+     */
     public function getInjection($method)
     {
         if (array_key_exists($method, $this->injections)) {
@@ -170,21 +189,37 @@ class DiService implements DiServiceInterface
         }
     }
 
+    /**
+     * Set a bunch of injections
+     * @param $injections
+     */
     protected function setInjections($injections)
     {
         $this->injections = $injections;
     }
 
-    protected function getInjections()
+    /**
+     * Get all injections
+     * @return array
+     */
+    public function getInjections()
     {
         return $this->injections;
     }
 
+    /**
+     * Set a bunch of expansions
+     * @param $expansions
+     */
     protected function setExpansions($expansions)
     {
         $this->expansions = $expansions;
     }
 
+    /**
+     * get all expansions
+     * @return array
+     */
     protected function getExpansions()
     {
         return $this->expansions;

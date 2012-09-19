@@ -14,6 +14,10 @@ class DiContainer implements DiContainerInterface
     //DiContainer is Singleton
     use SingletonTrait;
 
+    /**
+     * Collection of services
+     * @var array
+     */
     protected $services = [];
 
     /**
@@ -62,6 +66,6 @@ class DiContainer implements DiContainerInterface
      */
     public function get($name)
     {
-        // TODO: Implement get() method.
+        return $this->getService($name)->getInstance();
     }
 }
