@@ -33,7 +33,7 @@ class DiService implements DiServiceInterface
      * @param string $method
      * @param array $arguments
      * @throws Exception
-     * @return mixed
+     * @return \Efika\Di\DiService|mixed
      */
     public function inject($method, $arguments = [])
     {
@@ -46,6 +46,8 @@ class DiService implements DiServiceInterface
         } else {
             throw new Exception('Requested method "' . $method . '" does not exists!');
         }
+
+        return $this;
 
     }
 
@@ -78,16 +80,18 @@ class DiService implements DiServiceInterface
 
     /**
      * If object is instance of DiExpandableInterface, given object
-     * could extend with given method.
+     * could extend with given method or property.
      * @param string $name
-     * @param callable $callback
-     * @return mixed
+     * @param mixed | callable $callback
+     * @return \Efika\Di\DiService|mixed
      */
     public function expand($name, $callback)
     {
         if ($this->isExpandable()) {
             $this->expansions[$name] = $callback;
         }
+
+        return $this;
     }
 
     public function isExpandable()
@@ -134,6 +138,7 @@ class DiService implements DiServiceInterface
      * Invoke a method from object
      * @param $method
      * @param $object
+     * @return \Efika\Di\DiService
      */
     public function invokeMethod($method, $object)
     {
@@ -141,6 +146,8 @@ class DiService implements DiServiceInterface
         if ($invokable !== null) {
             $invokable['reflection']->invoke($object, $invokable['arguments']);
         }
+
+        return $this;
     }
 
     /**
@@ -150,6 +157,7 @@ class DiService implements DiServiceInterface
     protected function setReflection($object)
     {
         $this->reflection = $object;
+        return $this;
     }
 
     /**
@@ -166,6 +174,7 @@ class DiService implements DiServiceInterface
      * @param $method
      * @param $methodReflection
      * @param array $arguments
+     * @return \Efika\Di\DiService
      */
     protected function addInjection($method, $methodReflection, array $arguments = [])
     {
@@ -173,6 +182,8 @@ class DiService implements DiServiceInterface
             'reflection' => $methodReflection,
             'arguments' => $arguments
         ];
+
+        return $this;
     }
 
     /**
@@ -192,10 +203,12 @@ class DiService implements DiServiceInterface
     /**
      * Set a bunch of injections
      * @param $injections
+     * @return \Efika\Di\DiService
      */
     protected function setInjections($injections)
     {
         $this->injections = $injections;
+        return $this;
     }
 
     /**
@@ -210,10 +223,12 @@ class DiService implements DiServiceInterface
     /**
      * Set a bunch of expansions
      * @param $expansions
+     * @return \Efika\Di\DiService
      */
     protected function setExpansions($expansions)
     {
         $this->expansions = $expansions;
+        return $this;
     }
 
     /**
