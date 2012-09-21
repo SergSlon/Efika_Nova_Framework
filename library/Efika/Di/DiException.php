@@ -8,7 +8,7 @@ namespace Efika\Di;
 
 use Exception as PhpException;
 
-class Exception extends PhpException
+class DiException extends PhpException
 {
 
 }

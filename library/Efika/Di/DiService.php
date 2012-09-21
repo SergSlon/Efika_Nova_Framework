@@ -32,7 +32,7 @@ class DiService implements DiServiceInterface
      * Inject arguments into given method
      * @param string $method
      * @param array $arguments
-     * @throws Exception
+     * @throws DiException
      * @return \Efika\Di\DiService|mixed
      */
     public function inject($method, $arguments = [])
@@ -44,7 +44,7 @@ class DiService implements DiServiceInterface
                 $arguments
             );
         } else {
-            throw new Exception('Requested method "' . $method . '" does not exists!');
+            throw new DiException('Requested method "' . $method . '" does not exists!');
         }
 
         return $this;

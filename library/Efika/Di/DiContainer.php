@@ -46,7 +46,7 @@ class DiContainer implements DiContainerInterface
     /**
      * Delivers service an allows to manipulate service.
      * @param string $name
-     * @throws Exception
+     * @throws DiException
      * @return DiServiceInterface
      */
     public function getService($name)
@@ -54,7 +54,7 @@ class DiContainer implements DiContainerInterface
         if (array_key_exists($name, $this->services)) {
             return $this->services[$name];
         } else {
-            throw new Exception('Requested Service "' . $name . '" does not exist!');
+            throw new DiException('Requested Service "' . $name . '" does not exist!');
         }
     }
 
