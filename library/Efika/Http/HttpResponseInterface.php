@@ -30,11 +30,13 @@ interface HttpResponseInterface
      * @return mixed
      */
     public function setHttpMessage(HttpMessageInterface $httpMessage);
+
     /**
      * Set response-status by code
      * @abstract
      * @param int $code
      * @return HttpMessageInterface
+     * @see http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
      */
     public function setResponseStatus($code);
 

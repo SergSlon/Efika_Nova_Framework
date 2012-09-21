@@ -92,7 +92,7 @@ interface HttpUrlInterface
      * @param string $delimiter
      * @return mixed
      */
-    public function setScheme($value,$delimiter='://');
+    public function setScheme($value, $delimiter = '://');
 
     /**
      * @abstract

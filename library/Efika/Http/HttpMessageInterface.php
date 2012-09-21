@@ -13,7 +13,7 @@ interface HttpMessageInterface
      * @param HttpMessageInterface $httpMessage
      * @param HttpRequestInterface | HttpResponseInterface $type
      */
-    public function __construct(HttpMessageInterface $httpMessage = null,$type = null);
+    public function __construct(HttpMessageInterface $httpMessage = null, $type = null);
 
     /**
      * Add a header to header collection
@@ -22,7 +22,7 @@ interface HttpMessageInterface
      * @param $value
      * @return mixed
      */
-    public function addHeader($name,$value);
+    public function addHeader($name, $value);
 
     /**
      * Add a bunch of http headers
@@ -105,8 +105,6 @@ interface HttpMessageInterface
      * @return mixed
      */
     public function send();
-
-
 
 
 }

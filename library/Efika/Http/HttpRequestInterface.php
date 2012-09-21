@@ -33,7 +33,7 @@ interface HttpRequestInterface
      * @param null $requestMethod
      * @return mixed
      */
-    public static function establish($requestUrl=null,$requestMethod=null);
+    public static function establish($requestUrl = null, $requestMethod = null);
 
     /**
      * Get http message object
