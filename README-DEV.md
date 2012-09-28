@@ -2,7 +2,7 @@
 
 ## Enviroment
 
-wemp544ipv4 will use as development enviroment.
+latest xampp will use as development enviroment. Visit http://www.apachefriends.org/ for more information.
 
 ## Coding Standards
 

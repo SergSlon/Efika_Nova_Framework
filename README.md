@@ -1,4 +1,4 @@
-**Efika Nova** is a high performance and modern application development framework.
+**Efika Nova** is a high performance and modern package based application development framework.
 Efika Nova will be foundation for Smooth Media Open Source Software Efika Libera.
 
 ## Development
