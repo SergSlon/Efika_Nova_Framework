@@ -18,7 +18,7 @@ Efika Nova is using Zend code style. See: http://framework.zend.com/manual/en/co
  - traits: extend name with "Trait" e.g. ContextNameTrait
  - abstracts: append name with "Abstract" e.g. AbstractContextName
  - variables and methods: camelcased, describing right context and short $describingVar / describingMethod
- - consts: Uppercase and use brackets NAME_OF_CONST
+ - constants: Uppercase and use brackets NAME_OF_CONST
 
 ### File Formatting
 Efika Nova is using Zend PHP File Formatting. http://framework.zend.com/manual/en/coding-standard.php-file-formatting.html
@@ -26,5 +26,5 @@ Efika Nova is using Zend PHP File Formatting. http://framework.zend.com/manual/e
 ### Documentation
 
 Classes need to have copyright information and class description.
-Methods, consts and properties need to documented as well.
+Methods, constants and properties need to documented as well.
 
