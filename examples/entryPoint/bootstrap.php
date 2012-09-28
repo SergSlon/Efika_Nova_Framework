@@ -8,10 +8,11 @@ use Efika\Loader\StandardAutoloader;
 
 require_once __DIR__ . '/../../library/Efika/Loader/StandardAutoloader.php';
 
+//create Autoloader
+
 (new StandardAutoloader)
     ->setNamespaces(
     [
         'Efika\\' => __DIR__ . '/../library/Efika/',
-        'EfikaTest\\' => __DIR__ . '/../tests/Efika/'
     ])
     ->register();

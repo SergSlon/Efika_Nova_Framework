@@ -17,6 +17,7 @@ use Efika\EventManager\EventManager;
 $outputHandler = new OutputHandler();
 $em = new EventManager();
 
+//a simple chain
 //add some lines of text
 $em->attachEventHandler(
     'onAssignOutput',
@@ -25,10 +26,10 @@ $em->attachEventHandler(
         $outputHandler->addContent('Hello World');
         $outputHandler->addContent('some lines of code');
     }
-);
+)
 
 //execute some logic
-$em->attachEventHandler(
+->attachEventHandler(
     'onAssignOutput',
     function () use($outputHandler)
     {
@@ -39,28 +40,28 @@ $em->attachEventHandler(
         }
         $outputHandler->addContent('</ul>');
     }
-);
+)
 
 //set html mode to XHTML
-$em->attachEventHandler(
+->attachEventHandler(
     'onDisplayOutput',
     function () use($outputHandler)
     {
         $outputHandler->setHtmlMode(ENT_XHTML);
     }
-);
+)
 
 //set encoding to ISO-8859-1
-$em->attachEventHandler(
+->attachEventHandler(
     'onBeforeDisplayOutput',
     function () use($outputHandler)
     {
         $outputHandler->setEncoding('ISO-8859-1');
     }
-);
+)
 
 //sanitize html
-$em->attachEventHandler(
+->attachEventHandler(
     'onBeforeDisplayOutput',
     function () use($outputHandler)
     {
@@ -72,11 +73,11 @@ $em->attachEventHandler(
             );
         }
     }
-);
+)
 
 //display output
 //execute an event -> nested event execution
-$em->attachEventHandler(
+->attachEventHandler(
     'onDisplayOutput',
     function () use($outputHandler,$em)
     {
@@ -84,18 +85,18 @@ $em->attachEventHandler(
         $em->triggerEvent('onBeforeDisplayOutput');
         $outputHandler->display('<br />');
     }
-);
+)
 
-$em->attachEventHandler(
+->attachEventHandler(
     'onDisplayOutput',
     function () use($outputHandler)
     {
         echo PHP_EOL;
     }
-);
+)
 
 //assign output
-$em->triggerEvent('onAssignOutput');
+->triggerEvent('onAssignOutput')
 
 //display output
-$em->triggerEvent('onDisplayOutput');
+->triggerEvent('onDisplayOutput');
