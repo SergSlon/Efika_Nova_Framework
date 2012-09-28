@@ -68,7 +68,7 @@ trait EventManagerTrait
      * Attach an handler to an event or attach an event aggregate
      * @param string|\Efika\EventManager\EventHandlerAggregateInterface $event
      * @param $callback
-     * @return mixed
+     * @return EventManagerTrait
      */
     public function attachEventHandler($event, $callback)
     {
