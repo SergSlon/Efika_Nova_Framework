@@ -33,13 +33,13 @@ interface ViewModelInterface
      * @param $file
      * @return mixed
      */
-    public function setTemplate($file);
+    public function setView($file);
 
     /**
      * @abstract
      * @return mixed
      */
-    public function getTemplate();
+    public function getView();
 
     /**
      * Assign a var to current template

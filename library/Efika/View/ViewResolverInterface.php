@@ -12,4 +12,12 @@ namespace Efika\View;
 interface ViewResolverInterface
 {
 
+    /**
+     * resolves template in path
+     * @abstract
+     * @param $template
+     * @param $path
+     * @return mixed
+     */
+    public function resolve($view,$path);
 }

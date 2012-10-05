@@ -12,4 +12,11 @@ namespace Efika\View;
 interface ViewRendererInterface
 {
 
+    /**
+     * Renders given view
+     * @abstract
+     * @return mixed
+     */
+    public function render();
+
 }
