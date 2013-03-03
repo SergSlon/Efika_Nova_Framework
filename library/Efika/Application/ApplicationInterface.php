@@ -21,36 +21,6 @@ interface ApplicationInterface extends \Efika\EventManager\EventManagerInterface
     public function construct($config);
 
     /**
-     * trigger init event
-     * @return mixed
-     */
-    public function onInit();
-
-    /**
-     * trigger preProcess event
-     * @return mixed
-     */
-    public function onPreProcess();
-
-    /**
-     * trigger process event
-     * @return mixed
-     */
-    public function onProcess();
-
-    /**
-     * trigger postProcess event
-     * @return mixed
-     */
-    public function onPostProcess();
-
-    /**
-     * trigger complete event
-     * @return mixed
-     */
-    public function onComplete();
-
-    /**
      * trigger events
      * @abstract
      * @return mixed
