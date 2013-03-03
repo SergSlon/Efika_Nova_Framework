@@ -9,26 +9,51 @@ namespace Efika\Application;
 /**
  * Application
  */
-interface ApplicationInterface
+interface ApplicationInterface extends \Efika\EventManager\EventManagerInterface
 {
-    /**
-     * Returns Application Request
-     * @abstract
-     * @return mixed
-     */
-    public function getRequest();
+
+    use \Efika\Common\SingletonTrait;
 
     /**
-     * Returns Application Response
-     * @abstract
-     * @return mixed
+     * init config
+     * @param $config
      */
-    public function getResponse();
+    public function construct($config);
 
     /**
-     * Executes Application
+     * trigger init event
+     * @return mixed
+     */
+    public function onInit();
+
+    /**
+     * trigger preProcess event
+     * @return mixed
+     */
+    public function onPreProcess();
+
+    /**
+     * trigger process event
+     * @return mixed
+     */
+    public function onProcess();
+
+    /**
+     * trigger postProcess event
+     * @return mixed
+     */
+    public function onPostProcess();
+
+    /**
+     * trigger complete event
+     * @return mixed
+     */
+    public function onComplete();
+
+    /**
+     * trigger events
      * @abstract
      * @return mixed
      */
-    public function run();
+    public function execute();
 }
