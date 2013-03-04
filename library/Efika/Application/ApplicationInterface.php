@@ -9,26 +9,19 @@ namespace Efika\Application;
 /**
  * Application
  */
-interface ApplicationInterface
+interface ApplicationInterface extends \Efika\EventManager\EventManagerInterface
 {
-    /**
-     * Returns Application Request
-     * @abstract
-     * @return mixed
-     */
-    public function getRequest();
 
     /**
-     * Returns Application Response
-     * @abstract
-     * @return mixed
+     * init config
+     * @param $config
      */
-    public function getResponse();
+    public function construct($config);
 
     /**
-     * Executes Application
+     * trigger events
      * @abstract
      * @return mixed
      */
-    public function run();
+    public function execute();
 }
