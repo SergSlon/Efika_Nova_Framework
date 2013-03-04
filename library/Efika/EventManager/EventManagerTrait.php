@@ -76,12 +76,15 @@ trait EventManagerTrait
             return $this->attachEventHandlerAggregate($event);
         }
 
+        if(!($callback instanceof EventHandlerCallback))
+            $callback = new EventHandlerCallback($callback);
+
         if (is_array($event)) {
             foreach ($event as $name) {
                 $this->attachEventHandler($name, $callback);
             }
         } else {
-            $this->eventHandlers[$event] = $callback;
+            $this->eventHandlers[$event][] = $callback;
         }
 
         return $this;
