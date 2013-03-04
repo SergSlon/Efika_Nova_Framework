@@ -12,8 +12,6 @@ namespace Efika\Application;
 interface ApplicationInterface extends \Efika\EventManager\EventManagerInterface
 {
 
-    use \Efika\Common\SingletonTrait;
-
     /**
      * init config
      * @param $config

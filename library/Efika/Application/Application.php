@@ -36,6 +36,10 @@ class Application implements ApplicationInterface
     {
         if (!$this->getIsConstructed()) {
 
+            foreach($this->getEventTriggers() as $event => $object){
+                $this->attachEventHandler($event,function(){});
+            }
+
             $this->constructed();
         }
     }
@@ -100,10 +104,14 @@ class Application implements ApplicationInterface
                 $eventObject->setTarget($this);
                 $eventObject->setArguments($args);
 
-                $previousEventResponse = $this->triggerEvent($eventObject,[],$callback);
+                $previousEventResponse = $this->triggerEvent($event,$args);
             }
 
             $this->executed();
+
+            return true;
         }
+
+        return false;
     }
 }

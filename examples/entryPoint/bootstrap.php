@@ -13,6 +13,6 @@ require_once __DIR__ . '/../../library/Efika/Loader/StandardAutoloader.php';
 (new StandardAutoloader)
     ->setNamespaces(
     [
-        'Efika\\' => __DIR__ . '/../library/Efika/',
+        'Efika\\' => __DIR__ . '/../../library/Efika/',
     ])
     ->register();

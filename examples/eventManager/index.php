@@ -93,10 +93,10 @@ $em->attachEventHandler(
     {
         echo PHP_EOL;
     }
-)
+);
 
 //assign output
-->triggerEvent('onAssignOutput')
+$em->triggerEvent('onAssignOutput');
 
 //display output
-->triggerEvent('onDisplayOutput');
+$em->triggerEvent('onDisplayOutput');
