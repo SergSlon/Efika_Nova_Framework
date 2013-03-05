@@ -65,6 +65,11 @@ trait EventManagerTrait
     protected $eventResponseObject = null;
 
     /**
+     * @var array
+     */
+    protected $defaultEvents = [];
+
+    /**
      * Attach an handler to an event or attach an event aggregate
      * @param string|\Efika\EventManager\EventHandlerAggregateInterface $event
      * @param $callback
@@ -160,19 +165,22 @@ trait EventManagerTrait
         $responses = $this->getEventResponseObject();
         $responses->setEvent($e);
 
-        foreach($this->getEventHandler($e->getName()) as $handler){
-            if($handler instanceof EventHandlerCallback){
-                $responses->push($handler->execute($e));
-            }
+        if($this->hasEventHandler($e->getName())){
 
-            if($e->isPropagationStopped()){
-                $responses->stop(true);
-                break;
-            }
+            foreach($this->getEventHandler($e->getName()) as $handler){
+                if($handler instanceof EventHandlerCallback){
+                    $responses->push($handler->execute($e));
+                }
 
-            if($callback && call_user_func($callback, $responses->last())){
-                $responses->stop(true);
-                break;
+                if($e->isPropagationStopped()){
+                    $responses->stop(true);
+                    break;
+                }
+
+                if($callback && call_user_func($callback, $responses->last())){
+                    $responses->stop(true);
+                    break;
+                }
             }
         }
 
@@ -258,6 +266,54 @@ trait EventManagerTrait
     public function getEventHandlers()
     {
         return $this->eventHandlers;
+    }
+
+    /**
+     * @param string $defaultEventResponseClass
+     */
+    public function setDefaultEventResponseClass($defaultEventResponseClass)
+    {
+        $this->defaultEventResponseClass = $defaultEventResponseClass;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDefaultEventResponseClass()
+    {
+        return $this->defaultEventResponseClass;
+    }
+
+    /**
+     * @param string $defaultEventClass
+     */
+    protected function setDefaultEventClass($defaultEventClass)
+    {
+        $this->defaultEventClass = $defaultEventClass;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultEventClass()
+    {
+        return $this->defaultEventClass;
+    }
+
+    /**
+     * @param array $defaultEvents
+     */
+    protected function setDefaultEvents($defaultEvents)
+    {
+        $this->defaultEvents = $defaultEvents;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultEvents()
+    {
+        return $this->defaultEvents;
     }
 
 }
