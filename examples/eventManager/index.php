@@ -100,3 +100,5 @@ $em->triggerEvent('onAssignOutput');
 
 //display output
 $em->triggerEvent('onDisplayOutput');
+
+$em->triggerEvent('onUnknown');
