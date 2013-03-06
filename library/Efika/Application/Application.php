@@ -54,7 +54,8 @@ class Application implements ApplicationInterface
      */
     public function getEventObject($event)
     {
-        return $this->hasEventObject($event) ? $this->eventObjects[$event] : new $this->getDefaultEventClass();
+        $default = $this->getDefaultEventClass();
+        return $this->hasEventObject($event) ? $this->eventObjects[$event] : new $default;
     }
 
 
@@ -118,6 +119,7 @@ class Application implements ApplicationInterface
 
             //stop propagantion when error occurs
             $callback = function($response) use ($application) {
+                echo 'masso';
                 return false;
             };
 
@@ -135,10 +137,8 @@ class Application implements ApplicationInterface
                 $eventObject->setTarget($this);
                 $eventObject->setArguments($args);
 
-                $previousEventResponse = $this->triggerEvent($event,$args);
+                $previousEventResponse = $this->triggerEvent($eventObject,$args,$callback);
             }
-
-//            var_dump($this->getEventHandlers());
 
             $this->executed();
 
