@@ -12,56 +12,30 @@ class Application implements ApplicationInterface
     use \Efika\EventManager\EventManagerTrait;
     use \Efika\Common\SingletonTrait;
 
-    private $isConstructed = false;
+    /**
+     * @var bool
+     */
+    private $isConfigured = false;
+    /**
+     * @var bool
+     */
     private $isExecuted = false;
 
-    private $eventTriggers = [
-        'onInit' => '\Efika\EventManager\Event',
-        'onPreProcess' => '\Efika\EventManager\Event',
-        'onProcess' => '\Efika\EventManager\Event',
-        'onPostProcess' => '\Efika\EventManager\Event',
-        'onComplete' => '\Efika\EventManager\Event'
-    ];
-
-    public function getEventTriggers()
-    {
-        return $this->eventTriggers;
-    }
+    /**
+     * @var array
+     */
+    private $eventObjects = [];
 
     /**
-     * init config
-     * @param $config
+     * @return array
      */
-    public function construct($config)
+    public function getEventObjects()
     {
-        if (!$this->getIsConstructed()) {
-
-            foreach($this->getEventTriggers() as $event => $object){
-                $this->attachEventHandler($event,function(){});
-            }
-
-            $this->constructed();
-        }
+        return $this->eventObjects;
     }
 
-    public function getIsConstructed()
-    {
-        return $this->isConstructed;
-    }
-
-    public function getIsExecuted()
-    {
-        return $this->isExecuted;
-    }
-
-    protected function constructed()
-    {
-        $this->isConstructed = true;
-    }
-
-    protected function executed()
-    {
-        $this->isExecuted = true;
+    public function hasEventObject($event){
+        return array_key_exists($event, $this->getEventObjects());
     }
 
     /**
@@ -69,9 +43,67 @@ class Application implements ApplicationInterface
      * @param \Efika\EventManager\EventInterface $object
      * @return mixed
      */
-    public function setEventTrigger($handler, \Efika\EventManager\EventInterface $object)
+    public function setEventObject($event, \Efika\EventManager\EventInterface $object)
     {
-        $this->eventTriggers[$handler] = $object;
+        $this->eventObjects[$event] = $object;
+    }
+
+    /**
+     * @param $event
+     * @return \Efika\EventManager\EventInterface
+     */
+    public function getEventObject($event)
+    {
+        return $this->hasEventObject($event) ? $this->eventObjects[$event] : new $this->getDefaultEventClass();
+    }
+
+
+    /**
+     * init config
+     * @param $config
+     */
+    public function configure($config)
+    {
+        if (!$this->getIsConfigured()) {
+
+            foreach($this->getEventObjects() as $event => $object){
+                $this->attachEventHandler($event,function(){});
+            }
+
+            $this->configured();
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsConfigured()
+    {
+        return $this->isConfigured;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsExecuted()
+    {
+        return $this->isExecuted;
+    }
+
+    /**
+     *
+     */
+    protected function configured()
+    {
+        $this->isConfigured = true;
+    }
+
+    /**
+     *
+     */
+    protected function executed()
+    {
+        $this->isExecuted = true;
     }
 
     /**
@@ -89,10 +121,9 @@ class Application implements ApplicationInterface
                 return false;
             };
 
-            foreach ($this->getEventTriggers() as $event => $eventObject) {
+            foreach ($this->getEventHandlers() as $event => $handlers) {
 
-                if(!is_object($eventObject))
-                    $eventObject = new $eventObject;
+                $eventObject = $this->getEventObject($event);
 
                 if ($previousEventResponse == null) {
                     $args = null;
@@ -106,6 +137,8 @@ class Application implements ApplicationInterface
 
                 $previousEventResponse = $this->triggerEvent($event,$args);
             }
+
+//            var_dump($this->getEventHandlers());
 
             $this->executed();
 

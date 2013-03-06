@@ -19,7 +19,7 @@ $config = [
 ];
 
 $app = Efika\Application\Application::getInstance();
-$app->construct($config);
+$app->configure($config);
 
 new CustomService($app);
 

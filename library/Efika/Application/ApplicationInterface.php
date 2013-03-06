@@ -16,7 +16,7 @@ interface ApplicationInterface extends \Efika\EventManager\EventManagerInterface
      * init config
      * @param $config
      */
-    public function construct($config);
+    public function configure($config);
 
     /**
      * trigger events
