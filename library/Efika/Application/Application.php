@@ -66,11 +66,6 @@ class Application implements ApplicationInterface
     public function configure($config)
     {
         if (!$this->getIsConfigured()) {
-
-            foreach($this->getEventObjects() as $event => $object){
-                $this->attachEventHandler($event,function(){});
-            }
-
             $this->configured();
         }
     }
