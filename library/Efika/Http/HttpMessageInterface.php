@@ -10,10 +10,9 @@ interface HttpMessageInterface
 {
 
     /**
-     * @param HttpMessageInterface $httpMessage
-     * @param HttpRequestInterface | HttpResponseInterface $type
+     * @param HttpMessageInterface $httpMessage Parent Message
      */
-    public function __construct(HttpMessageInterface $httpMessage = null, $type = null);
+    public function __construct(HttpMessageInterface $httpMessage = null);
 
     /**
      * Add a header to header collection
@@ -33,11 +32,11 @@ interface HttpMessageInterface
     public function addHeaders(HttpHeaderInterface $header);
 
     /**
-     * Get message body
+     * Get message Content
      * @abstract
      * @return mixed
      */
-    public function getBody();
+    public function getContent();
 
     /**
      * Returns header field-value by header field-name
@@ -68,12 +67,22 @@ interface HttpMessageInterface
     public function getParentMessage();
 
     /**
+     * @return \Efika\Http\HttpRequestInterface
+     */
+    public function getRequest();
+
+    /**
+     * @return \Efika\Http\HttpResponseInterface
+     */
+    public function getResponse();
+
+    /**
      * @abstract
-     * @param string $body
-     * @param $body
+     * @param string $content
+     * @param $content
      * @return HttpMessageInterface
      */
-    public function setBody($body);
+    public function setContent($content);
 
     /**
      * Set http header
@@ -81,7 +90,7 @@ interface HttpMessageInterface
      * @param HttpHeaderInterface $header
      * @return HttpMessageInterface
      */
-    public function setHeaders(HttpHeaderInterface $header);
+    public function setHeader(HttpHeaderInterface $header);
 
     /**
      * Set http version
@@ -92,19 +101,15 @@ interface HttpMessageInterface
     public function setHttpVersion($version);
 
     /**
-     * Type could be Response or Request
-     * @abstract
-     * @param HttpRequestInterface | HttpResponseInterface $type
-     * @return HttpMessageInterface
-     */
-    public function setType($type);
-
-    /**
-     * send http message
-     * @abstract
+     * @param HttpRequestInterface $request
      * @return mixed
      */
-    public function send();
+    public function setRequest(HttpRequestInterface $request);
 
+    /**
+     * @param HttpResponseInterface $response
+     * @return mixed
+     */
+    public function setResponse(HttpResponseInterface $response);
 
 }

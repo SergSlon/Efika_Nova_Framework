@@ -25,6 +25,12 @@ interface HttpRequestInterface
     const OPTIONS = 'OPTIONS';
     const HEAD = 'HEAD';
 
+
+    /**
+     * @param \Efika\Http\HttpMessageInterface $httpMessage
+     */
+    public function __construct($httpMessage);
+
     /**
      * Build a new request
      * @static
@@ -41,7 +47,7 @@ interface HttpRequestInterface
      * @param HttpMessageInterface $httpMessage
      * @return mixed
      */
-    public function getHttpMessage(HttpMessageInterface $httpMessage);
+    public function getHttpMessage();
 
     /**
      * Get requested method
@@ -56,14 +62,6 @@ interface HttpRequestInterface
      * @return mixed
      */
     public function getRequestUrl();
-
-    /**
-     * Set http message
-     * @abstract
-     * @param HttpMessageInterface $httpMessage
-     * @return mixed
-     */
-    public function setHttpMessage(HttpMessageInterface $httpMessage);
 
     /**
      * Set a requested method

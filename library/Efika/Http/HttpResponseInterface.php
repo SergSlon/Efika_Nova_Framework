@@ -10,6 +10,11 @@ interface HttpResponseInterface
 {
 
     /**
+     * @param \Efika\Http\HttpMessageInterface $httpMessage
+     */
+    public function __construct($httpMessage);
+
+    /**
      * Get response code
      * @abstract
      * @return mixed
@@ -24,12 +29,11 @@ interface HttpResponseInterface
     public function getResponseStatus();
 
     /**
-     * Set http message
+     * Get http message
      * @abstract
-     * @param HttpMessageInterface $httpMessage
-     * @return mixed
+     * @return HttpMessageInterface $httpMessage
      */
-    public function setHttpMessage(HttpMessageInterface $httpMessage);
+    public function getHttpMessage();
 
     /**
      * Set response-status by code
