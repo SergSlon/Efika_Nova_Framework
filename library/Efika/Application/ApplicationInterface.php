@@ -27,7 +27,8 @@ interface ApplicationInterface extends \Efika\EventManager\EventManagerInterface
     /**
      * trigger events
      * @abstract
+     * @param null | callable $callback
      * @return mixed
      */
-    public function execute();
+    public function execute($callback=null);
 }

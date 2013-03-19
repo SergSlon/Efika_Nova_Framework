@@ -5,14 +5,87 @@
  */
 
 use Efika\Application\Application as WebApp;
+use Efika\Application\ApplicationInterface;
 
 require_once '../entryPoint/bootstrap.php';
 
-class CustomHandlerAggregate implements \Efika\EventManager\EventHandlerAggregateInterface
+class CustomApplicationService implements \Efika\EventManager\EventHandlerAggregateInterface, \Efika\Application\ApplicationServiceInterface
 {
 
-    public function onInit(\Efika\EventManager\EventInterface $e)
+    /**
+     * @var null | ApplicationInterface
+     */
+    private $app = null;
+
+    /**
+     * @var array
+     */
+    private $arguments = [];
+
+    /**
+     * @param \Efika\Application\ApplicationInterface|null $app
+     */
+    public function setApp($app)
     {
+        $this->app = $app;
+    }
+
+    /**
+     * @return \Efika\Application\ApplicationInterface|null
+     */
+    public function getApp()
+    {
+        return $this->app;
+    }
+
+    /**
+     * @param array $arguments
+     */
+    public function setArguments($arguments)
+    {
+        $this->arguments = $arguments;
+    }
+
+    /**
+     * @return array
+     */
+    public function getArguments()
+    {
+        return $this->arguments;
+    }
+
+    /**
+     * @param ApplicationInterface $app
+     * @param array $arguments
+     */
+    public function register(ApplicationInterface $app, array $arguments = [])
+    {
+        $this->setApp($app);
+        $this->setArguments($arguments);
+    }
+
+    /**
+     *
+     */
+    public function connect()
+    {
+        $this->getApp()->attachEventHandlerAggregate($this);
+    }
+
+    /**
+     *
+     */
+    public function disconnect()
+    {
+        // TODO: Implement disconnect() method.
+    }
+
+    /**
+     * @param \Efika\EventManager\EventInterface $e
+     */
+    public function onInit(Efika\EventManager\EventInterface $e)
+    {
+        var_dump(__FILE__ . __LINE__);
         var_dump($e);
     }
 
@@ -42,17 +115,35 @@ class CustomHandlerAggregate implements \Efika\EventManager\EventHandlerAggregat
     {
         // TODO: Implement detach() method.
     }
+
 }
 
 $config = [
-    'ConfigVar' => 'foo.bar',
+    'events' => [
+        WebApp::ON_INIT => [
+            /**
+             * @param $e
+             */
+            /**
+             * @param $e
+             */
+            function($e){
+                echo 'say hello';
+            }
+        ]
+    ],
 ];
 
 
 $app = WebApp::getInstance();
 $app->configure($config);
 
-$app->attachEventHandlerAggregate(new CustomHandlerAggregate());
+//$app->attachEventHandlerAggregate(new CustomHandlerAggregate());
 
+$app->registerService('customApplicationService', new CustomApplicationService());
+
+$app->connectService('customApplicationService');
+
+var_dump(__FILE__ . __LINE__);
 var_dump($app->execute());
 
