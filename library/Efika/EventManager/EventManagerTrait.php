@@ -152,14 +152,15 @@ trait EventManagerTrait
 
     /**
      * Trigger an event.
-     * @param string|EventInterface $event
+     * @param \Efika\EventManager\EventInterface|string $id
      * @param array $args an array with arguments which will passed to event class
      * @param null|callable $callback
-     * @return EventResponse
      * @throws Exception
+     * @return EventResponse
      */
     public function triggerEvent($id, $args=[], callable $callback = null)
     {
+
         $event = null;
         if (is_string($id)) {
             $event = $this->getEventObject()
@@ -199,12 +200,6 @@ trait EventManagerTrait
                 if($handler instanceof EventHandlerCallback){
                     $responses->push($handler->execute($e));
                 }
-
-                var_dump($e->isPropagationStopped() ||
-                    (
-                        $callback &&
-                            call_user_func($callback, $responses)
-                    ));
 
                 if(
                     $e->isPropagationStopped() ||

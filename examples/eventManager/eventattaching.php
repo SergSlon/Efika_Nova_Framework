@@ -82,24 +82,26 @@ $em->attachEventHandler('another.events', array(new CustomObject(), 'anEventCall
 print_r($em->getEventHandlers());
 
 echo '<b>trigger custom.eventName.foo</b>';
-$em->triggerEvent('custom.eventName.foo',
+$em->triggerEvent('custom.eventName.foo',[],
     function($responses){
         print_r($responses);
+        return false;
     }
 );
 
 echo '<b>trigger custom.eventName.bar</b>';
-$em->triggerEvent('custom.eventName.bar',
+$em->triggerEvent('custom.eventName.bar',[],
     function($responses){
         print_r($responses);
+        return false;
     }
 );
 
 echo '<b>trigger another.events</b>';
-$em->triggerEvent('another.events',
+$em->triggerEvent('another.events',[],
     function($responses){
         print_r($responses);
-        return true;
+        return false;
     }
 );
 
