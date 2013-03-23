@@ -9,6 +9,7 @@ namespace Efika\Application;
 use Efika\Common\SingletonTrait;
 use Efika\EventManager\EventInterface;
 use Efika\EventManager\EventManagerTrait;
+use Efika\EventManager\EventResponse;
 
 class Application implements ApplicationInterface
 {
@@ -58,9 +59,16 @@ class Application implements ApplicationInterface
         }
     }
 
-    public function connectService($id){
+    /**
+     * @param $id
+     * @return bool
+     */
+    public function connectService($id)
+    {
         if (array_key_exists($id, $this->getServices())) {
-            $this->services[$id]->connect();
+
+            $service = $this->services[$id];
+            $service->connect();
             return true;
         } else {
             return false;
@@ -137,13 +145,11 @@ class Application implements ApplicationInterface
     public function configure($config)
     {
         if (!$this->getIsConfigured()) {
-//            foreach ($config as $type => $data) {
-//                if ($type == 'events') {
-//                    print_r($data);
-//                    $this->attachEventHandler($data, null);
-//                }
-//            }
 
+            /**
+             * Add some logic to add configuration
+             * @see https://github.com/mbunge/Efika/tree/master/libraries/Efika/Config
+             */
 
             $this->configured();
         }
@@ -193,38 +199,28 @@ class Application implements ApplicationInterface
             /**
              * @var EventResponse
              */
-            $previousEventResponse = null;
+            $previousEventResponse = new EventResponse();
             $application = $this;
 
-            var_dump(__FILE__ . __LINE__);
-            var_dump($callback === null || !is_callable($callback));
-            var_dump($callback === null);
-            var_dump(!is_callable($callback));
-
-//            if ($callback === null || !is_callable($callback)) {
-//                //stop propagantion when error occurs
-//                $callback = function ($response) use ($application) {
-//                    $condition = !($response->hasEvent() && !array_key_exists('errors', $response->getEvent()->getArguments()));
-//                    var_dump(__FILE__ . __LINE__);
-//                    var_dump(!$condition);
-//
-//                };
-//            }
-//
-            //Bug: Callback will executed without any arguments
-            $callback = function () use ($application) {
-                var_dump(func_get_args());
-                return false;
-            };
+            if ($callback === null || !is_callable($callback)) {
+                //stop propagantion when error occurs
+                /**
+                 * @param EventResponse $response
+                 * @return bool
+                 */
+                $callback = function ($response) use ($application) {
+                    return !($response->hasEvent() && !array_key_exists('errors', $response->getEvent()->getArguments()));
+                };
+            }
 
             foreach ($this->getEventHandlers() as $event => $handlers) {
 
                 $eventObject = $this->getEventObject($event);
 
-                if ($previousEventResponse == null) {
-                    $args = null;
-                } else {
+                if ($previousEventResponse !== null && $previousEventResponse->hasEvent()) {
                     $args = $previousEventResponse->getEvent()->getArguments();
+                } else {
+                    $args = null;
                 }
 
                 $eventObject->setName($event);
@@ -235,7 +231,6 @@ class Application implements ApplicationInterface
             }
 
             $this->executed();
-            var_dump(__FILE__ . __LINE__);
             return true;
         }
 
