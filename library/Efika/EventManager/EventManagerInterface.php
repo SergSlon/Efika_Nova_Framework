@@ -10,26 +10,26 @@ interface EventManagerInterface
 {
     /**
      * Attach an handler to an event or attach an event aggregate
-     * @param string|\Efika\EventManager\EventHandlerAggregateInterface $event
-     * @param $callback
-     * @return mixed
+     * @param string|\Efika\EventManager\EventHandlerAggregateInterface $id
+     * @param callable | null $callback
+     * @return EventManagerTrait
      */
-    public function attachEventHandler($event, $callback);
+    public function attachEventHandler($id, $callback=null);
 
     /**
      * Detach an event handler.
-     * @param $event
+     * @param $id
      * @return EventManagerTrait
      */
-    public function detachEventHandler($event);
+    public function detachEventHandler($id);
 
     /**
      * Trigger an event.
-     * @param string|EventInterface $event
+     * @param string|EventInterface $id
      * @param array $args an array with arguments which will passed to event class
      * @param null|callable $callback
      * @return \Efika\EventManager\EventResponse
      * @throws \Efika\EventManager\Exception
      */
-    public function triggerEvent($event, $args = [], callable $callback = null);
+    public function triggerEvent($id, $args = [], callable $callback = null);
 }

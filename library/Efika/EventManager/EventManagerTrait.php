@@ -71,26 +71,53 @@ trait EventManagerTrait
 
     /**
      * Attach an handler to an event or attach an event aggregate
-     * @param string|\Efika\EventManager\EventHandlerAggregateInterface $event
-     * @param $callback
+     *
+     * Possible kinds of attaching:
+     *
+     * 1. attach aggregate if event is an instance of EventHandlerAggregateInterface
+     *
+     * 2. attach many callbacks to an event if callback is an array and not callable
+     *
+     * 3. attach multiple events. as key-value-pair. key will be event identifier and value
+     * will be a single valid callback or a array with many callbacks multiple aggegate
+     * attachment won't be possible
+     *
+     * @param string|\Efika\EventManager\EventHandlerAggregateInterface $id
+     * @param null | EventHandlerCallback | array $callback
      * @return EventManagerTrait
      */
-    public function attachEventHandler($event, $callback)
+    public function attachEventHandler($id, $callback = null)
     {
-        if ($event instanceof EventHandlerAggregateInterface) {
-            return $this->attachEventHandlerAggregate($event);
+        //attach aggregate if event is an instance of EventHandlerAggregateInterface
+        if ($id instanceof EventHandlerAggregateInterface) {
+            return $this->attachEventHandlerAggregate($id);
         }
 
-        if(!($callback instanceof EventHandlerCallback))
+        //attach many callbacks to an event if callback is an array and not callable
+        if(is_array($callback) && !is_callable($callback)){
+            foreach($callback as $callbackItem){
+                $this->attachEventHandler($id, $callbackItem);
+            }
+
+            return $this;
+        }
+
+        //attach multiple events. as key-value-pair. key will be event identifier and value
+        //will be a single valid callback or a array with many callbacks
+        //multiple aggegate attachment won't be possible
+        if(is_array($id)){
+
+            foreach($id as $id => $callback){
+                $this->attachEventHandler($id, $callback);
+            }
+
+            return $this;
+        }
+
+        if(!($callback instanceof EventHandlerCallback) && $callback !== null)
             $callback = new EventHandlerCallback($callback);
 
-        if (is_array($event)) {
-            foreach ($event as $name) {
-                $this->attachEventHandler($name, $callback);
-            }
-        } else {
-            $this->eventHandlers[$event][] = $callback;
-        }
+        $this->eventHandlers[$id][] = $callback;
 
         return $this;
     }
@@ -106,17 +133,17 @@ trait EventManagerTrait
     }
 
     /**
-     * Detach an event handler.
-     * @param $event
+     * Detach an event handler or an array of eventhandkers by event handler identifiers.
+     * @param $id
      * @return EventManagerTrait
      */
-    public function detachEventHandler($event)
+    public function detachEventHandler($id)
     {
-        if (!is_array($event))
-            $event = [$event];
+        if (!is_array($id))
+            $id = [$id];
         $handlers = [];
         foreach ($this->eventHandlers as $handler => $callback) {
-            if (!in_array($handler, $event))
+            if (!in_array($handler, $id))
                 $handlers[$handler] = new EventHandlerCallback($callback);
         }
 
@@ -125,21 +152,23 @@ trait EventManagerTrait
 
     /**
      * Trigger an event.
-     * @param string|EventInterface $event
+     * @param \Efika\EventManager\EventInterface|string $id
      * @param array $args an array with arguments which will passed to event class
      * @param null|callable $callback
-     * @return \Efika\EventManager\EventResponse
-     * @throws \Efika\EventManager\Exception
+     * @throws Exception
+     * @return EventResponse
      */
-    public function triggerEvent($event, $args=[], callable $callback = null)
+    public function triggerEvent($id, $args=[], callable $callback = null)
     {
-        if (is_string($event)) {
-            $eventName = $event;
+
+        $event = null;
+        if (is_string($id)) {
             $event = $this->getEventObject()
-            ->setName($eventName)
+            ->setName($id)
             ->setTarget($this)
             ->setArguments($args);
-        }else if($event instanceof EventInterface){
+        }else if($id instanceof EventInterface){
+            $event = $id;
             if(is_null($event->getTarget()))
                 $event->setTarget($this);
 
@@ -154,12 +183,12 @@ trait EventManagerTrait
     }
 
     /**
-     * Trigger handlers of given event
+     * Trigger handlers of given event. Stop propagation when callback returns true
      * @param EventInterface $e
      * @param $callback
      * @return mixed
      */
-    protected function triggerHandlers(EventInterface $e, $callback)
+    protected function triggerHandlers(EventInterface $e, $callback = null)
     {
 
         $responses = $this->getEventResponseObject();
@@ -172,12 +201,13 @@ trait EventManagerTrait
                     $responses->push($handler->execute($e));
                 }
 
-                if($e->isPropagationStopped()){
-                    $responses->stop(true);
-                    break;
-                }
-
-                if($callback && call_user_func($callback, $responses->last())){
+                if(
+                    $e->isPropagationStopped() ||
+                    (
+                        $callback &&
+                        call_user_func($callback, $responses)
+                    )
+                ){
                     $responses->stop(true);
                     break;
                 }
@@ -201,7 +231,7 @@ trait EventManagerTrait
 
     /**
      * Return an instance of EventResponseInterface
-     * @return EventResponseInterface
+     * @return EventResponse
      */
     public function getEventResponseObject()
     {
