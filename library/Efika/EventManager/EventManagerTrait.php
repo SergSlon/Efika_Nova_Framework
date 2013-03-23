@@ -172,12 +172,13 @@ trait EventManagerTrait
                     $responses->push($handler->execute($e));
                 }
 
-                if($e->isPropagationStopped()){
-                    $responses->stop(true);
-                    break;
-                }
-
-                if($callback && call_user_func($callback, $responses->last())){
+                if(
+                    $e->isPropagationStopped() ||
+                    (
+                        $callback &&
+                        call_user_func($callback, $responses)
+                    )
+                ){
                     $responses->stop(true);
                     break;
                 }
