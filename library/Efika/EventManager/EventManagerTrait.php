@@ -71,26 +71,53 @@ trait EventManagerTrait
 
     /**
      * Attach an handler to an event or attach an event aggregate
+     *
+     * Possible kinds of attaching:
+     *
+     * 1. attach aggregate if event is an instance of EventHandlerAggregateInterface
+     *
+     * 2. attach many callbacks to an event if callback is an array and not callable
+     *
+     * 3. attach multiple events. as key-value-pair. key will be event identifier and value
+     * will be a single valid callback or a array with many callbacks multiple aggegate
+     * attachment won't be possible
+     *
      * @param string|\Efika\EventManager\EventHandlerAggregateInterface $event
-     * @param $callback
+     * @param null | EventHandlerCallback | array $callback
      * @return EventManagerTrait
      */
-    public function attachEventHandler($event, $callback)
+    public function attachEventHandler($event, $callback = null)
     {
+        //attach aggregate if event is an instance of EventHandlerAggregateInterface
         if ($event instanceof EventHandlerAggregateInterface) {
             return $this->attachEventHandlerAggregate($event);
         }
 
-        if(!($callback instanceof EventHandlerCallback))
+        //attach many callbacks to an event if callback is an array and not callable
+        if(is_array($callback) && !is_callable($callback)){
+            foreach($callback as $callbackItem){
+                $this->attachEventHandler($event, $callbackItem);
+            }
+
+            return $this;
+        }
+
+        //attach multiple events. as key-value-pair. key will be event identifier and value
+        //will be a single valid callback or a array with many callbacks
+        //multiple aggegate attachment won't be possible
+        if(is_array($event)){
+
+            foreach($event as $id => $callback){
+                $this->attachEventHandler($id, $callback);
+            }
+
+            return $this;
+        }
+
+        if(!($callback instanceof EventHandlerCallback) && $callback !== null)
             $callback = new EventHandlerCallback($callback);
 
-        if (is_array($event)) {
-            foreach ($event as $name) {
-                $this->attachEventHandler($name, $callback);
-            }
-        } else {
-            $this->eventHandlers[$event][] = $callback;
-        }
+        $this->eventHandlers[$event][] = $callback;
 
         return $this;
     }
