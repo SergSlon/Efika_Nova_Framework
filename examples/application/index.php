@@ -6,6 +6,7 @@
 
 use Efika\Application\Application as WebApp;
 use Efika\Application\ApplicationInterface;
+use Efika\Common\Logger;
 
 require_once '../entryPoint/bootstrap.php';
 
@@ -146,4 +147,9 @@ $app->connectService('customApplicationService');
 
 var_dump(__FILE__ . __LINE__);
 var_dump($app->execute());
+
+echo "<pre>";
+echo "<h2>logger</h2>";
+echo Logger::getInstance()->toText();
+echo "</pre>";
 
