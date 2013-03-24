@@ -12,10 +12,16 @@
 require_once __DIR__ . '/../entryPoint/bootstrap.php';
 require_once __DIR__ . '/../utility/OutputHandler.php';
 
+use Efika\Common\Logger;
 use Efika\EventManager\EventManager;
+
+Logger::getInstance()->addMessage('init start');
 
 $outputHandler = new OutputHandler();
 $em = new EventManager();
+
+Logger::getInstance()->addMessage('init complete');
+Logger::getInstance()->addMessage('attaching start');
 
 //a simple chain
 //add some lines of text
@@ -95,6 +101,9 @@ $em->attachEventHandler(
     }
 );
 
+Logger::getInstance()->addMessage('attaching complete');
+Logger::getInstance()->addMessage('triggering start');
+
 //assign output
 $em->triggerEvent('onAssignOutput');
 
@@ -102,3 +111,9 @@ $em->triggerEvent('onAssignOutput');
 $em->triggerEvent('onDisplayOutput');
 
 $em->triggerEvent('onUnknown');
+
+Logger::getInstance()->addMessage('triggering complete');
+
+echo "<pre>";
+echo Logger::getInstance()->toText();
+echo "</pre>";
