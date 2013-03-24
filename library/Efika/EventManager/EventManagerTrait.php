@@ -7,6 +7,11 @@
 namespace Efika\EventManager;
 
 /**
+ * This trait provide reusable event manager. this event manager is based on observer pattern
+ */
+use Efika\Common\Logger;
+
+/**
  * manage events in a single object
  * <br />
  * Example Usage:
@@ -28,12 +33,10 @@ namespace Efika\EventManager;
  *      )
  * </code>
  */
-
-/**
- * This trait provide reusable event manager. this event manager is based on observer pattern
- */
 trait EventManagerTrait
 {
+
+    private $loggerScope = 'event.manager';
 
     /**
      * Handler array
@@ -83,7 +86,7 @@ trait EventManagerTrait
      * attachment won't be possible
      *
      * @param string|\Efika\EventManager\EventHandlerAggregateInterface $id
-     * @param null | EventHandlerCallback | array $callback
+     * @param null | EventHandlerCallback | array | callable $callback
      * @return EventManagerTrait
      */
     public function attachEventHandler($id, $callback = null)
@@ -118,6 +121,8 @@ trait EventManagerTrait
             $callback = new EventHandlerCallback($callback);
 
         $this->eventHandlers[$id][] = $callback;
+
+        Logger::getInstance()->scope($this->getLoggerScope())->addMessage('(attach to) ' . $id);
 
         return $this;
     }
@@ -212,6 +217,8 @@ trait EventManagerTrait
                     break;
                 }
             }
+
+            Logger::getInstance()->scope($this->getLoggerScope())->addMessage('(trigger) ' . $e->getName() . ' (Elements: ' . count($responses) . ')' ,$e);
         }
 
         return $responses;
@@ -296,6 +303,11 @@ trait EventManagerTrait
     public function getEventHandlers()
     {
         return $this->eventHandlers;
+    }
+
+    public function getLoggerScope()
+    {
+        return $this->loggerScope;
     }
 
     /**
