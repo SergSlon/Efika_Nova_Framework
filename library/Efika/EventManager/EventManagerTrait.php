@@ -7,6 +7,12 @@
 namespace Efika\EventManager;
 
 /**
+ * This trait provide reusable event manager. this event manager is based on observer pattern
+ */
+use Efika\Common\Logger;
+use SplPriorityQueue;
+
+/**
  * manage events in a single object
  * <br />
  * Example Usage:
@@ -28,12 +34,10 @@ namespace Efika\EventManager;
  *      )
  * </code>
  */
-
-/**
- * This trait provide reusable event manager. this event manager is based on observer pattern
- */
 trait EventManagerTrait
 {
+
+    private $loggerScope = 'event.manager';
 
     /**
      * Handler array
@@ -83,10 +87,11 @@ trait EventManagerTrait
      * attachment won't be possible
      *
      * @param string|\Efika\EventManager\EventHandlerAggregateInterface $id
-     * @param null | EventHandlerCallback | array $callback
+     * @param null | EventHandlerCallback | array | callable $callback
+     * @param int $priority
      * @return EventManagerTrait
      */
-    public function attachEventHandler($id, $callback = null)
+    public function attachEventHandler($id, $callback = null, $priority=1000)
     {
         //attach aggregate if event is an instance of EventHandlerAggregateInterface
         if ($id instanceof EventHandlerAggregateInterface) {
@@ -117,7 +122,9 @@ trait EventManagerTrait
         if(!($callback instanceof EventHandlerCallback) && $callback !== null)
             $callback = new EventHandlerCallback($callback);
 
-        $this->eventHandlers[$id][] = $callback;
+        $this->setEventHandler($id,$callback,$priority);
+
+        Logger::getInstance()->scope($this->getLoggerScope())->addMessage('(attach to) ' . $id);
 
         return $this;
     }
@@ -212,6 +219,8 @@ trait EventManagerTrait
                     break;
                 }
             }
+
+            Logger::getInstance()->scope($this->getLoggerScope())->addMessage('(trigger) ' . $e->getName() . ' (Elements: ' . count($responses) . ')' ,$e);
         }
 
         return $responses;
@@ -269,15 +278,29 @@ trait EventManagerTrait
 
     /**
      * Return an event handler of an event
-     * @param $event
+     * @param $id
      * @return mixed
      * @throws Exception
      */
-    public function getEventHandler($event)
+    public function getEventHandler($id)
     {
-        if(!$this->hasEventHandler($event))
-            throw new Exception('Unknown EventHandler: ' . $event);
-        return $this->eventHandlers[$event];
+        if(!$this->hasEventHandler($id))
+            throw new Exception('Unknown EventHandler: ' . $id);
+        return $this->eventHandlers[$id];
+    }
+
+    /**
+     * Return an event handler of an event
+     * @param string $id
+     * @param \Efika\EventManager\EventHandlerCallback|null $callback
+     * @param int $priority
+     * @return mixed
+     */
+    public function setEventHandler($id,EventHandlerCallback $callback,$priority=1000)
+    {
+        if(!$this->hasEventHandler($id))
+            $this->eventHandlers[$id] = new SplPriorityQueue();
+        $this->eventHandlers[$id]->insert($callback,$priority);
     }
 
     /**
@@ -296,6 +319,11 @@ trait EventManagerTrait
     public function getEventHandlers()
     {
         return $this->eventHandlers;
+    }
+
+    public function getLoggerScope()
+    {
+        return $this->loggerScope;
     }
 
     /**

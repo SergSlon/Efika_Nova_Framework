@@ -4,11 +4,14 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
+use Efika\Common\Logger;
+use Efika\EventManager\EventManager;
+
 require_once __DIR__ . '/../entryPoint/bootstrap.php';
 
 echo '<pre>';
 
-$em = new \Efika\EventManager\EventManager();
+$em = new EventManager();
 
 /**
  * 1. Attach an aggregate
@@ -106,3 +109,7 @@ $em->triggerEvent('another.events',[],
 );
 
 echo '</pre>';
+
+echo "<pre>";
+echo Logger::getInstance()->toText();
+echo "</pre>";

@@ -4,6 +4,9 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
+use Efika\Common\Logger;
+use Efika\EventManager\EventManager;
+
 /**
  * An procedural example. This example would also work with complex
  * nested logic for example in MVC structure.
@@ -12,10 +15,15 @@
 require_once __DIR__ . '/../entryPoint/bootstrap.php';
 require_once __DIR__ . '/../utility/OutputHandler.php';
 
-use Efika\EventManager\EventManager;
+
+
+Logger::getInstance()->addMessage('init start');
 
 $outputHandler = new OutputHandler();
 $em = new EventManager();
+
+Logger::getInstance()->addMessage('init complete');
+Logger::getInstance()->addMessage('attaching start');
 
 //a simple chain
 //add some lines of text
@@ -84,16 +92,21 @@ $em->attachEventHandler(
         //execute onBeforeDisplayOutput event
         $em->triggerEvent('onBeforeDisplayOutput');
         $outputHandler->display('<br />');
-    }
+    },
+        100
 )
 
 ->attachEventHandler(
     'onDisplayOutput',
     function () use($outputHandler)
     {
-        echo PHP_EOL;
-    }
+        echo 'Attach after but execute before';
+    },
+        5000
 );
+
+Logger::getInstance()->addMessage('attaching complete');
+Logger::getInstance()->addMessage('triggering start');
 
 //assign output
 $em->triggerEvent('onAssignOutput');
@@ -102,3 +115,9 @@ $em->triggerEvent('onAssignOutput');
 $em->triggerEvent('onDisplayOutput');
 
 $em->triggerEvent('onUnknown');
+
+Logger::getInstance()->addMessage('triggering complete');
+
+echo "<pre>";
+echo Logger::getInstance()->toText();
+echo "</pre>";
