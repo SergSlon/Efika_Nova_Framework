@@ -4,6 +4,9 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
+use Efika\Common\Logger;
+use Efika\EventManager\EventManager;
+
 /**
  * An procedural example. This example would also work with complex
  * nested logic for example in MVC structure.
@@ -12,8 +15,7 @@
 require_once __DIR__ . '/../entryPoint/bootstrap.php';
 require_once __DIR__ . '/../utility/OutputHandler.php';
 
-use Efika\Common\Logger;
-use Efika\EventManager\EventManager;
+
 
 Logger::getInstance()->addMessage('init start');
 
@@ -90,15 +92,17 @@ $em->attachEventHandler(
         //execute onBeforeDisplayOutput event
         $em->triggerEvent('onBeforeDisplayOutput');
         $outputHandler->display('<br />');
-    }
+    },
+        100
 )
 
 ->attachEventHandler(
     'onDisplayOutput',
     function () use($outputHandler)
     {
-        echo PHP_EOL;
-    }
+        echo 'Attach after but execute before';
+    },
+        5000
 );
 
 Logger::getInstance()->addMessage('attaching complete');
