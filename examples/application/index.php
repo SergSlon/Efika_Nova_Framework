@@ -6,12 +6,17 @@
 
 use Efika\Application\Application as WebApp;
 use Efika\Application\ApplicationInterface;
+use Efika\Application\ApplicationServiceInterface;
 use Efika\Common\Logger;
+use Efika\EventManager\EventHandlerAggregateInterface;
+use Efika\EventManager\EventInterface;
 
 require_once '../entryPoint/bootstrap.php';
 
-class CustomApplicationService implements \Efika\EventManager\EventHandlerAggregateInterface, \Efika\Application\ApplicationServiceInterface
+class CustomApplicationService implements EventHandlerAggregateInterface, ApplicationServiceInterface
 {
+
+    const LOGGER_SCOPE = 'application.customService';
 
     /**
      * @var null | ApplicationInterface
@@ -63,6 +68,7 @@ class CustomApplicationService implements \Efika\EventManager\EventHandlerAggreg
     {
         $this->setApp($app);
         $this->setArguments($arguments);
+        Logger::getInstance()->scope(self::LOGGER_SCOPE)->addMessage('service registred');
     }
 
     /**
@@ -71,6 +77,7 @@ class CustomApplicationService implements \Efika\EventManager\EventHandlerAggreg
     public function connect()
     {
         $this->getApp()->attachEventHandlerAggregate($this);
+        Logger::getInstance()->scope(self::LOGGER_SCOPE)->addMessage('service connected');
     }
 
     /**
@@ -82,12 +89,13 @@ class CustomApplicationService implements \Efika\EventManager\EventHandlerAggreg
     }
 
     /**
-     * @param \Efika\EventManager\EventInterface $e
+     * @param EventInterface $e
      */
-    public function onInit(Efika\EventManager\EventInterface $e)
+    public function onInit(EventInterface $e)
     {
         var_dump(__FILE__ . __LINE__);
-        var_dump($e);
+//        var_dump($e);
+        var_dump('Init service');
     }
 
     /**
@@ -145,8 +153,7 @@ $app->registerService('customApplicationService', new CustomApplicationService()
 
 $app->connectService('customApplicationService');
 
-var_dump(__FILE__ . __LINE__);
-var_dump($app->execute());
+$app->execute();
 
 echo "<pre>";
 echo "<h2>logger</h2>";

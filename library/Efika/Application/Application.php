@@ -6,6 +6,7 @@
 
 namespace Efika\Application;
 
+use Efika\Common\Logger;
 use Efika\Common\SingletonTrait;
 use Efika\EventManager\EventInterface;
 use Efika\EventManager\EventManagerTrait;
@@ -16,6 +17,8 @@ class Application implements ApplicationInterface
 
     use EventManagerTrait;
     use SingletonTrait;
+
+    const LOGGER_SCOPE = 'application';
 
     /**
      * @var bool
@@ -231,9 +234,11 @@ class Application implements ApplicationInterface
             }
 
             $this->executed();
+            Logger::getInstance()->scope(self::LOGGER_SCOPE)->addMessage('application successful executed');
             return true;
         }
 
+        Logger::getInstance()->scope(self::LOGGER_SCOPE)->addMessage('application unsuccessful executed');
         return false;
     }
 }
