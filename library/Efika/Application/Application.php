@@ -45,7 +45,10 @@ class Application implements ApplicationInterface
      */
     private $applicationConfig = [];
 
-    private $eventObjects = [];
+    /**
+     * @var array
+     */
+    private $customEventObjects = [];
 
     /**
      *
@@ -103,18 +106,18 @@ class Application implements ApplicationInterface
     /**
      * @return array
      */
-    public function getEventObjects()
+    public function getCustomEventObjects()
     {
-        return $this->eventObjects;
+        return $this->customEventObjects;
     }
 
     /**
      * @param $event
      * @return bool
      */
-    public function hasEventObject($event)
+    public function hasCustomEventObject($event)
     {
-        return array_key_exists($event, $this->getEventObjects());
+        return array_key_exists($event, $this->getCustomEventObjects());
     }
 
     /**
@@ -123,15 +126,20 @@ class Application implements ApplicationInterface
      * @internal param string $handler
      * @return mixed
      */
-    public function addEventObject($event, EventInterface $object)
+    public function addCustomEventObject($event, EventInterface $object)
     {
-        $this->eventObjects[$event] = $object;
+        $this->customEventObjects[$event] = $object;
     }
 
+    /**
+     * @param $id
+     * @param $arguments
+     * @param $callback
+     */
     public function executeApplicationEvent($id, $arguments, $callback){
 
         $default = $this->getDefaultEventClass();
-        $eventObject = $this->hasEventObject($id) ? $this->eventObjects[$id] : new $default;
+        $eventObject = $this->hasCustomEventObject($id) ? $this->customEventObjects[$id] : new $default;
 
         $eventObject->setName($id);
         $eventObject->setTarget($this);
