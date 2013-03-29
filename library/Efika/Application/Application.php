@@ -11,7 +11,6 @@ use Efika\Common\SingletonTrait;
 use Efika\EventManager\EventInterface;
 use Efika\EventManager\EventManagerTrait;
 use Efika\EventManager\EventResponse;
-use Efika\EventManager\Exception;
 use Exception as PhpException;
 use InvalidArgumentException;
 
@@ -45,6 +44,8 @@ class Application implements ApplicationInterface
      * @var array
      */
     private $applicationConfig = [];
+
+    private $eventObjects = [];
 
     /**
      *
@@ -117,6 +118,29 @@ class Application implements ApplicationInterface
     }
 
     /**
+     * @param $event
+     * @param \Efika\EventManager\EventInterface $object
+     * @internal param string $handler
+     * @return mixed
+     */
+    public function addEventObject($event, EventInterface $object)
+    {
+        $this->eventObjects[$event] = $object;
+    }
+
+    public function executeApplicationEvent($id, $arguments, $callback){
+
+        $default = $this->getDefaultEventClass();
+        $eventObject = $this->hasEventObject($id) ? $this->eventObjects[$id] : new $default;
+
+        $eventObject->setName($id);
+        $eventObject->setTarget($this);
+        $eventObject->setArguments($arguments);
+
+        $this->setPreviousEventResponse($this->triggerEvent($eventObject,$callback));
+    }
+
+    /**
      * init config
      * @param string $config
      * @return $this
@@ -151,58 +175,6 @@ class Application implements ApplicationInterface
         $this->logger = $logger;
     }
 
-//    /**
-//     * trigger events
-//     * @param null | callable $callback
-//     * @return mixed
-//     */
-//    public function execute($callback = null)
-//    {
-//        if (!$this->getIsExecuted()) {
-//
-//            /**
-//             * @var EventResponse
-//             */
-//            $previousEventResponse = new EventResponse();
-//            $application = $this;
-//
-//            if ($callback === null || !is_callable($callback)) {
-//                //stop propagantion when error occurs
-//                /**
-//                 * @param EventResponse $response
-//                 * @return bool
-//                 */
-//                $callback = function ($response) use ($application) {
-//                    return !($response->hasEvent() && !array_key_exists('errors', $response->getEvent()->getArguments()));
-//                };
-//            }
-//
-//            foreach ($this->getEventHandlers() as $event => $handlers) {
-//
-//                $eventObject = $this->getEventObject($event);
-//
-//                if ($previousEventResponse !== null && $previousEventResponse->hasEvent()) {
-//                    $args = $previousEventResponse->getEvent()->getArguments();
-//                } else {
-//                    $args = null;
-//                }
-//
-//                $eventObject->setName($event);
-//                $eventObject->setTarget($this);
-//                $eventObject->setArguments($args);
-//
-//                $previousEventResponse = $this->triggerEvent($eventObject, $args, $callback);
-//            }
-//
-//            $this->executed();
-//            Logger::getInstance()->scope(self::LOGGER_SCOPE)->addMessage('application successful executed');
-//            return true;
-//        }
-//
-//        Logger::getInstance()->scope(self::LOGGER_SCOPE)->addMessage('application unsuccessful executed');
-//        return false;
-//    }
-
     /**
      * @param callable $callback
      * @throws \Exception
@@ -215,14 +187,7 @@ class Application implements ApplicationInterface
             $this->getLogger()->addMessage('initialize application');
             $this->getLogger()->addMessage('execute initialize events');
 
-            $event = self::ON_INIT;
-            $eventObject = $this->getEventObject($event);
-
-            $eventObject->setName($event);
-            $eventObject->setTarget($this);
-            $eventObject->setArguments($this->getApplicationConfig());
-
-            $this->setPreviousEventResponse($this->triggerEvent(self::ON_INIT,$callback));
+            $this->executeApplicationEvent(self::ON_INIT,$this->getApplicationConfig(),$callback);
 
         }else{
             throw new PhpException('Status is not configured');
@@ -241,7 +206,14 @@ class Application implements ApplicationInterface
     {
         if($this->getStatus() == self::STATUS_INITIALIZED){
 
+            $this->getLogger()->addMessage('post-process application');
+            $this->executeApplicationEvent(self::ON_POSTPROCESS,[],$callback);
+
             $this->getLogger()->addMessage('process application');
+            $this->executeApplicationEvent(self::ON_PROCESS,[],$callback);
+
+            $this->getLogger()->addMessage('pre-process application');
+            $this->executeApplicationEvent(self::ON_PREPROCESS,[],$callback);
         }else{
             throw new PhpException('Status is not initialized');
         }
@@ -251,6 +223,7 @@ class Application implements ApplicationInterface
     }
 
     /**
+     * triggers application.complete event handler
      * @param callable $callback
      * @throws \Exception
      * @return $this
@@ -260,6 +233,7 @@ class Application implements ApplicationInterface
         if($this->getStatus() == self::STATUS_PROCESSED){
 
             $this->getLogger()->addMessage('complete application');
+            $this->executeApplicationEvent(self::ON_PREPROCESS,[],$callback);
         }else{
             throw new PhpException('Status is not processed');
         }
@@ -297,7 +271,7 @@ class Application implements ApplicationInterface
                 $this->getLogger()->addMessage('finalize application execution');
                 $executionResult = true;
             } else {
-                $this->getLogger()->addMessage('abord application execution');
+                $this->getLogger()->addMessage('abort application execution');
             }
 
         } catch (PhpException $e) {
@@ -342,7 +316,7 @@ class Application implements ApplicationInterface
     }
 
     /**
-     * @return null
+     * @return EventResponse
      */
     public function getPreviousEventResponse()
     {
