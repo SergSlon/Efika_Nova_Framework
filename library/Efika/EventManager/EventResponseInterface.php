@@ -6,7 +6,12 @@
 
 namespace Efika\EventManager;
 
-interface EventResponseInterface
+use ArrayAccess;
+use Countable;
+use Iterator;
+use Traversable;
+
+interface EventResponseInterface extends ArrayAccess, Countable, Traversable, Iterator
 {
 
     /**

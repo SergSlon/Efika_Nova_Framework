@@ -6,112 +6,352 @@
 
 namespace Efika\Application;
 
+use Efika\Common\Logger;
+use Efika\Common\SingletonTrait;
+use Efika\EventManager\EventInterface;
+use Efika\EventManager\EventManagerTrait;
+use Efika\EventManager\EventResponse;
+use Exception as PhpException;
+use InvalidArgumentException;
+
 class Application implements ApplicationInterface
 {
 
-    use \Efika\EventManager\EventManagerTrait;
-    use \Efika\Common\SingletonTrait;
+    use EventManagerTrait;
+    use SingletonTrait;
 
-    private $isConstructed = false;
-    private $isExecuted = false;
+    /**
+     * @var int
+     */
+    private $status = self::STATUS_FRESH;
 
-    private $eventTriggers = [
-        'onInit' => '\Efika\EventManager\Event',
-        'onPreProcess' => '\Efika\EventManager\Event',
-        'onProcess' => '\Efika\EventManager\Event',
-        'onPostProcess' => '\Efika\EventManager\Event',
-        'onComplete' => '\Efika\EventManager\Event'
-    ];
+    /**
+     * @var array
+     */
+    private $services = [];
 
-    public function getEventTriggers()
+    /**
+     * @var Logger
+     */
+    private $logger = null;
+
+    /**
+     * @var EventResponse
+     */
+    private $previousEventResponse = null;
+
+    /**
+     * @var array
+     */
+    private $applicationConfig = [];
+
+    /**
+     * @var array
+     */
+    private $customEventObjects = [];
+
+    /**
+     *
+     */
+    private function __construct()
     {
-        return $this->eventTriggers;
+        $this->setLogger(Logger::getInstance()->scope(self::LOGGER_SCOPE));
+    }
+
+    /**
+     * @param $id
+     * @param \Efika\Application\ApplicationServiceInterface $instance
+     * @param array $attributes
+     * @return bool
+     */
+    public function registerService($id, ApplicationServiceInterface $instance, $attributes = [])
+    {
+
+        if (!array_key_exists($id, $this->getServices())) {
+            $instance->register($this, $attributes);
+            $this->services[$id] = $instance;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     */
+    public function connectService($id)
+    {
+        if (array_key_exists($id, $this->getServices())) {
+
+            /**
+             * @var ApplicationServiceInterface
+             */
+            $service = $this->services[$id];
+            $service->connect();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getServices()
+    {
+        return $this->services;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomEventObjects()
+    {
+        return $this->customEventObjects;
+    }
+
+    /**
+     * @param $event
+     * @return bool
+     */
+    public function hasCustomEventObject($event)
+    {
+        return array_key_exists($event, $this->getCustomEventObjects());
+    }
+
+    /**
+     * @param $event
+     * @param \Efika\EventManager\EventInterface $object
+     * @internal param string $handler
+     * @return mixed
+     */
+    public function addCustomEventObject($event, EventInterface $object)
+    {
+        $this->customEventObjects[$event] = $object;
+    }
+
+    /**
+     * @param $id
+     * @param $arguments
+     * @param $callback
+     */
+    public function executeApplicationEvent($id, $arguments, $callback){
+
+        $default = $this->getDefaultEventClass();
+        $eventObject = $this->hasCustomEventObject($id) ? $this->customEventObjects[$id] : new $default;
+
+        $eventObject->setName($id);
+        $eventObject->setTarget($this);
+        $eventObject->setArguments($arguments);
+
+        $this->setPreviousEventResponse($this->triggerEvent($eventObject,$callback));
     }
 
     /**
      * init config
-     * @param $config
+     * @param string $config
+     * @return $this
+     * @throws \Exception
      */
-    public function construct($config)
+    public function configure($config)
     {
-        if (!$this->getIsConstructed()) {
+        if($this->getStatus() == self::STATUS_FRESH){
+            $this->getLogger()->addMessage('configure application');
 
-            foreach($this->getEventTriggers() as $event => $object){
-                $this->attachEventHandler($event,function(){});
-            }
-
-            $this->constructed();
+        }else{
+            throw new PhpException('Status is not fresh');
         }
-    }
 
-    public function getIsConstructed()
-    {
-        return $this->isConstructed;
-    }
-
-    public function getIsExecuted()
-    {
-        return $this->isExecuted;
-    }
-
-    protected function constructed()
-    {
-        $this->isConstructed = true;
-    }
-
-    protected function executed()
-    {
-        $this->isExecuted = true;
+        $this->setStatus(self::STATUS_CONFIGURED);
+        return $this;
     }
 
     /**
-     * @param string $handler
-     * @param \Efika\EventManager\EventInterface $object
-     * @return mixed
+     * @return Logger
      */
-    public function setEventTrigger($handler, \Efika\EventManager\EventInterface $object)
+    public function getLogger()
     {
-        $this->eventTriggers[$handler] = $object;
+        return $this->logger;
     }
 
     /**
-     * trigger events
-     * @return mixed
+     * @param Logger $logger
+     */
+    public function setLogger(Logger $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param callable $callback
+     * @throws \Exception
+     * @internal param array $args
+     * @return $this
+     */
+    public function init(callable $callback)
+    {
+        if($this->getStatus() == self::STATUS_CONFIGURED){
+            $this->getLogger()->addMessage('initialize application');
+            $this->getLogger()->addMessage('execute initialize events');
+
+            $this->executeApplicationEvent(self::ON_INIT,$this->getApplicationConfig(),$callback);
+
+        }else{
+            throw new PhpException('Status is not configured');
+        }
+
+        $this->setStatus(self::STATUS_INITIALIZED);
+        return $this;
+    }
+
+    /**
+     * @param callable $callback
+     * @throws \Exception
+     * @return $this
+     */
+    public function process(callable $callback)
+    {
+        if($this->getStatus() == self::STATUS_INITIALIZED){
+
+            $this->getLogger()->addMessage('post-process application');
+            $this->executeApplicationEvent(self::ON_POSTPROCESS,[],$callback);
+
+            $this->getLogger()->addMessage('process application');
+            $this->executeApplicationEvent(self::ON_PROCESS,[],$callback);
+
+            $this->getLogger()->addMessage('pre-process application');
+            $this->executeApplicationEvent(self::ON_PREPROCESS,[],$callback);
+        }else{
+            throw new PhpException('Status is not initialized');
+        }
+
+        $this->setStatus(self::STATUS_PROCESSED);
+        return $this;
+    }
+
+    /**
+     * triggers application.complete event handler
+     * @param callable $callback
+     * @throws \Exception
+     * @return $this
+     */
+    public function complete(callable $callback)
+    {
+        if($this->getStatus() == self::STATUS_PROCESSED){
+
+            $this->getLogger()->addMessage('complete application');
+            $this->executeApplicationEvent(self::ON_PREPROCESS,[],$callback);
+        }else{
+            throw new PhpException('Status is not processed');
+        }
+
+        $this->setStatus(self::STATUS_COMPLETED);
+        return $this;
+    }
+
+    /**
+     *
      */
     public function execute()
     {
-        if (!$this->getIsExecuted()) {
-            $previousEventResponse = null;
-            $application = $this;
+        $executionResult = false;
 
-            //stop propagantion when error occurs
-            $callback = function($response) use ($application) {
-                return false;
-            };
+        $this->getLogger()->addMessage('start application execution');
 
-            foreach ($this->getEventTriggers() as $event => $eventObject) {
+        try {
+            if ($this->getStatus() == self::STATUS_CONFIGURED) {
+                $application = $this;
 
-                if(!is_object($eventObject))
-                    $eventObject = new $eventObject;
+                /**
+                 * stop propagantion when error occurs
+                 * @param EventResponse $response
+                 * @return bool
+                 */
+                $callback = function ($response) use ($application) {
+                    return !($response->hasEvent() && !array_key_exists('errors', $response->getEvent()->getArguments()));
+                };
 
-                if ($previousEventResponse == null) {
-                    $args = null;
-                }else{
-                    $args = $previousEventResponse->getEvent()->getArguments();
-                }
+                $this->init($callback);
+                $this->process($callback);
+                $this->complete($callback);
 
-                $eventObject->setName($event);
-                $eventObject->setTarget($this);
-                $eventObject->setArguments($args);
-
-                $previousEventResponse = $this->triggerEvent($event,$args);
+                $this->getLogger()->addMessage('finalize application execution');
+                $executionResult = true;
+            } else {
+                $this->getLogger()->addMessage('abort application execution');
             }
 
-            $this->executed();
-
-            return true;
+        } catch (PhpException $e) {
+            $this->getLogger()->addMessage('Exception: ' . $e->getMessage());
         }
 
-        return false;
+        return $executionResult;
+
+
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param $status
+     * @throws \InvalidArgumentException
+     */
+    protected function setStatus($status)
+    {
+        if (!$this->isValidStatus($status)) {
+            throw new InvalidArgumentException('Invalid status');
+        }
+        $this->status = $status;
+    }
+
+    /**
+     * @param $status
+     * @return bool
+     */
+    public function isValidStatus($status)
+    {
+        return
+            $status % 2 === 0 &&
+            $status > $this->getStatus() &&
+            $status <= self::STATUS_COMPLETED;
+    }
+
+    /**
+     * @return EventResponse
+     */
+    public function getPreviousEventResponse()
+    {
+        return $this->previousEventResponse;
+    }
+
+    /**
+     * @param $previousEventResponse
+     */
+    protected function setPreviousEventResponse($previousEventResponse)
+    {
+        $this->previousEventResponse = $previousEventResponse;
+    }
+
+    /**
+     * @return null
+     */
+    public function getApplicationConfig()
+    {
+        return $this->applicationConfig;
+    }
+
+    /**
+     * @param $appConfig
+     */
+    protected function setApplicationConfig($appConfig)
+    {
+        $this->applicationConfig = $appConfig;
     }
 }

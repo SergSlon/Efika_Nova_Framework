@@ -73,24 +73,4 @@ class EventResponse extends SplStack implements EventResponseInterface
     {
         return $this->stopped;
     }
-
-    /**
-     * Returns first element of response
-     * @return mixed
-     */
-    public function first()
-    {
-        return parent::bottom();
-    }
-
-    /**
-     * Returns last element of response
-     * @return mixed
-     */
-    public function last()
-    {
-        return parent::top();
-    }
-
-
 }
