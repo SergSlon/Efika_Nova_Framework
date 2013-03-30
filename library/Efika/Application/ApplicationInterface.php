@@ -17,6 +17,12 @@ interface ApplicationInterface extends \Efika\EventManager\EventManagerInterface
     const ON_PROCESS = 'application.process';
     const ON_POSTPROCESS = 'application.postprocess';
     const ON_COMPLETE = 'application.complete';
+    const LOGGER_SCOPE = 'application';
+    const STATUS_FRESH = 0;
+    const STATUS_CONFIGURED = 2;
+    const STATUS_INITIALIZED = 4;
+    const STATUS_PROCESSED = 8;
+    const STATUS_COMPLETED = 16;
 
     /**
      * init config
@@ -27,8 +33,7 @@ interface ApplicationInterface extends \Efika\EventManager\EventManagerInterface
     /**
      * trigger events
      * @abstract
-     * @param null | callable $callback
-     * @return mixed
+     * @return bool
      */
-    public function execute($callback=null);
+    public function execute();
 }

@@ -4,14 +4,14 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
+namespace WebApplication\Services;
+
 use Efika\Application\Application as WebApp;
 use Efika\Application\ApplicationInterface;
 use Efika\Application\ApplicationServiceInterface;
 use Efika\Common\Logger;
 use Efika\EventManager\EventHandlerAggregateInterface;
 use Efika\EventManager\EventInterface;
-
-require_once '../entryPoint/bootstrap.php';
 
 class CustomApplicationService implements EventHandlerAggregateInterface, ApplicationServiceInterface
 {
@@ -108,7 +108,7 @@ class CustomApplicationService implements EventHandlerAggregateInterface, Applic
     public function attach($parent)
     {
         $aggregate = $this;
-        $parent->attachEventHandler(WebApp::ON_INIT,function($e) use ($aggregate){
+        $parent->attachEventHandler(WebApp::ON_INIT, function ($e) use ($aggregate) {
             $aggregate->onInit($e);
         });
     }
@@ -126,37 +126,4 @@ class CustomApplicationService implements EventHandlerAggregateInterface, Applic
     }
 
 }
-
-$config = [
-    'events' => [
-        WebApp::ON_INIT => [
-            /**
-             * @param $e
-             */
-            /**
-             * @param $e
-             */
-            function($e){
-                echo 'say hello';
-            }
-        ]
-    ],
-];
-
-
-$app = WebApp::getInstance();
-$app->configure($config);
-
-//$app->attachEventHandlerAggregate(new CustomHandlerAggregate());
-
-$app->registerService('customApplicationService', new CustomApplicationService());
-
-$app->connectService('customApplicationService');
-
-$app->execute();
-
-echo "<pre>";
-echo "<h2>logger</h2>";
-echo Logger::getInstance()->toText();
-echo "</pre>";
 
