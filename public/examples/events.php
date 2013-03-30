@@ -6,16 +6,15 @@
 
 use Efika\Common\Logger;
 use Efika\EventManager\EventManager;
+use WebApplication\OutputHandler;
+
 
 /**
  * An procedural example. This example would also work with complex
  * nested logic for example in MVC structure.
  */
 
-require_once __DIR__ . '/../entryPoint/bootstrap.php';
-require_once __DIR__ . '/../utility/OutputHandler.php';
-
-
+require_once __DIR__ . '/../../app/boot/bootstrap.php';
 
 Logger::getInstance()->addMessage('init start');
 

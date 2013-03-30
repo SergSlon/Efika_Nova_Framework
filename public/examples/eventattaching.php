@@ -7,7 +7,7 @@
 use Efika\Common\Logger;
 use Efika\EventManager\EventManager;
 
-require_once __DIR__ . '/../entryPoint/bootstrap.php';
+require_once __DIR__ . '/../../app/boot/bootstrap.php';
 
 echo '<pre>';
 

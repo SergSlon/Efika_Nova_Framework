@@ -4,6 +4,8 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
+namespace WebApplication;
+
 /**
  * sample class to handle output
  */
