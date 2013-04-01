@@ -22,6 +22,7 @@ class Router
      * @var RouterResult|null
      */
     protected $result = null;
+
     /**
      * @var null
      */
@@ -47,7 +48,7 @@ class Router
         $this->result->flush();
         $result = $this->result;
         if($this->matcherCommand === null){
-            $result = $this->simpleMatcher($request,$result);
+            $result = $this->matcherFallback($request,$result);
         }else{
             //Route matcher strategy
             //$routeMatcher = new AnyRouteMatcher($this);
@@ -58,7 +59,7 @@ class Router
     }
 
     /**
-     * Match route by given pattern
+     * Match route by given regular expression
      *
      * For example:
      * array(
@@ -70,8 +71,10 @@ class Router
      * @param RouterResult $result
      * @return mixed
      */
-    protected function simpleMatcher($request,RouterResult $result){
+    protected function matcherFallback($request,RouterResult $result){
         foreach ($this->getRoutes() as $pattern => $route) {
+
+            $matches = [];
 
             $matched = preg_match(
                 '#^' . $pattern . '$#i',
@@ -79,8 +82,12 @@ class Router
                 $matches
             );
 
+            foreach($matches as $key => $value){
+                $route = preg_replace('#:' . $key .'#i',$value,$route,1);
+            }
+
             if($matched !== 0){
-                $result->offsetSet($pattern,$matches);
+                $result->append($route);
             }
 
         }
