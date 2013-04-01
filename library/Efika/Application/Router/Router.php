@@ -69,9 +69,10 @@ class Router
      * )
      * @param $request
      * @param RouterResult $result
+     * @param string $idDelimiter
      * @return mixed
      */
-    protected function matcherFallback($request,RouterResult $result){
+    protected function matcherFallback($request,RouterResult $result, $idDelimiter = ':'){
         foreach ($this->getRoutes() as $pattern => $route) {
 
             $matches = [];
@@ -83,11 +84,11 @@ class Router
             );
 
             foreach($matches as $key => $value){
-                $route = preg_replace('#:' . $key .'#i',$value,$route,1);
+                $route = preg_replace('#' . $idDelimiter . $key .'#i',$value,$route,1);
             }
 
             if($matched !== 0){
-                $result->append($route);
+                $result->offsetSet($pattern,$route);
             }
 
         }
