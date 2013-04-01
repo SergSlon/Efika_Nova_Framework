@@ -116,7 +116,6 @@ class Logger
     public function toText()
     {
         $data = self::$messageCollection;
-        var_dump($data);
         $lines = [];
 
         foreach($data as $lineElement){
