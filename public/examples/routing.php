@@ -14,7 +14,8 @@ $routes = array(
     '/foo/(?P<params>[a-zA-Z0-9_]+)/view' => 'foo/view/:params',
 );
 
-$router = new Router($routes);
+$router = new Router();
+$router->setRoutes($routes);
 var_dump($router->match('/foo/1w3435/view'));
 var_dump($router->match('/foo/show/value'));
 var_dump($router->match('/'));

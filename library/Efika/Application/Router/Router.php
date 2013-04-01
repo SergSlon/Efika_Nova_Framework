@@ -10,7 +10,7 @@ namespace Efika\Application\Router;
  * Class Router
  * @package Efika\Application
  */
-class Router
+class Router implements RouterInterface
 {
 
     /**
@@ -30,16 +30,15 @@ class Router
 
 
     /**
-     * @param $routes
+     *
      */
-    public function __construct($routes)
+    public function __construct()
     {
-        $this->setRoutes($routes);
         $this->result = new RouterResult();
-
     }
 
     /**
+     * Match request with given routes
      * @param $request
      * @return mixed
      */
@@ -54,6 +53,8 @@ class Router
             //$routeMatcher = new AnyRouteMatcher($this);
             //$routeMatcher->match($request,$this->result)
         }
+
+        $this->setResult($result);
 
         return $result;
     }
@@ -107,17 +108,9 @@ class Router
     /**
      * @param $routes
      */
-    protected function setRoutes($routes)
+    public function setRoutes($routes)
     {
         $this->routes = $routes;
-    }
-
-    /**
-     * @return \Efika\Application\Router\RouterResult|null
-     */
-    public function getPreviousResult()
-    {
-        return $this->result;
     }
 
     /**
@@ -127,4 +120,14 @@ class Router
     {
         $this->result = $result;
     }
+
+    /**
+     * Returns last result from matcher
+     * @return \Efika\Application\Router\RouterResult|null
+     */
+    public function getResult()
+    {
+        return $this->result;
+    }
+
 }

@@ -56,6 +56,7 @@ class Application implements ApplicationInterface
     private function __construct()
     {
         $this->setLogger(Logger::getInstance()->scope(self::LOGGER_SCOPE));
+        $this->setDefaultEventClass('Efika\Application\ApplicationEvent');
     }
 
     /**
@@ -122,11 +123,11 @@ class Application implements ApplicationInterface
 
     /**
      * @param $event
-     * @param \Efika\EventManager\EventInterface $object
+     * @param \Efika\Application\ApplicationEvent $object
      * @internal param string $handler
      * @return mixed
      */
-    public function addCustomEventObject($event, EventInterface $object)
+    public function addCustomEventObject($event, ApplicationEvent $object)
     {
         $this->customEventObjects[$event] = $object;
     }
@@ -215,13 +216,13 @@ class Application implements ApplicationInterface
         if($this->getStatus() == self::STATUS_INITIALIZED){
 
             $this->getLogger()->addMessage('post-process application');
-            $this->executeApplicationEvent(self::ON_POSTPROCESS,[],$callback);
+            $this->executeApplicationEvent(self::ON_PREPROCESS,[],$callback);
 
             $this->getLogger()->addMessage('process application');
             $this->executeApplicationEvent(self::ON_PROCESS,[],$callback);
 
             $this->getLogger()->addMessage('pre-process application');
-            $this->executeApplicationEvent(self::ON_PREPROCESS,[],$callback);
+            $this->executeApplicationEvent(self::ON_POSTPROCESS,[],$callback);
         }else{
             throw new PhpException('Status is not initialized');
         }
@@ -241,7 +242,7 @@ class Application implements ApplicationInterface
         if($this->getStatus() == self::STATUS_PROCESSED){
 
             $this->getLogger()->addMessage('complete application');
-            $this->executeApplicationEvent(self::ON_PREPROCESS,[],$callback);
+            $this->executeApplicationEvent(self::ON_COMPLETE,[],$callback);
         }else{
             throw new PhpException('Status is not processed');
         }
