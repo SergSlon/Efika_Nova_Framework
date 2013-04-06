@@ -29,9 +29,20 @@ class CommandDispatcher implements DispatcherInterface
     const DEFAULT_CMD_NS = ':appnamespace\Commands\\';
 
     /**
+     *
+     */
+    const DEFAULT_CLASS_KEYWORD = 'Command';
+
+    /**
      * @var string
      */
     protected $appNs = self::DEFAULT_APP_NS;
+
+    /**
+     * @var string
+     */
+    protected $classKeyword = self::DEFAULT_CLASS_KEYWORD;
+
     /**
      * @var string
      */
@@ -55,13 +66,7 @@ class CommandDispatcher implements DispatcherInterface
     public function dispatch()
     {
         $result = $this->getRouter()->getResult();
-
-
-        var_dump($result);
-
         $class = $this->makeClassname($result->offsetGet('command'));
-
-        var_dump($class);
 
         try {
             $params =
@@ -132,7 +137,10 @@ class CommandDispatcher implements DispatcherInterface
      */
     protected function makeClassname($class)
     {
-        return $this->getNamespace() . ucfirst($class);
+        return
+            $this->getNamespace()
+            . ucfirst(rtrim(strtolower($class),strtolower($this->getClassKeyword())))
+            . $this->getClassKeyword();
     }
 
     /**
@@ -156,7 +164,9 @@ class CommandDispatcher implements DispatcherInterface
 
     /**
      * @param DiService $diService
+     * @param array $params
      * @param string $method
+     * @return $this
      * @throws DispatcherException
      */
     public function executeCommand(DiService $diService, $params = [], $method = 'execute')
@@ -166,20 +176,18 @@ class CommandDispatcher implements DispatcherInterface
 
         $instance = null;
 
-        if (!$reflection->isInstance($diService)) {
-
-            foreach ($this->getRequiredInterfaces() as $interface) {
-                if (!$reflection->implementsInterface($interface)) {
-                    throw new DispatcherException(
-                        sprintf('Class does not implement required interface %s!', $interface)
-                    );
-                }
+        foreach ($this->getRequiredInterfaces() as $interface) {
+            if (!$reflection->implementsInterface($interface)) {
+                throw new DispatcherException(
+                    sprintf('Class does not implement required interface %s!', $interface)
+                );
             }
-
-            $diService->inject($method, $params);
-            $diService->makeInstance();
-
         }
+
+        $diService->inject($method, $params);
+        $diService->makeInstance();
+
+        return $this;
 
     }
 
@@ -197,5 +205,21 @@ class CommandDispatcher implements DispatcherInterface
     public function setRequiredInterface($requiredInterface)
     {
         $this->requiredInterfaces[] = $requiredInterface;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClassKeyword()
+    {
+        return $this->classKeyword;
+    }
+
+    /**
+     * @param $classKeyword
+     */
+    protected function setClassKeyword($classKeyword)
+    {
+        $this->classKeyword = ucfirst(strtolower($classKeyword));
     }
 }

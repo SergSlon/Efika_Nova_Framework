@@ -14,5 +14,7 @@ class MyCommand implements CommandInterface{
     public function execute($params = [])
     {
         var_dump('hello world');
+
+        var_dump($params);
     }
 }

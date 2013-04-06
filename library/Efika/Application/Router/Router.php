@@ -99,6 +99,10 @@ class Router implements RouterInterface
                 $request,
                 $matches
             );
+            var_dump(__FILE__);
+            var_dump($pattern);
+            var_dump($matches);
+
 
             $matchedRoute = null;
 
