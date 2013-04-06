@@ -8,11 +8,17 @@ namespace Efika\Di;
 
 use Efika\Common\SingletonTrait;
 
+/**
+ * Class DiContainer
+ * @package Efika\Di
+ */
 class DiContainer implements DiContainerInterface
 {
 
     //DiContainer is Singleton
-    use SingletonTrait;
+    use SingletonTrait {
+        SingletonTrait::getInstance as TRAITgetInstance;
+    }
 
     /**
      * Collection of services
@@ -20,12 +26,22 @@ class DiContainer implements DiContainerInterface
      */
     protected $services = [];
 
+
+    /**
+     * @return DiContainer
+     */
+    public static function getInstance()
+    {
+        return self::TRAITgetInstance();
+    }
+
+
     /**
      * Create a new service. $object could be an instance or name of an object.
      * An instance will be prototyped. Name will be object name by default if $name is null.
      * @param string|object $object
      * @param null|string $name
-     * @return DiServiceInterface
+     * @return DiService
      */
     public function createService($object, $name = null)
     {
@@ -47,7 +63,7 @@ class DiContainer implements DiContainerInterface
      * Delivers service an allows to manipulate service.
      * @param string $name
      * @throws DiException
-     * @return DiServiceInterface
+     * @return DiService
      */
     public function getService($name)
     {
