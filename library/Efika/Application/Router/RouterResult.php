@@ -43,7 +43,7 @@ class RouterResult extends ArrayObject{
         switch($mode){
             case self::MODE_FIRST : return $this->offsetGet(0);
             case self::MODE_LAST : return $this->offsetGet($this->count()-1);
-            default : throw new Exception('Unknown response mode');
+            default : throw new RouterException('Unknown response mode');
         }
 
     }

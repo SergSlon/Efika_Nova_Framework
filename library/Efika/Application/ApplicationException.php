@@ -8,7 +8,7 @@ namespace Efika\Application;
 
 use Exception as PhpException;
 
-class Exception extends PhpException
+class ApplicationException extends PhpException
 {
 
 }

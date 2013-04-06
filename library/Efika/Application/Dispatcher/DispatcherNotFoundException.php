@@ -4,11 +4,11 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace Efika\Application\Router;
+namespace Efika\Application\Dispatcher;
 
 use Exception as PhpException;
 
-class Exception extends PhpException
+class DispatcherNotFoundException extends PhpException
 {
 
 }

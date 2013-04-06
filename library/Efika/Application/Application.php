@@ -8,10 +8,8 @@ namespace Efika\Application;
 
 use Efika\Common\Logger;
 use Efika\Common\SingletonTrait;
-use Efika\EventManager\EventInterface;
 use Efika\EventManager\EventManagerTrait;
 use Efika\EventManager\EventResponse;
-use Exception as PhpException;
 use InvalidArgumentException;
 
 class Application implements ApplicationInterface
@@ -152,8 +150,8 @@ class Application implements ApplicationInterface
     /**
      * init config
      * @param string $config
+     * @throws ApplicationException
      * @return $this
-     * @throws \Exception
      */
     public function configure($config)
     {
@@ -161,7 +159,7 @@ class Application implements ApplicationInterface
             $this->getLogger()->addMessage('configure application');
 
         }else{
-            throw new PhpException('Status is not fresh');
+            throw new ApplicationException('Status is not fresh');
         }
 
         $this->setStatus(self::STATUS_CONFIGURED);
@@ -186,7 +184,7 @@ class Application implements ApplicationInterface
 
     /**
      * @param callable $callback
-     * @throws \Exception
+     * @throws ApplicationException
      * @internal param array $args
      * @return $this
      */
@@ -199,7 +197,7 @@ class Application implements ApplicationInterface
             $this->executeApplicationEvent(self::ON_INIT,$this->getApplicationConfig(),$callback);
 
         }else{
-            throw new PhpException('Status is not configured');
+            throw new ApplicationException('Status is not configured');
         }
 
         $this->setStatus(self::STATUS_INITIALIZED);
@@ -208,7 +206,7 @@ class Application implements ApplicationInterface
 
     /**
      * @param callable $callback
-     * @throws \Exception
+     * @throws ApplicationException
      * @return $this
      */
     public function process(callable $callback)
@@ -224,7 +222,7 @@ class Application implements ApplicationInterface
             $this->getLogger()->addMessage('pre-process application');
             $this->executeApplicationEvent(self::ON_POSTPROCESS,[],$callback);
         }else{
-            throw new PhpException('Status is not initialized');
+            throw new ApplicationException('Status is not initialized');
         }
 
         $this->setStatus(self::STATUS_PROCESSED);
@@ -234,7 +232,7 @@ class Application implements ApplicationInterface
     /**
      * triggers application.complete event handler
      * @param callable $callback
-     * @throws \Exception
+     * @throws ApplicationException
      * @return $this
      */
     public function complete(callable $callback)
@@ -244,7 +242,7 @@ class Application implements ApplicationInterface
             $this->getLogger()->addMessage('complete application');
             $this->executeApplicationEvent(self::ON_COMPLETE,[],$callback);
         }else{
-            throw new PhpException('Status is not processed');
+            throw new ApplicationException('Status is not processed');
         }
 
         $this->setStatus(self::STATUS_COMPLETED);
@@ -283,7 +281,7 @@ class Application implements ApplicationInterface
                 $this->getLogger()->addMessage('abort application execution');
             }
 
-        } catch (PhpException $e) {
+        } catch (ApplicationException $e) {
             $this->getLogger()->addMessage('Exception: ' . $e->getMessage());
         }
 
