@@ -7,6 +7,7 @@
 namespace Efika\Di;
 
 use ReflectionClass;
+use ReflectionMethod;
 
 class DiService implements DiServiceInterface
 {
@@ -142,9 +143,12 @@ class DiService implements DiServiceInterface
      */
     public function invokeMethod($method, $object)
     {
-        $invokable = $this->getInjections($method);
-        if ($invokable !== null) {
-            $invokable['reflection']->invoke($object, $invokable['arguments']);
+        $invokables = $this->getInjection($method);
+
+        foreach ($invokables as $invokable) {
+            if ($invokable !== null) {
+                $invokable['reflection']->invoke($object, $invokable['arguments']);
+            }
         }
 
         return $this;
@@ -153,6 +157,7 @@ class DiService implements DiServiceInterface
     /**
      * Set reflection of service
      * @param $object
+     * @return $this
      */
     protected function setReflection($object)
     {
@@ -162,7 +167,7 @@ class DiService implements DiServiceInterface
 
     /**
      * get reflection of service
-     * @return null
+     * @return ReflectionClass
      */
     public function getReflection()
     {
@@ -172,11 +177,11 @@ class DiService implements DiServiceInterface
     /**
      * Add injection to service
      * @param $method
-     * @param $methodReflection
+     * @param ReflectionMethod $methodReflection
      * @param array $arguments
      * @return \Efika\Di\DiService
      */
-    protected function addInjection($method, $methodReflection, array $arguments = [])
+    protected function addInjection($method, ReflectionMethod $methodReflection, array $arguments = [])
     {
         $this->injections[$method][] = [
             'reflection' => $methodReflection,
