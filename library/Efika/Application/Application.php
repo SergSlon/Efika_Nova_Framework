@@ -8,15 +8,23 @@ namespace Efika\Application;
 
 use Efika\Common\Logger;
 use Efika\Common\SingletonTrait;
+use Efika\Config\Config;
 use Efika\EventManager\EventManagerTrait;
 use Efika\EventManager\EventResponse;
 use InvalidArgumentException;
 
+/**
+ * Class Application
+ * @package Efika\Application
+ */
 class Application implements ApplicationInterface
 {
 
     use EventManagerTrait;
-    use SingletonTrait;
+
+    use SingletonTrait {
+        SingletonTrait::getInstance as TRAITgetInstance;
+    }
 
     /**
      * @var int
@@ -41,6 +49,11 @@ class Application implements ApplicationInterface
     /**
      * @var array
      */
+    private $config = [];
+
+    /**
+     * @var array
+     */
     private $applicationConfig = [];
 
     /**
@@ -49,12 +62,21 @@ class Application implements ApplicationInterface
     private $customEventObjects = [];
 
     /**
+     * @return Application
+     */
+    public static function getInstance()
+    {
+        return self::TRAITgetInstance();
+    }
+
+    /**
      *
      */
     private function __construct()
     {
-        $this->setLogger(Logger::getInstance()->scope(self::LOGGER_SCOPE));
+        $this->setLogger(Logger::getInstance()->scope(self::OBJECT_ID));
         $this->setDefaultEventClass('Efika\Application\ApplicationEvent');
+
     }
 
     /**
@@ -135,7 +157,8 @@ class Application implements ApplicationInterface
      * @param $arguments
      * @param $callback
      */
-    public function executeApplicationEvent($id, $arguments, $callback){
+    public function executeApplicationEvent($id, $arguments, $callback)
+    {
 
         $default = $this->getDefaultEventClass();
         $eventObject = $this->hasCustomEventObject($id) ? $this->customEventObjects[$id] : new $default;
@@ -144,21 +167,34 @@ class Application implements ApplicationInterface
         $eventObject->setTarget($this);
         $eventObject->setArguments($arguments);
 
-        $this->setPreviousEventResponse($this->triggerEvent($eventObject,$callback));
+        $this->setPreviousEventResponse($this->triggerEvent($eventObject, $callback));
     }
 
     /**
      * init config
-     * @param string $config
      * @throws ApplicationException
      * @return $this
      */
-    public function configure($config)
+    public function configure()
     {
-        if($this->getStatus() == self::STATUS_FRESH){
+        if ($this->getStatus() == self::STATUS_FRESH) {
             $this->getLogger()->addMessage('configure application');
+            $config = $this->getConfig();
 
-        }else{
+            if ($config->offsetExists(self::OBJECT_ID)) {
+                $this->setApplicationConfig($config->offsetGet(self::OBJECT_ID));
+            }
+
+            $appConfig = $this->getApplicationConfig();
+            //set defaults
+
+            if($appConfig->offsetExists('events')){
+                foreach($appConfig->offsetGet('events') as $id => $callback){
+                    $this->attachEventHandler($id,$callback);
+                }
+            }
+
+        } else {
             throw new ApplicationException('Status is not fresh');
         }
 
@@ -190,13 +226,13 @@ class Application implements ApplicationInterface
      */
     public function init(callable $callback)
     {
-        if($this->getStatus() == self::STATUS_CONFIGURED){
+        if ($this->getStatus() == self::STATUS_CONFIGURED) {
             $this->getLogger()->addMessage('initialize application');
             $this->getLogger()->addMessage('execute initialize events');
 
-            $this->executeApplicationEvent(self::ON_INIT,$this->getApplicationConfig(),$callback);
+            $this->executeApplicationEvent(self::ON_INIT, $this->getApplicationConfig(), $callback);
 
-        }else{
+        } else {
             throw new ApplicationException('Status is not configured');
         }
 
@@ -211,17 +247,17 @@ class Application implements ApplicationInterface
      */
     public function process(callable $callback)
     {
-        if($this->getStatus() == self::STATUS_INITIALIZED){
+        if ($this->getStatus() == self::STATUS_INITIALIZED) {
 
             $this->getLogger()->addMessage('post-process application');
-            $this->executeApplicationEvent(self::ON_PREPROCESS,[],$callback);
+            $this->executeApplicationEvent(self::ON_PREPROCESS, [], $callback);
 
             $this->getLogger()->addMessage('process application');
-            $this->executeApplicationEvent(self::ON_PROCESS,[],$callback);
+            $this->executeApplicationEvent(self::ON_PROCESS, [], $callback);
 
             $this->getLogger()->addMessage('pre-process application');
-            $this->executeApplicationEvent(self::ON_POSTPROCESS,[],$callback);
-        }else{
+            $this->executeApplicationEvent(self::ON_POSTPROCESS, [], $callback);
+        } else {
             throw new ApplicationException('Status is not initialized');
         }
 
@@ -237,11 +273,11 @@ class Application implements ApplicationInterface
      */
     public function complete(callable $callback)
     {
-        if($this->getStatus() == self::STATUS_PROCESSED){
+        if ($this->getStatus() == self::STATUS_PROCESSED) {
 
             $this->getLogger()->addMessage('complete application');
-            $this->executeApplicationEvent(self::ON_COMPLETE,[],$callback);
-        }else{
+            $this->executeApplicationEvent(self::ON_COMPLETE, [], $callback);
+        } else {
             throw new ApplicationException('Status is not processed');
         }
 
@@ -339,7 +375,7 @@ class Application implements ApplicationInterface
     }
 
     /**
-     * @return null
+     * @return Config
      */
     public function getApplicationConfig()
     {
@@ -347,10 +383,34 @@ class Application implements ApplicationInterface
     }
 
     /**
-     * @param $appConfig
+     * @param Config $appConfig
      */
     protected function setApplicationConfig($appConfig)
     {
         $this->applicationConfig = $appConfig;
+    }
+
+    /**
+     * @return Config
+     */
+    public function getConfig()
+    {
+        if (!($this->config instanceof Config)) {
+            $this->setConfig();
+        }
+        return $this->config;
+    }
+
+    /**
+     * @param null $config
+     * @return mixed|void
+     */
+    public function setConfig(array $config = [])
+    {
+        if (!($config instanceof Config)) {
+            $this->config = new Config($config);
+        } else {
+            $this->config = $config;
+        }
     }
 }

@@ -19,7 +19,7 @@ $routes = array(
         ],
         'dispatchMode' => 'cmd',
     ],
-    '/cmd/(?P<command>\w+)/(?P<params>[a-zA-Z0-9_/]+)' => [
+    '/cmd/(?P<command>\w+)/(?P<params>[a-zA-Z0-9_/\-]+)' => [
         'route' => ':command/:params',
         'dispatchMode' => 'cmd',
     ],

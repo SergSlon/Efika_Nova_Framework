@@ -6,6 +6,10 @@
 
 return [
     'application' => [
-        'name' => 'base application'
+        'events' => [
+            'application.init' => function($e){
+                var_dump('init event from production config');
+            }
+        ]
     ]
 ];

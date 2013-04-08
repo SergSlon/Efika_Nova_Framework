@@ -96,7 +96,6 @@ class ApplicationService implements ApplicationServiceInterface, EventHandlerAgg
      */
     public function onApplicationInit(ApplicationEvent $event){
         $this->getLogger()->addMessage('Init Application by arguments');
-
     }
 
     /**

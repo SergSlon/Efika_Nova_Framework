@@ -22,10 +22,13 @@ require_once dirname(__FILE__) . '/../../library/Efika/Loader/StandardAutoloader
 
 //Initialize Webapplication
 
-$config = dirname(__FILE__) . '/../config.php';
+$config = require_once dirname(__FILE__) . '/../config/config.php';
+
+var_dump($config);
 
 $app = WebApp::getInstance();
-$app->configure($config);
+$app->setConfig($config);
+$app->configure();
 
 $app->registerService('ApplicationService', new ApplicationService());
 $app->registerService('CustomApplicationService', new CustomApplicationService());
