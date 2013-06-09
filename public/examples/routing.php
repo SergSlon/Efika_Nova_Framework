@@ -7,7 +7,7 @@
 namespace WebApplication;
 
 use Efika\Application\Dispatcher\CommandDispatcher;
-use Efika\Application\Dispatcher\DispatchFactory;
+use Efika\Application\Dispatcher\DispatcherFactory;
 use Efika\Application\Router\Router;
 
 require_once __DIR__ . '/../../app/boot/bootstrap.php';
@@ -41,8 +41,11 @@ if (array_key_exists('r', $_GET) && strlen($_GET['r']) > 0) {
     $router->match($_GET['r']);
 }
 
-$dispatcher = DispatchFactory::factory($router->getDispatchMode());
+$dispatcher = DispatcherFactory::factory($router->getDispatchMode());
+
+var_dump($dispatcher->getAppNs());
 
 $dispatcher->setAppNs(__NAMESPACE__);
+var_dump($dispatcher->getAppNs());
 $dispatcher->setRouter($router);
 $dispatcher->dispatch();

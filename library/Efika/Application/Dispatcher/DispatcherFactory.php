@@ -12,10 +12,10 @@ use Efika\Di\DiException;
 use Efika\Di\DiService;
 
 /**
- * Class DispatchFactory
+ * Class DispatcherFactory
  * @package Efika\Application\Dispatcher
  */
-class DispatchFactory
+class DispatcherFactory
 {
 
     /**

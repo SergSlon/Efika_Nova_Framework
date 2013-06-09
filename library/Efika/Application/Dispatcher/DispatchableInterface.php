@@ -4,9 +4,11 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace Efika\Application\Commands;
+namespace Efika\Application\Dispatcher;
 
-
-interface CommandInterface {
+/**
+ * TODO: Rename to DispatchableInterface
+ */
+interface DispatchableInterface {
     public function execute($params = []);
 }

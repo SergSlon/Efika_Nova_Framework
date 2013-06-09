@@ -19,6 +19,8 @@ use Efika\Di\DiService;
 class CommandDispatcher implements DispatcherInterface
 {
 
+    use ConcreteDispatcherTrait;
+
     /**
      *
      */
@@ -33,148 +35,24 @@ class CommandDispatcher implements DispatcherInterface
      */
     const DEFAULT_CLASS_KEYWORD = 'Command';
 
-    /**
-     * @var string
-     */
-    protected $appNs = self::DEFAULT_APP_NS;
-
-    /**
-     * @var string
-     */
-    protected $classKeyword = self::DEFAULT_CLASS_KEYWORD;
-
-    /**
-     * @var string
-     */
-    protected $namespace = self::DEFAULT_CMD_NS;
-
-    /**
-     * @var RouterInterface
-     */
-    protected $router = null;
-
-    /**
-     * @var array
-     */
-    protected $requiredInterfaces = [
-        'Efika\Application\Commands\CommandInterface'
-    ];
-
-    /**
-     *
-     */
-    public function dispatch()
-    {
-        $result = $this->getRouter()->getResult();
-        $class = $this->makeClassname($result->offsetGet('command'));
-
-        try {
-            $params =
-                $result->offsetExists('params') ?
-                    $this->getRouter()->makeParameters($result->offsetGet('params')) :
-                    [];
-
-            $diService = $this->getClassAsService($class);
-            $this->executeCommand($diService, $params);
-
-        } catch (DiException $e) {
-            throw new DispatcherException('Requested class not found', 0, $e);
-        }
-    }
-
-    /**
-     * @return Router
-     */
-    public function getRouter()
-    {
-        return $this->router;
-    }
-
-    /**
-     * @param RouterInterface $router
-     */
-    public function setRouter(RouterInterface $router)
-    {
-        $this->router = $router;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAppNs()
-    {
-        return $this->appNs;
-    }
-
-    /**
-     * @param string $appNs
-     */
-    public function setAppNs($appNs)
-    {
-        $this->appNs = '\\' . trim($appNs, '\\');
-    }
-
-    /**
-     * @return string
-     */
-    public function getNamespace()
-    {
-        return str_replace(':appnamespace', $this->getAppNs(), $this->namespace);
-    }
-
-    /**
-     * @param string $ns
-     */
-    public function setNamespace($ns)
-    {
-        $this->namespace = trim($ns, '\\') . '\\';
-        ;
-    }
-
-    /**
-     * @param $class
-     * @return string
-     */
-    protected function makeClassname($class)
-    {
-        return
-            $this->getNamespace()
-            . ucfirst(rtrim(strtolower($class),strtolower($this->getClassKeyword())))
-            . $this->getClassKeyword();
-    }
-
-    /**
-     * @param $class
-     * @return mixed
-     */
-    protected function getClassAsService($class)
-    {
-        $di = DiContainer::getInstance();
-
-        $service = null;
-
-        try {
-            $service = $di->getService($class);
-        } catch (DiException $e) {
-            $service = $di->createService($class);
-        }
-
-        return $service;
+    public function __construct(){
+//        $this->setAppNs(self::DEFAULT_APP_NS);
+        $this->setClassKeyword(self::DEFAULT_CLASS_KEYWORD);
+        $this->setClassParamKeyword(strtolower(self::DEFAULT_CLASS_KEYWORD));
+        $this->setNamespace(self::DEFAULT_APP_NS);
     }
 
     /**
      * @param DiService $diService
      * @param array $params
-     * @param string $method
-     * @return $this
      * @throws DispatcherException
+     * @internal param string $method
+     * @return $this
      */
-    public function executeCommand(DiService $diService, $params = [], $method = 'execute')
+    public function executeDispatchable(DiService $diService, $params = [])
     {
         //set additional data like request, result, response
         $reflection = $diService->getReflection();
-
-        $instance = null;
 
         foreach ($this->getRequiredInterfaces() as $interface) {
             if (!$reflection->implementsInterface($interface)) {
@@ -184,42 +62,11 @@ class CommandDispatcher implements DispatcherInterface
             }
         }
 
-        $diService->inject($method, $params);
-        $diService->makeInstance();
+        $diService->inject('execute', $params);
+        $this->setDispatchableInstance($diService->makeInstance());
 
         return $this;
 
     }
 
-    /**
-     * @return array
-     */
-    public function getRequiredInterfaces()
-    {
-        return $this->requiredInterfaces;
-    }
-
-    /**
-     * @param $requiredInterface
-     */
-    public function setRequiredInterface($requiredInterface)
-    {
-        $this->requiredInterfaces[] = $requiredInterface;
-    }
-
-    /**
-     * @return string
-     */
-    public function getClassKeyword()
-    {
-        return $this->classKeyword;
-    }
-
-    /**
-     * @param $classKeyword
-     */
-    protected function setClassKeyword($classKeyword)
-    {
-        $this->classKeyword = ucfirst(strtolower($classKeyword));
-    }
 }

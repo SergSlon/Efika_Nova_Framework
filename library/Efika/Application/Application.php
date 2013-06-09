@@ -181,17 +181,8 @@ class Application implements ApplicationInterface
             $this->getLogger()->addMessage('configure application');
             $config = $this->getConfig();
 
-            if ($config->offsetExists(self::OBJECT_ID)) {
-                $this->setApplicationConfig($config->offsetGet(self::OBJECT_ID));
-            }
-
-            $appConfig = $this->getApplicationConfig();
-            //set defaults
-
-            if($appConfig->offsetExists('events')){
-                foreach($appConfig->offsetGet('events') as $id => $callback){
-                    $this->attachEventHandler($id,$callback);
-                }
+            if($config->offsetExists('events')){
+                $this->attachEventHandler($config->offsetGet('events')->toArray());
             }
 
         } else {
@@ -230,7 +221,7 @@ class Application implements ApplicationInterface
             $this->getLogger()->addMessage('initialize application');
             $this->getLogger()->addMessage('execute initialize events');
 
-            $this->executeApplicationEvent(self::ON_INIT, $this->getApplicationConfig(), $callback);
+            $this->executeApplicationEvent(self::ON_INIT, ['config'=>$this->getConfig()], $callback);
 
         } else {
             throw new ApplicationException('Status is not configured');

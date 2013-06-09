@@ -11,19 +11,16 @@ use WebApplication\Services\CustomApplicationService;
 
 require_once dirname(__FILE__) . '/../../library/Efika/Loader/StandardAutoloader.php';
 
-//create Autoloader
-(new StandardAutoloader)
-    ->setNamespaces(
-        [
-            'Efika\\' => dirname(__FILE__) . '/../../library/Efika/',
-            'WebApplication\\' => dirname(__FILE__) . '/../src/Classes/',
-        ])
-    ->register();
-
-//Initialize Webapplication
-
 $config = require_once dirname(__FILE__) . '/../config/config.php';
 
+//create Autoloader
+(new StandardAutoloader)
+    ->setNamespaces($config['autoloader'])
+    ->register();
+
+
+
+//Initialize Webapplication
 var_dump($config);
 
 $app = WebApp::getInstance();

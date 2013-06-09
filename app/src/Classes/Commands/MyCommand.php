@@ -7,9 +7,9 @@
 namespace WebApplication\Commands;
 
 
-use Efika\Application\Commands\CommandInterface;
+use Efika\Application\Dispatcher\DispatchableInterface;
 
-class MyCommand implements CommandInterface{
+class MyCommand implements DispatchableInterface{
 
     public function execute($params = [])
     {

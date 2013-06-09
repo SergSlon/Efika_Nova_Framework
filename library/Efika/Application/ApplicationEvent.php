@@ -10,6 +10,7 @@ namespace Efika\Application;
 use ArrayAccess;
 use Efika\Application\Router\Router;
 use Efika\Application\Router\RouterInterface;
+use Efika\Config\Config;
 use Efika\Di\DiContainer;
 use Efika\Di\DiContainerInterface;
 use Efika\Di\DiService;
@@ -33,6 +34,11 @@ class ApplicationEvent extends Event{
      * @var DiContainer
      */
     public $diContainer = 'Efika\Di\DiContainer';
+
+    /**
+     * @var array
+     */
+    public $config = [];
 
     /**
      *
@@ -98,6 +104,22 @@ class ApplicationEvent extends Event{
 
         }
         return $this->error;
+    }
+
+    /**
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * @param $config
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
     }
 
 }

@@ -6,7 +6,7 @@
 
 namespace Efika\Application\Router;
 
-use Efika\Application\Dispatcher\DispatchFactory;
+use Efika\Application\Dispatcher\DispatcherFactory;
 
 /**
  * Class Router
@@ -169,7 +169,7 @@ class Router implements RouterInterface
      * @param null $dispatchMode
      * @param string $default
      */
-    protected function setDispatchMode($dispatchMode=null,$default=DispatchFactory::MODE_MVC)
+    protected function setDispatchMode($dispatchMode=null,$default=DispatcherFactory::MODE_MVC)
     {
         if($dispatchMode == null){
             $dispatchMode = $default;
