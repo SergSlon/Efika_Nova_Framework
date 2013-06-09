@@ -44,8 +44,6 @@ class CommandDispatcher implements DispatcherInterface
 
     /**
      * @param DiService $diService
-     * @internal param array $params
-     * @internal param string $method
      * @return $this
      */
     public function executeDispatchable(DiService $diService)

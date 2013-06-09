@@ -19,6 +19,9 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
 
     public function execute()
     {
+
+        var_dump(__FILE__ . __LINE__);
+        var_dump($this->getAction());
         // Execute Action
     }
 

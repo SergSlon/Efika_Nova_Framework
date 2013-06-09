@@ -36,9 +36,6 @@ class MvcDispatcher implements DispatcherInterface{
 
     /**
      * @param DiService $diService
-     * @param array $params
-     * @throws DispatcherException
-     * @internal param string $method
      * @return $this
      */
     public function executeDispatchable(DiService $diService)
@@ -48,21 +45,19 @@ class MvcDispatcher implements DispatcherInterface{
         //Validate required interfaces for dispatchable
         $this->validateRequiredInterfaces($diService);
 
-        $result = $this->getRouter()->getResult();
+        $router = $this->getRouter();
+        $result = $router->getResult();
         $params =
             $result->offsetExists('params') ?
                 $this->getRouter()->makeParameters($result->offsetGet('params')) :
                 [];
 
-        var_dump($params);
-
         $diService->inject('setRouter',['router' => $this->getRouter()]);
-        $diService->inject('setParams',$params);
+        $diService->inject('setParams',['params' => $params]);
+        $diService->inject('setAction',['action' => $result->offsetGet('action')]);
 
         $diService->inject('execute');
         $this->setDispatchableInstance($diService->makeInstance());
-
-        var_dump('YOLO');
 
         return $this;
 
