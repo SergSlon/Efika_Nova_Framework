@@ -60,12 +60,7 @@ trait ConcreteDispatcherTrait {
         $result = $this->getRouter()->getResult();
         $dispatchableService = $this->getDispatchableService($result);
 
-        $params =
-            $result->offsetExists('params') ?
-                $this->getRouter()->makeParameters($result->offsetGet('params')) :
-                [];
-
-        $this->executeDispatchable($dispatchableService, $params);
+        $this->executeDispatchable($dispatchableService);
     }
 
     /**
@@ -173,7 +168,7 @@ trait ConcreteDispatcherTrait {
      * @internal param string $method
      * @return $this
      */
-    abstract public function executeDispatchable(DiService $diService, $params = []);
+    abstract public function executeDispatchable(DiService $diService);
 
     /**
      * @return array
@@ -237,5 +232,21 @@ trait ConcreteDispatcherTrait {
     public function setDispatchableInstance($dispatchableInstance)
     {
         $this->dispatchableInstance = $dispatchableInstance;
+    }
+
+    /**
+     * @param DiService $diService
+     * @throws DispatcherException
+     */
+    public function validateRequiredInterfaces(DiService $diService){
+        $reflection = $diService->getReflection();
+
+        foreach ($this->getRequiredInterfaces() as $interface) {
+            if (!$reflection->implementsInterface($interface)) {
+                throw new DispatcherException(
+                    sprintf('Class does not implement required interface %s!', $interface)
+                );
+            }
+        }
     }
 }

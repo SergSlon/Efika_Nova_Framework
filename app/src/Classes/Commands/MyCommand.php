@@ -7,14 +7,15 @@
 namespace WebApplication\Commands;
 
 
-use Efika\Application\Dispatcher\DispatchableInterface;
 
-class MyCommand implements DispatchableInterface{
 
-    public function execute($params = [])
+use Efika\Application\Commands\DefaultCommand;
+
+class MyCommand extends DefaultCommand{
+
+    public function execute()
     {
         var_dump('hello world');
-
-        var_dump($params);
+        var_dump($this->getParams());
     }
 }

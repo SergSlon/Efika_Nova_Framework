@@ -23,8 +23,9 @@ $routes = array(
         'route' => ':command/:params',
         'dispatchMode' => 'cmd',
     ],
-    '/(?P<controller>\w+)/(?P<action>\w+)/(?P<params>[a-zA-Z0-9_]+)' => [
+    '/(?P<controller>\w+)/(?P<action>\w+)/(?P<params>[a-zA-Z0-9_/]+)?' => [
         'route' => [
+            'route' => ':controller/:action/:params',
             'controller' => 'Ext{controller}Somthing' //ExtBLABLASomething
         ],
         'dispatchMode' => 'mvc',
@@ -37,6 +38,9 @@ $router->setRoutes($routes);
 //var_dump($router->match('/foo/show/value'));
 //var_dump($router->match('/'));
 $router->match('/cmd/my/user/marco/group/admin');
+
+//Controller
+//$router->match('/any/way/to');
 if (array_key_exists('r', $_GET) && strlen($_GET['r']) > 0) {
     $router->match($_GET['r']);
 }

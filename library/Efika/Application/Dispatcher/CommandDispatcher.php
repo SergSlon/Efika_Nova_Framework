@@ -36,7 +36,7 @@ class CommandDispatcher implements DispatcherInterface
     const DEFAULT_CLASS_KEYWORD = 'Command';
 
     public function __construct(){
-//        $this->setAppNs(self::DEFAULT_APP_NS);
+        $this->setAppNs(self::DEFAULT_APP_NS);
         $this->setClassKeyword(self::DEFAULT_CLASS_KEYWORD);
         $this->setClassParamKeyword(strtolower(self::DEFAULT_CLASS_KEYWORD));
         $this->setNamespace(self::DEFAULT_CMD_NS);
@@ -44,25 +44,28 @@ class CommandDispatcher implements DispatcherInterface
 
     /**
      * @param DiService $diService
-     * @param array $params
-     * @throws DispatcherException
+     * @internal param array $params
      * @internal param string $method
      * @return $this
      */
-    public function executeDispatchable(DiService $diService, $params = [])
+    public function executeDispatchable(DiService $diService)
     {
+
+
+
         //set additional data like request, result, response
-        $reflection = $diService->getReflection();
+        //Validate required interfaces for dispatchable
+        $this->validateRequiredInterfaces($diService);
 
-        foreach ($this->getRequiredInterfaces() as $interface) {
-            if (!$reflection->implementsInterface($interface)) {
-                throw new DispatcherException(
-                    sprintf('Class does not implement required interface %s!', $interface)
-                );
-            }
-        }
+        $result = $this->getRouter()->getResult();
 
-        $diService->inject('execute', $params);
+        $params =
+            $result->offsetExists('params') ?
+                $this->getRouter()->makeParameters($result->offsetGet('params')) :
+                [];
+
+        $diService->inject('setParams',['params' => $params]);
+        $diService->inject('execute');
         $this->setDispatchableInstance($diService->makeInstance());
 
         return $this;

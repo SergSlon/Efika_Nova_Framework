@@ -10,5 +10,5 @@ namespace Efika\Application\Dispatcher;
  * TODO: Rename to DispatchableInterface
  */
 interface DispatchableInterface {
-    public function execute($params = []);
+    public function execute();
 }
