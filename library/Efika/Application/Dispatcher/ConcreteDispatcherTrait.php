@@ -123,16 +123,10 @@ trait ConcreteDispatcherTrait {
      */
     protected function makeClassname($class)
     {
-
-        var_dump($this->getNamespace());
-
-        $classname =
+        return
             $this->getNamespace()
             . ucfirst(rtrim(strtolower($class),strtolower($this->getClassKeyword())))
             . $this->getClassKeyword();
-        var_dump($classname);
-
-        return $classname;
     }
 
     /**

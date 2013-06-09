@@ -39,7 +39,7 @@ class CommandDispatcher implements DispatcherInterface
 //        $this->setAppNs(self::DEFAULT_APP_NS);
         $this->setClassKeyword(self::DEFAULT_CLASS_KEYWORD);
         $this->setClassParamKeyword(strtolower(self::DEFAULT_CLASS_KEYWORD));
-        $this->setNamespace(self::DEFAULT_APP_NS);
+        $this->setNamespace(self::DEFAULT_CMD_NS);
     }
 
     /**

@@ -43,9 +43,6 @@ if (array_key_exists('r', $_GET) && strlen($_GET['r']) > 0) {
 
 $dispatcher = DispatcherFactory::factory($router->getDispatchMode());
 
-var_dump($dispatcher->getAppNs());
-
 $dispatcher->setAppNs(__NAMESPACE__);
-var_dump($dispatcher->getAppNs());
 $dispatcher->setRouter($router);
 $dispatcher->dispatch();
