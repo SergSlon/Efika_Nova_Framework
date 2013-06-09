@@ -147,7 +147,7 @@ class DiService implements DiServiceInterface
 
         foreach ($invokables as $invokable) {
             if ($invokable !== null) {
-                $invokable['reflection']->invoke($object, $invokable['arguments']);
+                $invokable['reflection']->invokeArgs($object, $invokable['arguments']);
             }
         }
 
