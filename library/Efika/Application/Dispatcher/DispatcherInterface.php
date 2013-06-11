@@ -11,7 +11,7 @@ use Efika\Application\Router\RouterInterface;
 
 interface DispatcherInterface {
 
-    public function dispatch();
+    public function execute();
     public function getRouter();
     public function setRouter(RouterInterface $router);
 

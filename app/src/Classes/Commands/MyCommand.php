@@ -13,7 +13,7 @@ use Efika\Application\Commands\DefaultCommand;
 
 class MyCommand extends DefaultCommand{
 
-    public function execute()
+    public function dispatch()
     {
         var_dump('hello world');
         var_dump($this->getParams());

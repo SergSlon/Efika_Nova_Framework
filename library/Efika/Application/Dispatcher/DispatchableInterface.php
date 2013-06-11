@@ -5,10 +5,17 @@
  */
 
 namespace Efika\Application\Dispatcher;
+use Efika\Http\HttpRequestInterface;
+use Efika\Http\HttpResponseInterface;
 
 /**
  * TODO: Rename to DispatchableInterface
  */
 interface DispatchableInterface {
-    public function execute();
+    /**
+     * @internal param \Efika\Http\HttpRequestInterface $request
+     * @internal param \Efika\Http\HttpResponseInterface $response
+     * @return void
+     */
+    public function dispatch();
 }

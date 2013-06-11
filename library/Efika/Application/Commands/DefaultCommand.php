@@ -13,7 +13,7 @@ class DefaultCommand implements DispatchableInterface, ParameterInterface{
 
     protected $params = [];
 
-    public function execute()
+    public function dispatch()
     {
 
     }

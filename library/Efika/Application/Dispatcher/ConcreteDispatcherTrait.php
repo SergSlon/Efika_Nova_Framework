@@ -35,6 +35,8 @@ trait ConcreteDispatcherTrait {
      */
     protected $dispatchableInstance = null;
 
+    protected $dispatchableResult = null;
+
     /**
      * @var string
      */
@@ -52,15 +54,22 @@ trait ConcreteDispatcherTrait {
         'Efika\Application\Dispatcher\DispatchableInterface'
     ];
 
+    public function __construct(){
+        $this->setAppNs(self::DEFAULT_APP_NS);
+        $this->setClassKeyword(self::DEFAULT_CLASS_KEYWORD);
+        $this->setClassParamKeyword(strtolower(self::DEFAULT_CLASS_KEYWORD));
+        $this->setNamespace(self::DEFAULT_CMD_NS);
+    }
+
     /**
      *
      */
-    public function dispatch()
+    public function execute()
     {
-        $result = $this->getRouter()->getResult();
-        $dispatchableService = $this->getDispatchableService($result);
-
-        $this->executeDispatchable($dispatchableService);
+        $dispatchableService = $this->createDispatchable();
+        $dispatchable = $dispatchableService->makeInstance();
+        $this->setDispatchableInstance($dispatchable);
+        $this->setDispatchableResult($dispatchable->dispatch());
     }
 
     /**
@@ -127,7 +136,7 @@ trait ConcreteDispatcherTrait {
     /**
      * @param RouterResult $result
      * @throws DispatcherException
-     * @return string
+     * @return DiService
      */
     public function getDispatchableService($result){
         $class = $this->makeClassname($result->offsetGet($this->getClassParamKeyword()));
@@ -163,12 +172,9 @@ trait ConcreteDispatcherTrait {
     }
 
     /**
-     * @param DiService $diService
-     * @param array $params
-     * @internal param string $method
-     * @return $this
+     * @return DiService
      */
-    abstract public function executeDispatchable(DiService $diService);
+    abstract protected function createDispatchable();
 
     /**
      * @return array
@@ -248,5 +254,21 @@ trait ConcreteDispatcherTrait {
                 );
             }
         }
+    }
+
+    /**
+     * @return null
+     */
+    public function getDispatchableResult()
+    {
+        return $this->dispatchableResult;
+    }
+
+    /**
+     * @param null $dispatchableResult
+     */
+    public function setDispatchableResult($dispatchableResult)
+    {
+        $this->dispatchableResult = $dispatchableResult;
     }
 }

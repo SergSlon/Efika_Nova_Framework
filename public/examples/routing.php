@@ -23,9 +23,9 @@ $routes = array(
         'route' => ':command/:params',
         'dispatchMode' => 'cmd',
     ],
-    '/(?P<controller>\w+)/(?P<action>\w+)/(?P<params>[a-zA-Z0-9_/]+)?' => [
+    '/(?P<controller>\w+)/(?P<actionId>\w+)/(?P<params>[a-zA-Z0-9_/]+)?' => [
         'route' => [
-            'route' => ':controller/:action/:params',
+            'route' => ':controller/:actionId/:params',
             'controller' => 'Ext{controller}Somthing' //ExtBLABLASomething
         ],
         'dispatchMode' => 'mvc',
@@ -49,4 +49,4 @@ $dispatcher = DispatcherFactory::factory($router->getDispatchMode());
 
 $dispatcher->setAppNs(__NAMESPACE__);
 $dispatcher->setRouter($router);
-$dispatcher->dispatch();
+$dispatcher->execute();

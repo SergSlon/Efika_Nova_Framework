@@ -7,11 +7,16 @@
 namespace Efika\Application\Dispatcher;
 
 
+use Efika\Application\Commands\ControllerLogicalException;
 use Efika\Di\DiService;
 
 class MvcDispatcher implements DispatcherInterface{
 
     use ConcreteDispatcherTrait;
+
+    /**
+     * TODO: Information about sourcefiles will collected by modules!
+     */
 
     /**
      *
@@ -27,23 +32,18 @@ class MvcDispatcher implements DispatcherInterface{
      */
     const DEFAULT_CLASS_KEYWORD = 'Controller';
 
-    public function __construct(){
-        $this->setAppNs(self::DEFAULT_APP_NS);
-        $this->setClassKeyword(self::DEFAULT_CLASS_KEYWORD);
-        $this->setClassParamKeyword(strtolower(self::DEFAULT_CLASS_KEYWORD));
-        $this->setNamespace(self::DEFAULT_CMD_NS);
-    }
-
     /**
-     * @param DiService $diService
      * @return $this
      */
-    public function executeDispatchable(DiService $diService)
+    protected function createDispatchable()
     {
+
+        $result = $this->getRouter()->getResult();
+        $dispatchableService = $this->getDispatchableService($result);
         //set additional data like request, result, response
 
         //Validate required interfaces for dispatchable
-        $this->validateRequiredInterfaces($diService);
+        $this->validateRequiredInterfaces($dispatchableService);
 
         $router = $this->getRouter();
         $result = $router->getResult();
@@ -52,14 +52,12 @@ class MvcDispatcher implements DispatcherInterface{
                 $this->getRouter()->makeParameters($result->offsetGet('params')) :
                 [];
 
-        $diService->inject('setRouter',['router' => $this->getRouter()]);
-        $diService->inject('setParams',['params' => $params]);
-        $diService->inject('setAction',['action' => $result->offsetGet('action')]);
+        $dispatchableService->inject('setRouter',['router' => $this->getRouter()]);
+        $dispatchableService->inject('setParams',['params' => $params]);
+        $dispatchableService->inject('setActionId',['actionId' => $result->offsetGet('actionId')]);
+        $dispatchableService->inject('setControllerId',['controllerId' => $result->offsetGet($this->getClassParamKeyword())]);
 
-        $diService->inject('execute');
-        $this->setDispatchableInstance($diService->makeInstance());
-
-        return $this;
+        return $dispatchableService;
 
     }
 }

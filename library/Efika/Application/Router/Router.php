@@ -77,7 +77,7 @@ class Router implements RouterInterface
      * For example:
      * array(
      *  '/' => 'index/index',
-     *  '/(?P<controller>\w+)/(?P<action>\w+)/(?P<params>[a-zA-Z0-9_]+)' => ':controller/:action/:params',
+     *  '/(?P<controller>\w+)/(?P<actionId>\w+)/(?P<params>[a-zA-Z0-9_]+)' => ':controller/:actionId/:params',
      *  '/foo/(?P<params>[a-zA-Z0-9_]+)/view' => 'foo/view/:params',
      * )
      * @param $request

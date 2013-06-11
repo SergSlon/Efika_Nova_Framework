@@ -11,8 +11,9 @@ use Efika\Application\Commands\ControllerCommand;
 
 class AnyController extends ControllerCommand{
 
-    public function wayAction($to='empty yo!'){
-        var_dump($to);
+    public function wayAction(){
+        var_dump(__FILE__ . __LINE__);
+        var_dump($this->getParams());
     }
 
 }
