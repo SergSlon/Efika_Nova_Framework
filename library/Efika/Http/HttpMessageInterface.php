@@ -15,23 +15,6 @@ interface HttpMessageInterface
     public function __construct(HttpMessageInterface $httpMessage = null);
 
     /**
-     * Add a header to header collection
-     * @abstract
-     * @param $name
-     * @param $value
-     * @return mixed
-     */
-    public function addHeader($name, $value);
-
-    /**
-     * Add a bunch of http headers
-     * @abstract
-     * @param HttpHeaderInterface $header
-     * @return mixed
-     */
-    public function addHeaders(HttpHeaderInterface $header);
-
-    /**
      * Get message Content
      * @abstract
      * @return mixed
@@ -44,13 +27,6 @@ interface HttpMessageInterface
      * @return mixed
      */
     public function getHeader();
-
-    /**
-     * Return http headers
-     * @abstract
-     * @return HttpHeaderInterface
-     */
-    public function getHeaders();
 
     /**
      * Get http version
@@ -82,7 +58,7 @@ interface HttpMessageInterface
      * @param $content
      * @return HttpMessageInterface
      */
-    public function setContent($content);
+    public function setContent(HttpContent $content);
 
     /**
      * Set http header

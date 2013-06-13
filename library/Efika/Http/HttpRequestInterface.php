@@ -29,7 +29,7 @@ interface HttpRequestInterface
     /**
      * @param \Efika\Http\HttpMessageInterface $httpMessage
      */
-    public function __construct($httpMessage);
+    public function __construct(HttpMessageInterface $httpMessage);
 
     /**
      * Build a new request
@@ -44,7 +44,7 @@ interface HttpRequestInterface
     /**
      * Get http message object
      * @abstract
-     * @param HttpMessageInterface $httpMessage
+     * @internal param \Efika\Http\HttpMessageInterface $httpMessage
      * @return mixed
      */
     public function getHttpMessage();

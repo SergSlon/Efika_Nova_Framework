@@ -63,28 +63,28 @@ interface HttpUrlInterface
      * @param string $value
      * @return HttpUrlInterface
      */
-    public function setFragment($value);
+    public function setFragment($fragment);
 
     /**
      * @abstract
      * @param string $value
      * @return mixed
      */
-    public function setHost($value);
+    public function setHost($host);
 
     /**
      * @abstract
      * @param string $value
      * @return mixed
      */
-    public function setPassword($value);
+    public function setPassword($password);
 
     /**
      * @abstract
      * @param string | int $value
      * @return mixed
      */
-    public function setPort($value);
+    public function setPort($port);
 
     /**
      * @abstract
@@ -92,19 +92,19 @@ interface HttpUrlInterface
      * @param string $delimiter
      * @return mixed
      */
-    public function setScheme($value, $delimiter = '://');
+    public function setScheme($scheme, $delimiter = '://');
 
     /**
      * @abstract
      * @param string | array $value
      * @return mixed
      */
-    public function setSearchPart($value);
+    public function setSearchPart($searchPart);
 
     /**
      * @abstract
      * @param string | array $value
      * @return mixed
      */
-    public function setUrlPath($value);
+    public function setUrlPath($urlPath);
 }
