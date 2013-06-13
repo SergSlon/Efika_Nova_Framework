@@ -14,7 +14,7 @@ class HttpUrl implements HttpUrlInterface{
     private $port;
     private $scheme;
     private $schemeDelimiter;
-    private $searchPart;
+    private $query;
     private $urlPath;
 
     /**
@@ -139,18 +139,18 @@ class HttpUrl implements HttpUrlInterface{
      * @param mixed $searchPart
      * @return $this|mixed
      */
-    public function setSearchPart($searchPart)
+    public function setQuery($searchPart)
     {
-        $this->searchPart = $searchPart;
+        $this->query = $searchPart;
         return $this;
     }
 
     /**
      * @return mixed
      */
-    public function getSearchPart()
+    public function getQuery()
     {
-        return $this->searchPart;
+        return $this->query;
     }
 
     /**
@@ -172,5 +172,7 @@ class HttpUrl implements HttpUrlInterface{
 
     public function composeUrl(){
         // TODO: add url composer
+        // {scheme}{schemeDelimiter}{user}:{password}@{host}{urlPath}?{query}#{fragment}
+        // query "?" is optional and depends on protocol
     }
 }

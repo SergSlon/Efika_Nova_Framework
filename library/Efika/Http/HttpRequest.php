@@ -31,12 +31,10 @@ class HttpRequest implements HttpRequestInterface{
      * @static
      * @param null $requestUrl
      * @param null $requestMethod
-     * @return mixed
+     * @return \Efika\Http\HttpRequest|mixed
      */
     public static function establish($requestUrl = null, $requestMethod = null)
     {
-
-        var_dump($_SERVER);
 
         $message = new HttpMessage();
         $message->setHttpVersion($_SERVER['SERVER_PROTOCOL']);
@@ -49,6 +47,7 @@ class HttpRequest implements HttpRequestInterface{
             $requestUrl->setPort($_SERVER['SERVER_PORT']);
             $requestUrl->setScheme($_SERVER['REQUEST_SCHEME']);
             $requestUrl->setUrlPath($_SERVER['REQUEST_URI']);
+            $requestUrl->setQuery($_SERVER['QUERY_STRING']);
 
         }else{
             $requestUrl = new HttpUrl($requestUrl);
@@ -59,6 +58,7 @@ class HttpRequest implements HttpRequestInterface{
             $requestMethod = $_SERVER['REQUEST_METHOD'];
         }
         $request->setRequestMethod($requestMethod);
+        return $request;
     }
 
     /**

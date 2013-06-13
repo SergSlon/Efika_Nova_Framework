@@ -10,4 +10,5 @@ use Efika\Http\HttpRequest;
 
 require_once __DIR__ . '/../../app/boot/bootstrap.php';
 
-HttpRequest::establish();
+$request = HttpRequest::establish();
+var_dump($request);

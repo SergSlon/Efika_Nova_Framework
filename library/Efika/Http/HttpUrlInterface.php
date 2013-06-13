@@ -50,7 +50,7 @@ interface HttpUrlInterface
      * @abstract
      * @return mixed
      */
-    public function getSearchPart();
+    public function getQuery();
 
     /**
      * @abstract
@@ -99,7 +99,7 @@ interface HttpUrlInterface
      * @param string | array $value
      * @return mixed
      */
-    public function setSearchPart($searchPart);
+    public function setQuery($searchPart);
 
     /**
      * @abstract
