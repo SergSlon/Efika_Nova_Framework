@@ -4,9 +4,9 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-require_once dirname(__FILE__) . 'env.php';
-$defaultConfig = require_once dirname(__FILE__) . 'config.default.php';
-$enviromentConfigFile = dirname(__FILE__) . 'config.' . EFIKA_ENVIROMENT . '.php';
+require_once dirname(__FILE__) . '/env.php';
+$defaultConfig = require_once dirname(__FILE__) . '/config.default.php';
+$enviromentConfigFile = dirname(__FILE__) . '/config.' . EFIKA_ENVIROMENT . '.php';
 $enviroments = ['production','developent','test'];
 
 if(
@@ -16,4 +16,4 @@ if(
     $enviromentConfig = require_once $enviromentConfigFile;
 }
 
-return array_merge_recursive($defaultConfig, $enviromentConfigFile);
+return array_merge_recursive($defaultConfig, $enviromentConfig);

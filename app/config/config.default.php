@@ -5,13 +5,10 @@
  */
 
 return [
-    'directives' => [
-        'application' => 'Efika\Application\ApplicationConfigAdapter',
+    'autoloader' => [
+        'Efika\\' => dirname(__FILE__) . '/../../library/Efika/',
     ],
-
-    'application' => [
-        'router' => [],
-        'modules' => [],
-        'events' => [],
-    ],
+    'router' => [],
+    'modules' => [],
+    'events' => [],
 ];

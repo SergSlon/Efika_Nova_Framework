@@ -8,17 +8,23 @@ namespace Efika\Application;
 
 use Efika\Common\Logger;
 use Efika\Common\SingletonTrait;
-use Efika\EventManager\EventInterface;
+use Efika\Config\Config;
 use Efika\EventManager\EventManagerTrait;
 use Efika\EventManager\EventResponse;
-use Exception as PhpException;
 use InvalidArgumentException;
 
+/**
+ * Class Application
+ * @package Efika\Application
+ */
 class Application implements ApplicationInterface
 {
 
     use EventManagerTrait;
-    use SingletonTrait;
+
+    use SingletonTrait {
+        SingletonTrait::getInstance as TRAITgetInstance;
+    }
 
     /**
      * @var int
@@ -43,6 +49,11 @@ class Application implements ApplicationInterface
     /**
      * @var array
      */
+    private $config = [];
+
+    /**
+     * @var array
+     */
     private $applicationConfig = [];
 
     /**
@@ -51,11 +62,21 @@ class Application implements ApplicationInterface
     private $customEventObjects = [];
 
     /**
+     * @return Application
+     */
+    public static function getInstance()
+    {
+        return self::TRAITgetInstance();
+    }
+
+    /**
      *
      */
     private function __construct()
     {
-        $this->setLogger(Logger::getInstance()->scope(self::LOGGER_SCOPE));
+        $this->setLogger(Logger::getInstance()->scope(self::OBJECT_ID));
+        $this->setDefaultEventClass('Efika\Application\ApplicationEvent');
+
     }
 
     /**
@@ -122,11 +143,11 @@ class Application implements ApplicationInterface
 
     /**
      * @param $event
-     * @param \Efika\EventManager\EventInterface $object
+     * @param \Efika\Application\ApplicationEvent $object
      * @internal param string $handler
      * @return mixed
      */
-    public function addCustomEventObject($event, EventInterface $object)
+    public function addCustomEventObject($event, ApplicationEvent $object)
     {
         $this->customEventObjects[$event] = $object;
     }
@@ -136,7 +157,8 @@ class Application implements ApplicationInterface
      * @param $arguments
      * @param $callback
      */
-    public function executeApplicationEvent($id, $arguments, $callback){
+    public function executeApplicationEvent($id, $arguments, $callback)
+    {
 
         $default = $this->getDefaultEventClass();
         $eventObject = $this->hasCustomEventObject($id) ? $this->customEventObjects[$id] : new $default;
@@ -145,22 +167,26 @@ class Application implements ApplicationInterface
         $eventObject->setTarget($this);
         $eventObject->setArguments($arguments);
 
-        $this->setPreviousEventResponse($this->triggerEvent($eventObject,$callback));
+        $this->setPreviousEventResponse($this->triggerEvent($eventObject, $callback));
     }
 
     /**
      * init config
-     * @param string $config
+     * @throws ApplicationException
      * @return $this
-     * @throws \Exception
      */
-    public function configure($config)
+    public function configure()
     {
-        if($this->getStatus() == self::STATUS_FRESH){
+        if ($this->getStatus() == self::STATUS_FRESH) {
             $this->getLogger()->addMessage('configure application');
+            $config = $this->getConfig();
 
-        }else{
-            throw new PhpException('Status is not fresh');
+            if($config->offsetExists('events')){
+                $this->attachEventHandler($config->offsetGet('events')->toArray());
+            }
+
+        } else {
+            throw new ApplicationException('Status is not fresh');
         }
 
         $this->setStatus(self::STATUS_CONFIGURED);
@@ -185,20 +211,20 @@ class Application implements ApplicationInterface
 
     /**
      * @param callable $callback
-     * @throws \Exception
+     * @throws ApplicationException
      * @internal param array $args
      * @return $this
      */
     public function init(callable $callback)
     {
-        if($this->getStatus() == self::STATUS_CONFIGURED){
+        if ($this->getStatus() == self::STATUS_CONFIGURED) {
             $this->getLogger()->addMessage('initialize application');
             $this->getLogger()->addMessage('execute initialize events');
 
-            $this->executeApplicationEvent(self::ON_INIT,$this->getApplicationConfig(),$callback);
+            $this->executeApplicationEvent(self::ON_INIT, ['config'=>$this->getConfig()], $callback);
 
-        }else{
-            throw new PhpException('Status is not configured');
+        } else {
+            throw new ApplicationException('Status is not configured');
         }
 
         $this->setStatus(self::STATUS_INITIALIZED);
@@ -207,23 +233,23 @@ class Application implements ApplicationInterface
 
     /**
      * @param callable $callback
-     * @throws \Exception
+     * @throws ApplicationException
      * @return $this
      */
     public function process(callable $callback)
     {
-        if($this->getStatus() == self::STATUS_INITIALIZED){
+        if ($this->getStatus() == self::STATUS_INITIALIZED) {
 
             $this->getLogger()->addMessage('post-process application');
-            $this->executeApplicationEvent(self::ON_POSTPROCESS,[],$callback);
+            $this->executeApplicationEvent(self::ON_PREPROCESS, [], $callback);
 
             $this->getLogger()->addMessage('process application');
-            $this->executeApplicationEvent(self::ON_PROCESS,[],$callback);
+            $this->executeApplicationEvent(self::ON_PROCESS, [], $callback);
 
             $this->getLogger()->addMessage('pre-process application');
-            $this->executeApplicationEvent(self::ON_PREPROCESS,[],$callback);
-        }else{
-            throw new PhpException('Status is not initialized');
+            $this->executeApplicationEvent(self::ON_POSTPROCESS, [], $callback);
+        } else {
+            throw new ApplicationException('Status is not initialized');
         }
 
         $this->setStatus(self::STATUS_PROCESSED);
@@ -233,17 +259,17 @@ class Application implements ApplicationInterface
     /**
      * triggers application.complete event handler
      * @param callable $callback
-     * @throws \Exception
+     * @throws ApplicationException
      * @return $this
      */
     public function complete(callable $callback)
     {
-        if($this->getStatus() == self::STATUS_PROCESSED){
+        if ($this->getStatus() == self::STATUS_PROCESSED) {
 
             $this->getLogger()->addMessage('complete application');
-            $this->executeApplicationEvent(self::ON_PREPROCESS,[],$callback);
-        }else{
-            throw new PhpException('Status is not processed');
+            $this->executeApplicationEvent(self::ON_COMPLETE, [], $callback);
+        } else {
+            throw new ApplicationException('Status is not processed');
         }
 
         $this->setStatus(self::STATUS_COMPLETED);
@@ -282,7 +308,7 @@ class Application implements ApplicationInterface
                 $this->getLogger()->addMessage('abort application execution');
             }
 
-        } catch (PhpException $e) {
+        } catch (ApplicationException $e) {
             $this->getLogger()->addMessage('Exception: ' . $e->getMessage());
         }
 
@@ -340,7 +366,7 @@ class Application implements ApplicationInterface
     }
 
     /**
-     * @return null
+     * @return Config
      */
     public function getApplicationConfig()
     {
@@ -348,10 +374,34 @@ class Application implements ApplicationInterface
     }
 
     /**
-     * @param $appConfig
+     * @param Config $appConfig
      */
     protected function setApplicationConfig($appConfig)
     {
         $this->applicationConfig = $appConfig;
+    }
+
+    /**
+     * @return Config
+     */
+    public function getConfig()
+    {
+        if (!($this->config instanceof Config)) {
+            $this->setConfig();
+        }
+        return $this->config;
+    }
+
+    /**
+     * @param null $config
+     * @return mixed|void
+     */
+    public function setConfig(array $config = [])
+    {
+        if (!($config instanceof Config)) {
+            $this->config = new Config($config);
+        } else {
+            $this->config = $config;
+        }
     }
 }

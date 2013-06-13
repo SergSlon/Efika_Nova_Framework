@@ -6,29 +6,74 @@
 
 namespace Efika\Application;
 
+use Efika\EventManager\EventManagerInterface;
+
 /**
  * Application
  */
-interface ApplicationInterface extends \Efika\EventManager\EventManagerInterface
+/**
+ * Class ApplicationInterface
+ * @package Efika\Application
+ */
+interface ApplicationInterface extends EventManagerInterface
 {
 
+    /**
+     *
+     */
     const ON_INIT = 'application.init';
+    /**
+     *
+     */
     const ON_PREPROCESS = 'application.preprocess';
+    /**
+     *
+     */
     const ON_PROCESS = 'application.process';
+    /**
+     *
+     */
     const ON_POSTPROCESS = 'application.postprocess';
+    /**
+     *
+     */
     const ON_COMPLETE = 'application.complete';
-    const LOGGER_SCOPE = 'application';
+    /**
+     *
+     */
+    const OBJECT_ID = 'application';
+    /**
+     *
+     */
     const STATUS_FRESH = 0;
+    /**
+     *
+     */
     const STATUS_CONFIGURED = 2;
+    /**
+     *
+     */
     const STATUS_INITIALIZED = 4;
+    /**
+     *
+     */
     const STATUS_PROCESSED = 8;
+    /**
+     *
+     */
     const STATUS_COMPLETED = 16;
 
     /**
      * init config
-     * @param $config
+     * @return
      */
-    public function configure($config);
+    public function configure();
+
+    /**
+     * @param $config
+     * @return mixed
+     */
+    public function setConfig(array $config=[]);
 
     /**
      * trigger events
