@@ -24,7 +24,7 @@ interface HttpMessageInterface
     /**
      * Returns header field-value by header field-name
      * @abstract
-     * @return mixed
+     * @return HttpHeaderInterface
      */
     public function getHeader();
 

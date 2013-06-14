@@ -17,6 +17,6 @@ class HttpContent extends \ArrayObject{
      */
     public function __toString()
     {
-        return implode('',$this);
+        return implode('',$this->getArrayCopy());
     }
 }

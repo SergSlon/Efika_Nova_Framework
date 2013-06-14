@@ -39,4 +39,9 @@ interface HttpHeaderInterface
      */
     public function exists($name);
 
+    /**
+     * @return HttpHeaderInterface
+     */
+    public function getHeaders();
+
 }

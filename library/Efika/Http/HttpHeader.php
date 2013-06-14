@@ -61,4 +61,14 @@ class HttpHeader implements HttpHeaderInterface{
     {
         return $this->headers->offsetExists($name);
     }
+
+    /**
+     * @return array|\ArrayObject
+     */
+    public function getHeaders()
+    {
+        return $this->headers;
+    }
+
+
 }

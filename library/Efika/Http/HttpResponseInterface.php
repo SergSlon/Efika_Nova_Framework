@@ -10,9 +10,9 @@ interface HttpResponseInterface
 {
 
     /**
-     * @param \Efika\Http\HttpMessageInterface $httpMessage
+     * @param \Efika\Http\HttpMessage|\Efika\Http\HttpMessageInterface $httpMessage
      */
-    public function __construct($httpMessage);
+    public function __construct(HttpMessage $httpMessage);
 
     /**
      * Get response code
@@ -26,7 +26,7 @@ interface HttpResponseInterface
      * @abstract
      * @return mixed
      */
-    public function getResponseStatus();
+    public function getResponseStatusMessage();
 
     /**
      * Get http message
@@ -42,7 +42,7 @@ interface HttpResponseInterface
      * @return HttpMessageInterface
      * @see http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
      */
-    public function setResponseStatus($code);
+    public function setResponseCode($code);
 
     /**
      * send http message

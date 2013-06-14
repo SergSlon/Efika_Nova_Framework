@@ -17,6 +17,9 @@ class HttpUrl implements HttpUrlInterface{
     private $query;
     private $urlPath;
 
+    const DEFAULT_SCHEMA = 'http';
+    const DEFAULT_SCHEMA_SEPERATOR = '://';
+
     /**
      * @param null $url
      */
@@ -102,7 +105,7 @@ class HttpUrl implements HttpUrlInterface{
      * @param string $delimiter
      * @return $this|mixed
      */
-    public function setScheme($scheme,$delimiter='://')
+    public function setScheme($scheme,$delimiter=self::DEFAULT_SCHEMA_SEPERATOR)
     {
         $this->scheme = $scheme;
         $this->schemeDelimiter = $delimiter;

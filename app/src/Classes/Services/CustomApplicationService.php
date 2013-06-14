@@ -93,9 +93,9 @@ class CustomApplicationService implements EventHandlerAggregateInterface, Applic
      */
     public function onInit(EventInterface $e)
     {
-        var_dump(__FILE__ . __LINE__);
+//        var_dump(__FILE__ . __LINE__);
 //        var_dump($e);
-        var_dump('Init service');
+//        var_dump('Init service');
     }
 
     /**

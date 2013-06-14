@@ -7,7 +7,10 @@
 namespace Efika\Http;
 
 
-class HttpMessage implements HttpMessageInterface{
+class HttpMessage implements HttpMessageInterface
+{
+
+    const DEFAULT_HTTP_VERSION = '1.1';
 
     /**
      * @var HttpHeaderInterface
@@ -32,7 +35,7 @@ class HttpMessage implements HttpMessageInterface{
     /**
      * @var string
      */
-    private $httpVersion;
+    private $httpVersion = self::DEFAULT_HTTP_VERSION;
 
     /**
      * @var HttpMessageInterface
@@ -44,7 +47,7 @@ class HttpMessage implements HttpMessageInterface{
      */
     public function __construct(HttpMessageInterface $httpMessage = null)
     {
-        if($httpMessage !== null){
+        if ($httpMessage !== null) {
             $this->parentMessage = $httpMessage;
         }
     }
@@ -55,6 +58,8 @@ class HttpMessage implements HttpMessageInterface{
      */
     public function getContent()
     {
+        if ($this->content === null)
+            $this->content = new HttpContent();
         return $this->content;
     }
 
@@ -64,6 +69,8 @@ class HttpMessage implements HttpMessageInterface{
      */
     public function getHeader()
     {
+        if ($this->headers === null)
+            $this->headers = new HttpHeader();
         return $this->headers;
     }
 
@@ -128,7 +135,7 @@ class HttpMessage implements HttpMessageInterface{
      */
     public function setHttpVersion($version)
     {
-        $this->httpVersion = str_replace('HTTP/','',$version);
+        $this->httpVersion = str_replace('HTTP/', '', $version);
     }
 
     /**

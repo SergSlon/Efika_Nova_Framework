@@ -21,7 +21,7 @@ $config = require_once dirname(__FILE__) . '/../config/config.php';
 
 
 //Initialize Webapplication
-var_dump($config);
+//var_dump($config);
 
 $app = WebApp::getInstance();
 $app->setConfig($config);
