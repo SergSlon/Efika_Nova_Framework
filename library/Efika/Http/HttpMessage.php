@@ -7,10 +7,16 @@
 namespace Efika\Http;
 
 
+use Efika\Http\Header\HttpHeader;
+use Efika\Http\Response\HttpContent;
+use Efika\Http\Header\HttpHeaderInterface;
+
 class HttpMessage implements HttpMessageInterface
 {
 
-    const DEFAULT_HTTP_VERSION = '1.1';
+    const DEFAULT_HTTP_VERSION = self::HTTP_V_1_1;
+    const HTTP_V_1_0 = '1.0';
+    const HTTP_V_1_1 = '1.1';
 
     /**
      * @var HttpHeaderInterface
@@ -131,11 +137,21 @@ class HttpMessage implements HttpMessageInterface
     /**
      * Set http version
      * @param $version
+     * @throws HttpException
      * @return HttpMessageInterface
      */
     public function setHttpVersion($version)
     {
-        $this->httpVersion = str_replace('HTTP/', '', $version);
+        $versionNumber = str_replace('HTTP/', '', $version);
+
+        //check whether protocol is HTTP/1.0 or HTTP/1.1
+        switch ($versionNumber) {
+            case self::HTTP_V_1_1 : continue;
+            case self::HTTP_V_1_0 : continue;
+            default : throw new HttpException(sprintf('Given HTTP version "%s" is invalid!',$version));
+        }
+
+        $this->httpVersion = $versionNumber;
     }
 
     /**

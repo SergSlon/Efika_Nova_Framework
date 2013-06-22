@@ -7,15 +7,14 @@
 namespace Efika\Http;
 
 
-class HttpRequest implements HttpRequestInterface{
+class HttpRequest implements HttpRequestInterface
+{
 
     private $httpMessage = null;
 
     private $requestMethod = null;
 
     private $requestUrl = null;
-
-    private $rawRequest = [];
 
     /**
      * @param \Efika\Http\HttpMessageInterface $httpMessage
@@ -31,33 +30,20 @@ class HttpRequest implements HttpRequestInterface{
      * @static
      * @param null $requestUrl
      * @param null $requestMethod
+     * @param \Efika\Http\HttpMessage|null $parentHttpMessage
      * @return \Efika\Http\HttpRequest|mixed
      */
-    public static function establish($requestUrl = null, $requestMethod = null)
+    public static function establish($requestUrl = null, $requestMethod = null, HttpMessage $parentHttpMessage = null)
     {
 
-        $message = new HttpMessage();
-        $message->setHttpVersion($_SERVER['SERVER_PROTOCOL']);
-
-        $request = new self($message);
-        $request->setRawRequest($_SERVER);
-        if($requestUrl === null){
-            $requestUrl = new HttpUrl();
-            $requestUrl->setHost($_SERVER['HTTP_HOST']);
-            $requestUrl->setPort($_SERVER['SERVER_PORT']);
-            $requestUrl->setScheme($_SERVER['REQUEST_SCHEME']);
-            $requestUrl->setUrlPath($_SERVER['REQUEST_URI']);
-            $requestUrl->setQuery($_SERVER['QUERY_STRING']);
-
-        }else{
-            $requestUrl = new HttpUrl($requestUrl);
+        if ($parentHttpMessage === null) {
+            $parentHttpMessage = new HttpMessage();
         }
+
+        $request = new self($parentHttpMessage);
         $request->setRequestUrl($requestUrl);
-
-        if($requestMethod === null){
-            $requestMethod = $_SERVER['REQUEST_METHOD'];
-        }
         $request->setRequestMethod($requestMethod);
+
         return $request;
     }
 
@@ -106,16 +92,18 @@ class HttpRequest implements HttpRequestInterface{
     public function setRequestMethod($method)
     {
         $this->requestMethod = $method;
+        return $this;
     }
 
     /**
      * Set request url
-     * @param string | HttpRequestUrl $url
+     * @param string | HttpUrlInterface $url
      * @return HttpMessageInterface
      */
     public function setRequestUrl($url)
     {
         $this->requestUrl = $url;
+        return $this;
     }
 
     /**
@@ -128,19 +116,4 @@ class HttpRequest implements HttpRequestInterface{
         //establish curlrequest
     }
 
-    /**
-     * @return array
-     */
-    public function getRawRequest()
-    {
-        return $this->rawRequest;
-    }
-
-    /**
-     * @param array $rawRequest
-     */
-    public function setRawRequest($rawRequest)
-    {
-        $this->rawRequest = $rawRequest;
-    }
 }

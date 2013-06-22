@@ -44,11 +44,4 @@ interface HttpResponseInterface
      */
     public function setResponseCode($code);
 
-    /**
-     * send http message
-     * @abstract
-     * @return mixed
-     */
-    public function send();
-
 }

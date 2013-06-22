@@ -32,16 +32,6 @@ interface HttpRequestInterface
     public function __construct(HttpMessageInterface $httpMessage);
 
     /**
-     * Build a new request
-     * @static
-     * @abstract
-     * @param null $requestUrl
-     * @param null $requestMethod
-     * @return mixed
-     */
-    public static function establish($requestUrl = null, $requestMethod = null);
-
-    /**
      * Get http message object
      * @abstract
      * @internal param \Efika\Http\HttpMessageInterface $httpMessage

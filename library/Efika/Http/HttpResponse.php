@@ -101,11 +101,20 @@ class HttpResponse implements HttpResponseInterface
 
     /**
      * @param null $code
+     * @throws \InvalidArgumentException
      * @return $this|\Efika\Http\HttpMessageInterface
      */
     public function setResponseCode($code)
     {
-        $this->responseCode = $code;
+        if(!array_key_exists($code,$this->responseStatusMessages) || !is_numeric($code)){
+            $code = is_scalar($code) ? $code : gettype($code);
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid status code provided: "%s"',
+                $code
+            ));
+        }
+
+        $this->responseCode = intval($code);
         return $this;
     }
 
@@ -128,59 +137,4 @@ class HttpResponse implements HttpResponseInterface
         return $this->httpMessage;
     }
 
-    public function sendHeaders()
-    {
-        $header = $this->getHttpMessage()->getHeader();
-        $httpProtocol = sprintf('HTTP/%s',$this->getHttpMessage()->getHttpVersion());
-
-        //add current status if unknown
-        if (!($header->exists('Status') || $header->exists($httpProtocol))) {
-
-            if (strpos(php_sapi_name(), 'cgi') !== false) {
-                $header->add('Status', sprintf('%s %s',$this->getResponseCode(),$this->getResponseStatusMessage()));
-            } else {
-                $header->add(
-                    $httpProtocol,
-                    sprintf('%s %s',$this->getResponseCode(),$this->getResponseStatusMessage()),
-                    ' '
-                );
-            }
-        }
-
-        $result = [];
-
-        foreach($header->getHeaders() as $headers){
-            $string = sprintf('%s%s%s', $headers->getName(), $headers->getDelimiter(), $headers->getValue());
-            $result[$headers->getName()] = header($string);
-        }
-
-        return $result;
-
-    }
-
-    /**
-     * Send content to browser
-     * @param bool $return
-     * @return bool|mixed
-     */
-    public function sendBody($return = false)
-    {
-        $content = $this->httpMessage->getContent();
-        if($return){
-            return $content;
-        }else{
-            echo $content;
-            return true;
-        }
-    }
-
-    /**
-     * send http message and echo output
-     * @return mixed
-     */
-    public function send()
-    {
-        $this->sendHeaders();
-        return $this->sendBody();
-    }
 }

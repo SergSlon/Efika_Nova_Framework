@@ -6,6 +6,9 @@
 
 namespace Efika\Http;
 
+use Efika\Http\Response\HttpContent;
+use Efika\Http\Header\HttpHeaderInterface;
+
 interface HttpMessageInterface
 {
 
