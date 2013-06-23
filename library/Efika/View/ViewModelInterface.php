@@ -66,21 +66,5 @@ interface ViewModelInterface
      * @return mixed
      */
     public function getVarCollection();
-    public function setRenderer($object);
 
-    /**
-     * If no renderer has been set, the renderer will get by DI
-     * @abstract
-     * @return mixed
-     */
-    public function getRenderer();
-
-    public function setResolver($object);
-
-    /**
-     * If no resolver has been set, the resolver will get by DI
-     * @abstract
-     * @return mixed
-     */
-    public function getResolver();
 }

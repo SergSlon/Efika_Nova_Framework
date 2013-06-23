@@ -5,11 +5,16 @@
  */
 
 namespace Efika\View;
+use Efika\EventManager\EventManagerInterface;
 
 /**
  * Factory for view management
  */
-interface ViewInterface
+interface ViewInterface extends EventManagerInterface
 {
+
+    public function addRenderStrategy($callable);
+    public function addResponseStrategy($callable);
+    public function render(ViewModelInterface $model);
 
 }

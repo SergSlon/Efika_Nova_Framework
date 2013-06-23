@@ -9,7 +9,7 @@ namespace Efika\View;
 /**
  * Collection of assigned variables
  */
-interface ViewVarCollectionInterface
+interface ViewVarCollectionInterface extends \ArrayAccess
 {
 
 }

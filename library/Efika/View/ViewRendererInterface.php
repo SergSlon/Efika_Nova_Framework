@@ -12,6 +12,8 @@ namespace Efika\View;
 interface ViewRendererInterface
 {
 
+    public function setView();
+
     /**
      * Renders given view
      * @abstract
