@@ -15,28 +15,30 @@ class View implements ViewInterface, ViewModelAwareInterface{
 
     use EventManagerTrait;
 
+    protected $viewModel = null;
+
     public function __construct(){
-
-    }
-
-    public function setEventObject(ViewEvent $eventObject = null){
-        if($eventObject === null){
-            $eventClassname = self::DEFAULT_EVENT;
-            $eventObject = new $eventClassname;
-        }
-
-        $eventObject->setTarget($this);
 
     }
 
     public function setViewModel(ViewModelInterface $model)
     {
-        // TODO: Implement setViewModel() method.
+        $this->viewModel = $model;
+    }
+
+    /**
+     * @return null
+     */
+    public function getViewModel()
+    {
+        return $this->viewModel;
     }
 
     public function resolve()
     {
-        $this->triggerEvent(self::BEFORE_RENDER_VIEW,array());
+        $this->triggerEvent(self::BEFORE_RESOLVE_VIEW);
+        $this->triggerEvent(self::WHILE_RESOLVE_VIEW);
+        $this->triggerEvent(self::AFTER_RESOLVE_VIEW);
     }
 
     public function render()

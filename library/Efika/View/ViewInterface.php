@@ -20,9 +20,9 @@ interface ViewInterface extends EventManagerInterface
     const BEFORE_RENDER_VIEW = 'before.render';
     const WHILE_RENDER_VIEW = 'while.render';
     const AFTER_RENDER_VIEW = 'after.render';
-    const BEFORE_RESPONSE_VIEW = 'before.response';
-    const WHILE_RESPONSE_VIEW = 'while.response';
-    const AFTER_RESPONSE_VIEW = 'after.response';
+    const BEFORE_RESOLVE_VIEW = 'before.resolve';
+    const WHILE_RESOLVE_VIEW = 'while.resolve';
+    const AFTER_RESOLVE_VIEW = 'after.resolve';
 
     public function render();
     public function resolve();

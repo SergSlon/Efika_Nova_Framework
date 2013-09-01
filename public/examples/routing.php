@@ -9,6 +9,7 @@ namespace WebApplication;
 use Efika\Application\Dispatcher\CommandDispatcher;
 use Efika\Application\Dispatcher\DispatcherFactory;
 use Efika\Application\Router\Router;
+use Efika\Common\Logger;
 use Efika\Http\HttpMessageInterface;
 use Efika\Http\HttpResponseInterface;
 
@@ -61,3 +62,8 @@ if($dispatcherResult instanceof HttpResponseInterface){
     $http = $dispatcherResult;
     $http->sendBody();
 }
+
+echo "<pre>";
+echo "<h2>logger</h2>";
+echo Logger::getInstance()->toText();
+echo "</pre>";

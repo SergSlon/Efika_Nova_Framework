@@ -66,19 +66,11 @@ class ViewEvent extends Event {
     }
 
     /**
-     * @param \Efika\View\ViewModelInterface|null $viewModel
-     */
-    public function setViewModel(ViewModelInterface $viewModel)
-    {
-        $this->viewModel = $viewModel;
-    }
-
-    /**
      * @return null
      */
     public function getViewModel()
     {
-        return $this->viewModel;
+        return $this->getTarget()->getViewModel();
     }
 
 

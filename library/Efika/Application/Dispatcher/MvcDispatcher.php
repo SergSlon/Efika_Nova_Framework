@@ -7,17 +7,9 @@
 namespace Efika\Application\Dispatcher;
 
 
-use Efika\Application\Commands\ControllerLogicalException;
-use Efika\Di\DiService;
 use Efika\Http\HttpRequestInterface;
-use Efika\Http\HttpResponse;
 use Efika\Http\HttpResponseInterface;
 use Efika\Http\PhpEnvironment\Request;
-use Efika\Http\PhpEnvironment\Response;
-use Efika\View\View;
-use Efika\View\ViewEvent;
-use Efika\View\ViewRenderer;
-use Efika\View\ViewResolver;
 
 class MvcDispatcher implements DispatcherInterface{
 
@@ -66,8 +58,7 @@ class MvcDispatcher implements DispatcherInterface{
 
         $request = $httpMessage->getRequest();
         if(!($request instanceof HttpRequestInterface)){
-            $request = Request::establish();
-            $httpMessage = $request->getHttpMessage();
+            $request = $this->getClassAsService('Efika\Http\PhpEnvironment\Request')->makeInstance([$httpMessage]);
         }
 
         $response = $httpMessage->getResponse();
