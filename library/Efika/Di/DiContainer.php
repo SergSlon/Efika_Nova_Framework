@@ -84,4 +84,22 @@ class DiContainer implements DiContainerInterface
     {
         return $this->getService($name)->getInstance();
     }
+
+    /**
+     * Returns class as service. create service when service does not exist
+     * @param string|object $class
+     * @return DiService
+     */
+    public function getClassAsService($class)
+    {
+        $service = null;
+
+        try {
+            $service = $this->getService($class);
+        } catch (DiException $e) {
+            $service = $this->createService($class);
+        }
+
+        return $service;
+    }
 }
