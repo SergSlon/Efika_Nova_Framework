@@ -136,6 +136,23 @@ class DiService implements DiServiceInterface
     }
 
     /**
+     * Check whether instance exists
+     * @return bool
+     */
+    public function hasInstance(){
+        return is_object($this->instance);
+    }
+
+    /**
+     * Return an instance and creates instance with args when no instance exists
+     * @param array $args
+     * @return object|null
+     */
+    public function applyInstance($args=[]){
+        return $this->hasInstance() ? $this->getInstance() : $this->makeInstance();
+    }
+
+    /**
      * Invoke a method from object
      * @param $method
      * @param $object
