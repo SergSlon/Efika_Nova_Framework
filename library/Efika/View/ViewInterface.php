@@ -13,8 +13,18 @@ use Efika\EventManager\EventManagerInterface;
 interface ViewInterface extends EventManagerInterface
 {
 
-    public function addRenderStrategy($callable);
-    public function addResponseStrategy($callable);
-    public function render(ViewModelInterface $model);
+    const DEFAULT_VIEW_FILE_EXTENSION = 'php';
+    const DEFAULT_EVENT = 'Efika\View\ViewEvent';
+    const DEFAULT_RESOLVER = 'Efika\View\ViewResolver';
+    const DEFAULT_RENDERER = 'Efika\View\ViewRenderer';
+    const BEFORE_RENDER_VIEW = 'before.render';
+    const WHILE_RENDER_VIEW = 'while.render';
+    const AFTER_RENDER_VIEW = 'after.render';
+    const BEFORE_RESPONSE_VIEW = 'before.response';
+    const WHILE_RESPONSE_VIEW = 'while.response';
+    const AFTER_RESPONSE_VIEW = 'after.response';
+
+    public function render();
+    public function resolve();
 
 }

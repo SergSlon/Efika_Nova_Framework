@@ -9,6 +9,8 @@ namespace WebApplication;
 use Efika\Application\Dispatcher\CommandDispatcher;
 use Efika\Application\Dispatcher\DispatcherFactory;
 use Efika\Application\Router\Router;
+use Efika\Http\HttpMessageInterface;
+use Efika\Http\HttpResponseInterface;
 
 require_once __DIR__ . '/../../app/boot/bootstrap.php';
 
@@ -23,7 +25,7 @@ $routes = array(
         'route' => ':command/:params',
         'dispatchMode' => 'cmd',
     ],
-    '/(?P<controller>\w+)/(?P<actionId>\w+)/(?P<params>[a-zA-Z0-9_/]+)?' => [
+    '/(?P<controller>\w+)/(?P<actionId>\w+)(/(?P<params>[a-zA-Z0-9_/]+)?)?' => [
         'route' => [
             'route' => ':controller/:actionId/:params',
             'controller' => 'Ext{controller}Somthing' //ExtBLABLASomething
@@ -50,3 +52,12 @@ $dispatcher = DispatcherFactory::factory($router->getDispatchMode());
 $dispatcher->setAppNs(__NAMESPACE__);
 $dispatcher->setRouter($router);
 $dispatcher->execute();
+
+//var_dump(__FILE__ . __LINE__);
+$dispatcherResult = $dispatcher->getDispatchableResult();
+//var_dump($dispatcherResult);
+
+if($dispatcherResult instanceof HttpResponseInterface){
+    $http = $dispatcherResult;
+    $http->sendBody();
+}

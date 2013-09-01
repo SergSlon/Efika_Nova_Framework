@@ -15,7 +15,10 @@ class MyCommand extends DefaultCommand{
 
     public function dispatch()
     {
+        var_dump(__FILE__ . __LINE__);
         var_dump('hello world');
         var_dump($this->getParams());
+
+
     }
 }

@@ -28,6 +28,11 @@ class ViewModel implements ViewModelInterface{
      */
     private $view = null;
 
+    /**
+     * @var null
+     */
+    private $viewFileExtension = null;
+
 
     /**
      * Uses ViewResolverInterface to resolve und set the view path
@@ -51,11 +56,13 @@ class ViewModel implements ViewModelInterface{
      * Set a template. Name represents path/to/filename starting with view-path
      * and without file-extension
      * @param $file
+     * @param string $extension
      * @return mixed
      */
-    public function setView($file)
+    public function setView($file,$extension=ViewInterface::DEFAULT_VIEW_FILE_EXTENSION)
     {
         $this->view = $file;
+        $this->viewFileExtension = $extension;
     }
 
     /**
@@ -120,19 +127,38 @@ class ViewModel implements ViewModelInterface{
         $this->getVarCollection()->addChildren($id,$model);
     }
 
+    /**
+     * @param $name
+     * @param $arguments
+     */
     public function __call($name, $arguments)
     {
         // TODO: Call view helper
     }
 
+    /**
+     * @param $name
+     * @return mixed
+     */
     public function __get($name)
     {
         return $this->getVarCollection()->offsetGet($name);
     }
 
-    public function __set($name, $value)
-    {
-        $this->assignVar($name,$value);
+//    /**
+//     * @param $name
+//     * @param $value
+//     */
+//    public function __set($name, $value)
+//    {
+//        $this->assignVar($name,$value);
+//    }
+
+    /**
+     * @return array
+     */
+    public function toArray(){
+        return $this->getVarCollection()->getArrayCopy();
     }
 
 

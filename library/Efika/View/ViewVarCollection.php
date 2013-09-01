@@ -24,7 +24,7 @@ class ViewVarCollection extends \ArrayObject implements ViewVarCollectionInterfa
      */
     public function addChildren($id, ViewModelInterface $model){
         if(!is_string($id) || is_numeric($id)){
-            throw new Exception(sprintf('Given id ""'));
+            throw new Exception(sprintf('Given type "%s" of id is invalid',gettype($id)));
         }
 
         if(!$this->offsetExists('children')){

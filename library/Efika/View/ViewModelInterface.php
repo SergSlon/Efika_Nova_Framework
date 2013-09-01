@@ -12,6 +12,7 @@ namespace Efika\View;
  */
 interface ViewModelInterface
 {
+
     /**
      * Uses ViewResolverInterface to resolve und set the view path
      * @abstract
@@ -31,9 +32,10 @@ interface ViewModelInterface
      * and without file-extension
      * @abstract
      * @param $file
+     * @param string $extension
      * @return mixed
      */
-    public function setView($file);
+    public function setView($file,$extension=ViewInterface::DEFAULT_VIEW_FILE_EXTENSION);
 
     /**
      * @abstract

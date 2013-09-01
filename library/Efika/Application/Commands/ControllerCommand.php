@@ -9,10 +9,14 @@ namespace Efika\Application\Commands;
 
 use Efika\Application\Dispatcher\DispatchableInterface;
 use Efika\Application\Router\Router;
-use Efika\Application\Router\RouterInterface;
+use Efika\Http\HttpException;
 use Efika\Http\HttpRequestInterface;
 use Efika\Http\HttpResponseInterface;
+use Efika\Http\Response\HttpContent;
+use Efika\View\ViewInterface;
+use Efika\View\ViewModel;
 use Efika\View\ViewModelInterface;
+use Efika\View\ViewVarCollection;
 
 class ControllerCommand implements DispatchableInterface, ParameterInterface {
 
@@ -26,6 +30,7 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
     protected $router = null;
     protected $params = null;
     protected $plugins = null;
+    protected $view = null;
 
     protected function resolveActionMethod(){
         $actionId = $this->getActionId();
@@ -43,33 +48,43 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
      */
     public function dispatch()
     {
+        $view = $this->getView();
+        $response = $this->getResponse();
+        $message = $response->getHttpMessage();
+        $content = null;
+
+        try {
+            // Execute Action
+            $result = call_user_func(array($this,$this->resolveActionMethod()));
+
+//            var_dump(__FILE__ . __LINE__);
+//            var_dump($result);
 
 
-        // Execute Action
-        $result = call_user_func(array($this,$this->resolveActionMethod()));
+            if(is_array($result)){
+                $collection = new ViewVarCollection($result);
+                $result = new ViewModel();
+                $result->setVarCollection($collection);
+            }else if($result instanceof ViewModelInterface){
+                $view->setViewModel($result);
+                $view->resolve();
+                $content = new HttpContent($view->render());
+                $message->setContent($content);
+            }else if($result instanceof HttpContent){
+                $message->setContent($result);
+            }
+        } catch (HttpException $e){
+            $content = new HttpContent([$e->getMessage()]);
+            $message->setContent($content);
+            $response->setResponseCode('404');
 
-        var_dump(__FILE__ . __LINE__);
-        var_dump($result);
-        /**
-         * Result could be null, false, ViewModel or HttpResponse
-         *
-         *  - null = empty result, use ViewStrategy
-         *  - false = no ViewModel or HttpResponse, no output, use ErrorStrategy (400, Bad Request)
-         *  - ViewModel = process returned ViewModel, use ViewAwareStrategy
-         *  - Response = process returned Response, use ResponseAwareStrategy
-         *
-         * Strategy will resolved by output processor
-         */
+        } catch (\Exception $e){
+            $content = new HttpContent([$e->getMessage()]);
+            $message->setContent($content);
+            $response->setResponseCode('500');
+        }
 
-        /**
-         * ------------------------------------------------------------
-         */
-
-        /**
-         *
-         */
-
-        return $result;
+        return $response;
     }
 
     /**
@@ -169,7 +184,7 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
     }
 
     /**
-     * @return null
+     * @return \Efika\Http\HttpResponseInterface|null
      */
     public function getResponse()
     {
@@ -182,6 +197,22 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
     public function setResponse(HttpResponseInterface $response = null)
     {
         $this->response = $response;
+    }
+
+    /**
+     * @param \Efika\View\ViewInterface|null $view
+     */
+    public function setView(ViewInterface $view)
+    {
+        $this->view = $view;
+    }
+
+    /**
+     * @return \Efika\View\ViewInterface|null
+     */
+    public function getView()
+    {
+        return $this->view;
     }
 
 }

@@ -8,12 +8,17 @@ namespace WebApplication\Controller;
 
 
 use Efika\Application\Commands\ControllerCommand;
+use Efika\Http\HttpException;
+use Efika\Http\Response\HttpContent;
 
 class AnyController extends ControllerCommand{
 
     public function wayAction(){
-        var_dump(__FILE__ . __LINE__);
-        var_dump($this->getParams());
+//        var_dump(__FILE__ . __LINE__);
+//        var_dump($this->getParams());
+//        throw new HttpException('Hey, error!');
+//        return array('vars' => 'null');
+        return new HttpContent(['My content string!',"\n",'next line']);
     }
 
 }

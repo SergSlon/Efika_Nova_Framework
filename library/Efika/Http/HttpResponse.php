@@ -88,6 +88,7 @@ class HttpResponse implements HttpResponseInterface
      */
     public function __construct(HttpMessage $httpMessage)
     {
+        $httpMessage->setResponse($this);
         $this->httpMessage = $httpMessage;
     }
 

@@ -12,7 +12,7 @@ namespace Efika\View;
 interface ViewRendererInterface
 {
 
-    public function setView();
+    public function setResolvedView($view);
 
     /**
      * Renders given view
