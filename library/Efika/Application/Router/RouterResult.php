@@ -35,8 +35,8 @@ class RouterResult extends ArrayObject{
 
     /**
      * @param int $mode
+     * @throws RouterException
      * @return mixed
-     * @throws Exception
      */
     public function getMatchedRoute($mode = self::MODE_FIRST){
 

@@ -6,11 +6,6 @@
 
 namespace Efika\Application\Dispatcher;
 
-
-use Efika\Http\HttpRequestInterface;
-use Efika\Http\HttpResponseInterface;
-use Efika\Http\PhpEnvironment\Request;
-
 class MvcDispatcher implements DispatcherInterface{
 
     use ConcreteDispatcherTrait;
@@ -57,20 +52,18 @@ class MvcDispatcher implements DispatcherInterface{
                 [];
 
 
-        $renderer = $this->getClassAsService('Efika\View\ViewRenderer')->makeInstance();
-        $resolver = $this->getClassAsService('Efika\View\ViewResolver')->makeInstance();
+        $renderer = $this->getClassAsService('Efika\View\ViewRenderer')->applyInstance();
+        $resolver = $this->getClassAsService('Efika\View\ViewResolver')->applyInstance();
 
-        $viewEventService = $this->getClassAsService('Efika\View\ViewEvent');
-        $viewEvent = $viewEventService->makeInstance();
+        $viewEvent =  $this->getClassAsService('Efika\View\ViewEvent')->applyInstance();
         $viewEvent->setRenderer($renderer);
         $viewEvent->setResolver($resolver);
 
-        $viewService = $this->getClassAsService('Efika\View\View');
-        $view = $viewService->getInstance() ? $viewService->getInstance() : $viewService->makeInstance();
+        $view = $this->getClassAsService('Efika\View\View')->applyInstance();
 
-        var_dump(__FILE__ . __LINE__);
-        var_dump($view);
-        exit();
+//        var_dump(__FILE__ . __LINE__);
+//        var_dump($view);
+//        exit();
 
 //        $view->setEventObject($viewEvent);
 

@@ -87,12 +87,11 @@ class Router implements RouterInterface
      */
     protected function matcherFallback($request, RouterResult $result, $idDelimiter = ':')
     {
-
         foreach ($this->getRoutes() as $pattern => $routeArray) {
 
             $matches = [];
 
-            $route = $routeArray['route'];
+            $route = array_key_exists('route',$routeArray) ? $routeArray['route'] : [];
 
             $matched = preg_match(
                 '#^' . $pattern . '$#i',

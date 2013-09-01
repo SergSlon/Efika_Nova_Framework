@@ -10,9 +10,25 @@ return [
     ],
     'events' => [
         'application.init' => function ($e) {
-//            var_dump('init event from production config');
-//            echo '<pre>';
-//            print_r($e->getArguments());
+            //do something
         }
-    ]
+    ],
+    'router' => [
+        '/cmd/(?P<command>\w+)' => [
+            'route' => [
+                'params' => 'user/foo/group/bar'
+            ],
+            'dispatchMode' => 'cmd',
+        ],
+        '/cmd/(?P<command>\w+)/(?P<params>[a-zA-Z0-9_/\-]+)' => [
+            'route' => ':command/:params',
+            'dispatchMode' => 'cmd',
+        ],
+        '/(?P<controller>\w+)/(?P<actionId>\w+)(/(?P<params>[a-zA-Z0-9_/]+)?)?' => [
+            'route' => [
+                'route' => ':controller/:actionId/:params',
+            ],
+            'dispatchMode' => 'mvc',
+        ]
+    ],
 ];

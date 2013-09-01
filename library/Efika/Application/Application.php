@@ -9,6 +9,7 @@ namespace Efika\Application;
 use Efika\Common\Logger;
 use Efika\Common\SingletonTrait;
 use Efika\Config\Config;
+use Efika\Di\DiContainer;
 use Efika\EventManager\EventManagerTrait;
 use Efika\EventManager\EventResponse;
 use InvalidArgumentException;
@@ -57,11 +58,6 @@ class Application implements ApplicationInterface
     private $applicationConfig = [];
 
     /**
-     * @var array
-     */
-    private $customEventObjects = [];
-
-    /**
      * @return Application
      */
     public static function getInstance()
@@ -76,6 +72,9 @@ class Application implements ApplicationInterface
     {
         $this->setLogger(Logger::getInstance()->scope(self::OBJECT_ID));
         $this->setDefaultEventClass('Efika\Application\ApplicationEvent');
+        $di = DiContainer::getInstance();
+        $eventObject = $di->getClassAsService('Efika\Application\ApplicationEvent')->applyInstance();
+        $this->setEventObject($eventObject);
 
     }
 
@@ -125,34 +124,6 @@ class Application implements ApplicationInterface
     }
 
     /**
-     * @return array
-     */
-    public function getCustomEventObjects()
-    {
-        return $this->customEventObjects;
-    }
-
-    /**
-     * @param $event
-     * @return bool
-     */
-    public function hasCustomEventObject($event)
-    {
-        return array_key_exists($event, $this->getCustomEventObjects());
-    }
-
-    /**
-     * @param $event
-     * @param \Efika\Application\ApplicationEvent $object
-     * @internal param string $handler
-     * @return mixed
-     */
-    public function addCustomEventObject($event, ApplicationEvent $object)
-    {
-        $this->customEventObjects[$event] = $object;
-    }
-
-    /**
      * @param $id
      * @param $arguments
      * @param $callback
@@ -160,8 +131,7 @@ class Application implements ApplicationInterface
     public function executeApplicationEvent($id, $arguments, $callback)
     {
 
-        $default = $this->getDefaultEventClass();
-        $eventObject = $this->hasCustomEventObject($id) ? $this->customEventObjects[$id] : new $default;
+        $eventObject = $this->getEventObject();
 
         $eventObject->setName($id);
         $eventObject->setTarget($this);

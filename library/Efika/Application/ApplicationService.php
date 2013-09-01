@@ -9,6 +9,7 @@ namespace Efika\Application;
 
 use Efika\Application\Router\Router;
 use Efika\Common\Logger;
+use Efika\Di\DiContainer;
 use Efika\EventManager\EventHandlerAggregateInterface;
 
 /**
@@ -95,7 +96,18 @@ class ApplicationService implements ApplicationServiceInterface, EventHandlerAgg
      * @param ApplicationEvent $event
      */
     public function onApplicationInit(ApplicationEvent $event){
-        $this->getLogger()->addMessage('Init Application by arguments');
+        $di = $event->getDiContainer();
+        $config = $event->getTarget()->getConfig();
+        $routerConfig = $config->offsetGet('router')->toArray();
+
+        if($config->offsetExists('appNs')){
+            $event->setAppNs($config->offsetGet('appNs'));
+        }
+
+        $router = $di->getClassAsService('Efika\Application\Router\Router')->applyInstance();
+        $router->setRoutes($routerConfig);
+
+        $event->setRouter($router);
     }
 
     /**

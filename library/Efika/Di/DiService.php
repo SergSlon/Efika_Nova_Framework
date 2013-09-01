@@ -149,7 +149,7 @@ class DiService implements DiServiceInterface
      * @return object|null
      */
     public function applyInstance($args=[]){
-        return $this->hasInstance() ? $this->getInstance() : $this->makeInstance();
+        return $this->hasInstance() ? $this->getInstance() : $this->makeInstance($args);
     }
 
     /**

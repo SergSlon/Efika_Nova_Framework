@@ -47,8 +47,6 @@ class CommandDispatcher implements DispatcherInterface
         //Validate required interfaces for dispatchable
         $this->validateRequiredInterfaces($dispatchableService);
 
-
-
         $params =
             $result->offsetExists('params') ?
                 $this->getRouter()->makeParameters($result->offsetGet('params')) :

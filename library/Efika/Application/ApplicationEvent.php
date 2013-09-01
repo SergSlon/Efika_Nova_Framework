@@ -26,6 +26,17 @@ class ApplicationEvent extends Event{
      * @var Router
      */
     public $router = 'Efika\Application\Router\Router';
+
+    /**
+     * @var Router
+     */
+    public $response = 'Efika\Application\Router\Router';
+
+    /**
+     * @var Router
+     */
+    public $request = 'Efika\Application\Router\Router';
+
     /**
      * @var \ArrayObject
      */
@@ -33,7 +44,11 @@ class ApplicationEvent extends Event{
     /**
      * @var DiContainer
      */
-    public $diContainer = 'Efika\Di\DiContainer';
+    public $diContainer = null;
+
+    public $dispatcher = null;
+
+    public $appNs = null;
 
     /**
      * @var array
@@ -43,7 +58,7 @@ class ApplicationEvent extends Event{
     /**
      *
      */
-    function __construct()
+    public function __construct()
     {
         $this->setDiContainer(DiContainer::getInstance());
     }
@@ -70,7 +85,7 @@ class ApplicationEvent extends Event{
      */
     public function setRouter($router)
     {
-        $this->router = $this->getDiContainer()->createService($router)->makeInstance();
+        $this->router = $router;
     }
 
     /**
@@ -120,6 +135,70 @@ class ApplicationEvent extends Event{
     public function setConfig($config)
     {
         $this->config = $config;
+    }
+
+    /**
+     * @param null $dispatcher
+     */
+    public function setDispatcher($dispatcher)
+    {
+        $this->dispatcher = $dispatcher;
+    }
+
+    /**
+     * @return null
+     */
+    public function getDispatcher()
+    {
+        return $this->dispatcher;
+    }
+
+    /**
+     * @param \Efika\Application\Router\Router $request
+     */
+    public function setRequest($request)
+    {
+        $this->request = $request;
+    }
+
+    /**
+     * @return \Efika\Application\Router\Router
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * @param \Efika\Application\Router\Router $response
+     */
+    public function setResponse($response)
+    {
+        $this->response = $response;
+    }
+
+    /**
+     * @return \Efika\Application\Router\Router
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     * @param null $appNs
+     */
+    public function setAppNs($appNs)
+    {
+        $this->appNs = $appNs;
+    }
+
+    /**
+     * @return null
+     */
+    public function getAppNs()
+    {
+        return $this->appNs;
     }
 
 }

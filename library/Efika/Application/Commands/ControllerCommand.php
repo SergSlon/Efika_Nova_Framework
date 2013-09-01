@@ -57,14 +57,13 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
             // Execute Action
             $result = call_user_func(array($this,$this->resolveActionMethod()));
 
-//            var_dump(__FILE__ . __LINE__);
-//            var_dump($result);
-
-
             if(is_array($result)){
                 $collection = new ViewVarCollection($result);
                 $result = new ViewModel();
                 $result->setVarCollection($collection);
+            }else if(is_string($result)){
+                $content = new HttpContent([$result]);
+                $message->setContent($content);
             }else if($result instanceof ViewModelInterface){
                 $view->setViewModel($result);
                 $view->resolve();
@@ -76,7 +75,8 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
         } catch (HttpException $e){
             $content = new HttpContent([$e->getMessage()]);
             $message->setContent($content);
-            $response->setResponseCode('404');
+            $code = $e->getCode() != 0 ? $e->getCode() : 404;
+            $response->setResponseCode($code);
 
         } catch (\Exception $e){
             $content = new HttpContent([$e->getMessage()]);

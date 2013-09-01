@@ -5,10 +5,17 @@
  */
 
 return [
+    'appNs' => 'WebApplication',
     'autoloader' => [
         'Efika\\' => dirname(__FILE__) . '/../../library/Efika/',
     ],
-    'router' => [],
+    'router' => [
+        '(/)?' => [
+            'controller' => 'index',
+            'actionId' => 'index',
+            'dispatchMode' => 'mvc',
+        ],
+    ],
     'modules' => [],
     'events' => [],
 ];

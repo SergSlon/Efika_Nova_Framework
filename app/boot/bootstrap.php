@@ -27,10 +27,12 @@ $app = WebApp::getInstance();
 $app->setConfig($config);
 $app->configure();
 
-$app->registerService('ApplicationService', new ApplicationService());
+//$app->registerService('ApplicationService', new ApplicationService());
+$app->registerService('HttpApplicationService', new \Efika\Application\Services\HttpApplicationService());
 $app->registerService('CustomApplicationService', new CustomApplicationService());
 
-$app->connectService('ApplicationService');
+//$app->connectService('ApplicationService');
+$app->connectService('HttpApplicationService');
 $app->connectService('CustomApplicationService');
 
 $app->execute();

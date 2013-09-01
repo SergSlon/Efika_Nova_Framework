@@ -35,7 +35,7 @@ $routes = array(
     '/(?P<controller>\w+)/(?P<actionId>\w+)(/(?P<params>[a-zA-Z0-9_/]+)?)?' => [
         'route' => [
             'route' => ':controller/:actionId/:params',
-            'controller' => 'Ext{controller}Somthing' //ExtBLABLASomething
+//            'controller' => 'Ext{controller}Somthing' //ExtBLABLASomething
         ],
         'dispatchMode' => 'mvc',
     ]
@@ -44,30 +44,30 @@ $di = DiContainer::getInstance();
 
 //app initHttp
 $httpMessageService = $di->getClassAsService('Efika\Http\HttpMessage');
-$httpMessage = $httpMessageService->makeInstance();
+$httpMessage = $httpMessageService->applyInstance();
 
 $request = $httpMessage->getRequest();
 if(!($request instanceof HttpRequestInterface)){
-    $request = $di->getClassAsService('Efika\Http\PhpEnvironment\Request')->makeInstance([$httpMessage]);
+    $request = $di->getClassAsService('Efika\Http\PhpEnvironment\Request')->applyInstance([$httpMessage]);
 }
 
 $response = $httpMessage->getResponse();
 
 if(!($response instanceof HttpResponseInterface)){
-    $response = $di->getClassAsService('Efika\Http\PhpEnvironment\Response')->makeInstance([$httpMessage]);
+    $response = $di->getClassAsService('Efika\Http\PhpEnvironment\Response')->applyInstance([$httpMessage]);
 }
 
 //try to append view
-$view = $di->getClassAsService('Efika\View\View')->makeInstance();
-$view->attachEventHandler(View::BEFORE_RESOLVE_VIEW, function($e){
-    var_dump('YOLO!!!');
-});
+//$view = $di->getClassAsService('Efika\View\View')->applyInstance();
+//$view->attachEventHandler(View::BEFORE_RESOLVE_VIEW, function($e){
+//    var_dump('YOLO!!!');
+//});
 
 
 //init router
 //Efika\Application\Router\Router
 //$router = new Router();
-$router = $di->getClassAsService('Efika\Application\Router\Router')->makeInstance();
+$router = $di->getClassAsService('Efika\Application\Router\Router')->applyInstance();
 $router->setRoutes($routes);
 //var_dump($router->match('/foo/1w3435/view'));
 //var_dump($router->match('/foo/show/value'));
