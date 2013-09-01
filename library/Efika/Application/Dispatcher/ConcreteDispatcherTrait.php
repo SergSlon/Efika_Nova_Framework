@@ -12,6 +12,8 @@ use Efika\Application\Router\RouterResult;
 use Efika\Di\DiContainer;
 use Efika\Di\DiException;
 use Efika\Di\DiService;
+use Efika\Http\PhpEnvironment\Request;
+use Efika\Http\PhpEnvironment\Response;
 
 trait ConcreteDispatcherTrait {
 
@@ -46,6 +48,16 @@ trait ConcreteDispatcherTrait {
      * @var RouterInterface
      */
     protected $router = null;
+
+    /**
+     * @var Response
+     */
+    protected $response = null;
+
+    /**
+     * @var Request
+     */
+    protected $request = null;
 
     /**
      * @var array
@@ -86,6 +98,38 @@ trait ConcreteDispatcherTrait {
     public function setRouter(RouterInterface $router)
     {
         $this->router = $router;
+    }
+
+    /**
+     * @param \Efika\Http\PhpEnvironment\Request $request
+     */
+    public function setRequest($request)
+    {
+        $this->request = $request;
+    }
+
+    /**
+     * @return \Efika\Http\PhpEnvironment\Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * @param \Efika\Http\PhpEnvironment\Response $response
+     */
+    public function setResponse($response)
+    {
+        $this->response = $response;
+    }
+
+    /**
+     * @return \Efika\Http\PhpEnvironment\Response
+     */
+    public function getResponse()
+    {
+        return $this->response;
     }
 
     /**

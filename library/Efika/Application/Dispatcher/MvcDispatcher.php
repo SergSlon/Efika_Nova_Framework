@@ -39,6 +39,9 @@ class MvcDispatcher implements DispatcherInterface{
     protected function createDispatchable()
     {
 
+        $response = $this->getResponse();
+        $request = $this->getRequest();
+
         $result = $this->getRouter()->getResult();
         $dispatchableService = $this->getDispatchableService($result);
         //set additional data like request, result, response
@@ -53,19 +56,6 @@ class MvcDispatcher implements DispatcherInterface{
                 $this->getRouter()->makeParameters($result->offsetGet('params')) :
                 [];
 
-        $httpMessageService = $this->getClassAsService('Efika\Http\HttpMessage');
-        $httpMessage = $httpMessageService->makeInstance();
-
-        $request = $httpMessage->getRequest();
-        if(!($request instanceof HttpRequestInterface)){
-            $request = $this->getClassAsService('Efika\Http\PhpEnvironment\Request')->makeInstance([$httpMessage]);
-        }
-
-        $response = $httpMessage->getResponse();
-
-        if(!($response instanceof HttpResponseInterface)){
-            $response = $this->getClassAsService('Efika\Http\PhpEnvironment\Response')->makeInstance([$httpMessage]);
-        }
 
         $renderer = $this->getClassAsService('Efika\View\ViewRenderer')->makeInstance();
         $resolver = $this->getClassAsService('Efika\View\ViewResolver')->makeInstance();
