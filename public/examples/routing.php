@@ -17,6 +17,7 @@ use Efika\Http\HttpMessageInterface;
 use Efika\Http\HttpRequestInterface;
 use Efika\Http\HttpResponseInterface;
 use Efika\Http\PhpEnvironment\Request;
+use Efika\View\View;
 
 require_once __DIR__ . '/../../app/boot/bootstrap.php';
 
@@ -39,41 +40,34 @@ $routes = array(
         'dispatchMode' => 'mvc',
     ]
 );
-
-function getClassAsService($class)
-{
-    $di = DiContainer::getInstance();
-
-    $service = null;
-
-    try {
-        $service = $di->getService($class);
-    } catch (DiException $e) {
-        $service = $di->createService($class);
-    }
-
-    return $service;
-}
+$di = DiContainer::getInstance();
 
 //app initHttp
-$httpMessageService = getClassAsService('Efika\Http\HttpMessage');
+$httpMessageService = $di->getClassAsService('Efika\Http\HttpMessage');
 $httpMessage = $httpMessageService->makeInstance();
 
 $request = $httpMessage->getRequest();
 if(!($request instanceof HttpRequestInterface)){
-    $request = getClassAsService('Efika\Http\PhpEnvironment\Request')->makeInstance([$httpMessage]);
+    $request = $di->getClassAsService('Efika\Http\PhpEnvironment\Request')->makeInstance([$httpMessage]);
 }
 
 $response = $httpMessage->getResponse();
 
 if(!($response instanceof HttpResponseInterface)){
-    $response = getClassAsService('Efika\Http\PhpEnvironment\Response')->makeInstance([$httpMessage]);
+    $response = $di->getClassAsService('Efika\Http\PhpEnvironment\Response')->makeInstance([$httpMessage]);
 }
+
+//try to append view
+$view = $di->getClassAsService('Efika\View\View')->makeInstance();
+$view->attachEventHandler(View::BEFORE_RESOLVE_VIEW, function($e){
+    var_dump('YOLO!!!');
+});
+
 
 //init router
 //Efika\Application\Router\Router
 //$router = new Router();
-$router = getClassAsService('Efika\Application\Router\Router')->makeInstance();
+$router = $di->getClassAsService('Efika\Application\Router\Router')->makeInstance();
 $router->setRoutes($routes);
 //var_dump($router->match('/foo/1w3435/view'));
 //var_dump($router->match('/foo/show/value'));

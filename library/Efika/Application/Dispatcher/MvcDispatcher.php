@@ -60,12 +60,19 @@ class MvcDispatcher implements DispatcherInterface{
         $renderer = $this->getClassAsService('Efika\View\ViewRenderer')->makeInstance();
         $resolver = $this->getClassAsService('Efika\View\ViewResolver')->makeInstance();
 
-        $viewEvent = $this->getClassAsService('Efika\View\ViewEvent')->makeInstance();
+        $viewEventService = $this->getClassAsService('Efika\View\ViewEvent');
+        $viewEvent = $viewEventService->makeInstance();
         $viewEvent->setRenderer($renderer);
         $viewEvent->setResolver($resolver);
 
-        $view = $this->getClassAsService('Efika\View\View')->makeInstance();
-        $view->setEventObject($viewEvent);
+        $viewService = $this->getClassAsService('Efika\View\View');
+        $view = $viewService->getInstance() ? $viewService->getInstance() : $viewService->makeInstance();
+
+        var_dump(__FILE__ . __LINE__);
+        var_dump($view);
+        exit();
+
+//        $view->setEventObject($viewEvent);
 
         $dispatchableService->inject('setRouter',['router' => $this->getRouter()]);
         $dispatchableService->inject('setParams',['params' => $params]);

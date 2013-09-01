@@ -198,21 +198,11 @@ trait ConcreteDispatcherTrait {
 
     /**
      * @param $class
-     * @return mixed
+     * @return DiService
      */
     protected function getClassAsService($class)
     {
-        $di = DiContainer::getInstance();
-
-        $service = null;
-
-        try {
-            $service = $di->getService($class);
-        } catch (DiException $e) {
-            $service = $di->createService($class);
-        }
-
-        return $service;
+        return DiContainer::getInstance()->getClassAsService($class);
     }
 
     /**
