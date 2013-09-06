@@ -11,5 +11,7 @@ namespace Efika\View;
  */
 interface ViewHelperInterface
 {
-
+    public function init($args);
+    public function execute();
+    public function __invoke();
 }

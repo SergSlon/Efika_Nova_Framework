@@ -14,7 +14,7 @@ class IndexController extends ControllerCommand{
 
     public function indexAction(){
 //        return new HttpContent(['Hello World',"\n",'Welcome!']);
-        return 'hello world!';
+//        return 'hello world!';
     }
 
 }

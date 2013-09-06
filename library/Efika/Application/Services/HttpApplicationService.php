@@ -52,7 +52,9 @@ class HttpApplicationService extends ApplicationService{
         $response = $event->getResponse();
         $query = $request->getQuery();
 
-        $route = array_key_exists('r', $query) && strlen($query['r']) > 0 ? $query['r'] : null;
+
+
+        $route = is_array($query) && array_key_exists('r', $query) && strlen($query['r']) > 0 ? $query['r'] : null;
         $router->match($route);
 
         $dispatcher = DispatcherFactory::factory($router->getDispatchMode());

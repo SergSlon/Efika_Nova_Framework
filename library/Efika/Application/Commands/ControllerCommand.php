@@ -25,12 +25,14 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
 
     protected $actionId = null;
     protected $controllerId = null;
+    protected $viewId = null;
     protected $request = null;
     protected $response = null;
     protected $router = null;
     protected $params = null;
     protected $plugins = null;
     protected $view = null;
+    protected $defaultViewPath = null;
 
     protected function resolveActionMethod(){
         $actionId = $this->getActionId();
@@ -43,44 +45,75 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
         return $actionMethod;
     }
 
+    protected function generateViewId(){
+        return sprintf('%s/%s', $this->getControllerId() , $this->getActionId());
+    }
+
     /**
      * @return ViewModelInterface|HttpResponseInterface|false|null
      */
     public function dispatch()
     {
-        $view = $this->getView();
+
         $response = $this->getResponse();
         $message = $response->getHttpMessage();
-        $content = null;
 
         try {
             // Execute Action
             $result = call_user_func(array($this,$this->resolveActionMethod()));
 
-            if(is_array($result)){
-                $collection = new ViewVarCollection($result);
+            //process result
+            if(is_array($result) || $result === null){
+                $collection = new ViewVarCollection($result === null ? array() : $result);
                 $result = new ViewModel();
                 $result->setVarCollection($collection);
-            }else if(is_string($result)){
-                $content = new HttpContent([$result]);
-                $message->setContent($content);
-            }else if($result instanceof ViewModelInterface){
+                $result->setViewPath($this->getDefaultViewPath());
+
+                $viewId = $this->getViewId();
+
+                if($viewId === null){
+                    $this->setViewId($this->generateViewId());
+                    $viewId = $this->getViewId();
+                }
+
+                $result->setView($viewId);
+            }
+
+            if(is_string($result)){
+                $result = new HttpContent([$result]);
+            }
+
+            $view = $this->getView();
+            if($result instanceof ViewModelInterface){
                 $view->setViewModel($result);
-                $view->resolve();
-                $content = new HttpContent($view->render());
-                $message->setContent($content);
-            }else if($result instanceof HttpContent){
+            }
+
+            if($view->getViewModel() instanceof ViewModelInterface){
+                $viewEventResponse = $view->execute();
+                $result = new HttpContent([$viewEventResponse->getEvent()->getRenderedContent()]);
+            }
+
+            if($result instanceof HttpContent){
                 $message->setContent($result);
             }
+
+            if($result instanceof HttpResponseInterface){
+                $this->setResponse($result);
+                $message->setResponse($this->getResponse());
+            }
+
         } catch (HttpException $e){
-            $content = new HttpContent([$e->getMessage()]);
-            $message->setContent($content);
+
+            $message->setContent(
+                new HttpContent([$e->getMessage()])
+            );
             $code = $e->getCode() != 0 ? $e->getCode() : 404;
             $response->setResponseCode($code);
 
         } catch (\Exception $e){
-            $content = new HttpContent([$e->getMessage()]);
-            $message->setContent($content);
+            $message->setContent(
+                new HttpContent([$e->getMessage()])
+            );
             $response->setResponseCode('500');
         }
 
@@ -184,6 +217,22 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
     }
 
     /**
+     * @param null $viewId
+     */
+    public function setViewId($viewId)
+    {
+        $this->viewId = $viewId;
+    }
+
+    /**
+     * @return null
+     */
+    public function getViewId()
+    {
+        return $this->viewId;
+    }
+
+    /**
      * @return \Efika\Http\HttpResponseInterface|null
      */
     public function getResponse()
@@ -213,6 +262,45 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
     public function getView()
     {
         return $this->view;
+    }
+
+    /**
+     * Will set while resolve controller
+     * @param null|string $defaultViewPath
+     * @return bool
+     */
+    public function setDefaultViewPath($defaultViewPath)
+    {
+        if($this->defaultViewPath === null){
+            $this->defaultViewPath = $defaultViewPath;
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * @return null
+     */
+    public function getDefaultViewPath()
+    {
+        if($this->defaultViewPath === null){
+
+            $path = (new \ReflectionClass($this))->getFileName();
+            $previousPath = null;
+            $viewPath = null;
+
+            while(($path = dirname($path)) !== $previousPath){
+                $previousPath = $path;
+                $possibleViewPath = sprintf('%s/%s', $path, ViewInterface::DEFAULT_VIEW_FOLDER);
+                if(file_exists($possibleViewPath)){
+                    $viewPath = $possibleViewPath;
+                    break;
+                }
+            }
+            $this->setDefaultViewPath($viewPath);
+        }
+        return $this->defaultViewPath;
     }
 
 }

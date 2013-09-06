@@ -13,6 +13,8 @@ namespace Efika\View;
 interface ViewModelInterface
 {
 
+    public function viewHelper($id);
+
     /**
      * Uses ViewResolverInterface to resolve und set the view path
      * @abstract
@@ -65,7 +67,7 @@ interface ViewModelInterface
     /**
      * If no varCollection has been set, the varCollection will get by DI
      * @abstract
-     * @return mixed
+     * @return ViewVarCollection
      */
     public function getVarCollection();
 

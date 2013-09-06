@@ -7,6 +7,8 @@
 namespace Efika\View;
 
 
+use Efika\Di\DiContainer;
+use Efika\Di\DiException;
 use Exception;
 
 class ViewModel implements ViewModelInterface{
@@ -33,6 +35,15 @@ class ViewModel implements ViewModelInterface{
      */
     private $viewFileExtension = null;
 
+    public function viewHelper($id){
+        $di = DiContainer::getInstance();
+        try {
+            $service = $di->getService($id);
+            return $service->applyInstance();
+        } catch(DiException $e){
+            throw new ViewHelperException(sprintf('Unable to load Helper "%s"', $id),0,$e);
+        }
+    }
 
     /**
      * Uses ViewResolverInterface to resolve und set the view path

@@ -15,7 +15,7 @@ interface ViewResolverInterface
     /**
      * resolves template in path
      * @abstract
-     * @param $template
+     * @param $view
      * @param $path
      * @return mixed
      */

@@ -17,8 +17,9 @@ interface ViewRendererInterface
     /**
      * Renders given view
      * @abstract
+     * @param ViewModelInterface $viewModel
      * @return mixed
      */
-    public function render();
+    public function render(ViewModelInterface $viewModel);
 
 }

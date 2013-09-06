@@ -6,7 +6,10 @@
 
 namespace Efika\Application\Dispatcher;
 
-class MvcDispatcher implements DispatcherInterface{
+use Efika\Loader\StandardAutoloader;
+
+class MvcDispatcher implements DispatcherInterface
+{
 
     use ConcreteDispatcherTrait;
 
@@ -55,11 +58,12 @@ class MvcDispatcher implements DispatcherInterface{
         $renderer = $this->getClassAsService('Efika\View\ViewRenderer')->applyInstance();
         $resolver = $this->getClassAsService('Efika\View\ViewResolver')->applyInstance();
 
-        $viewEvent =  $this->getClassAsService('Efika\View\ViewEvent')->applyInstance();
+        $viewEvent = $this->getClassAsService('Efika\View\ViewEvent')->applyInstance();
         $viewEvent->setRenderer($renderer);
         $viewEvent->setResolver($resolver);
 
-        $view = $this->getClassAsService('Efika\View\View')->applyInstance();
+        $view = $this->getClassAsService('Efika\View\View')
+            ->applyInstance();
 
 //        var_dump(__FILE__ . __LINE__);
 //        var_dump($view);
@@ -67,13 +71,13 @@ class MvcDispatcher implements DispatcherInterface{
 
 //        $view->setEventObject($viewEvent);
 
-        $dispatchableService->inject('setRouter',['router' => $this->getRouter()]);
-        $dispatchableService->inject('setParams',['params' => $params]);
-        $dispatchableService->inject('setActionId',['actionId' => $result->offsetGet('actionId')]);
-        $dispatchableService->inject('setControllerId',['controllerId' => $result->offsetGet($this->getClassParamKeyword())]);
-        $dispatchableService->inject('setView',['view' => $view]);
-        $dispatchableService->inject('setRequest',['response' => $request]);
-        $dispatchableService->inject('setResponse',['request' => $response]);
+        $dispatchableService->inject('setRouter', ['router' => $this->getRouter()])
+            ->inject('setParams', ['params' => $params])
+            ->inject('setActionId', ['actionId' => $result->offsetGet('actionId')])
+            ->inject('setControllerId', ['controllerId' => $result->offsetGet($this->getClassParamKeyword())])
+            ->inject('setView', ['view' => $view])
+            ->inject('setRequest', ['response' => $request])
+            ->inject('setResponse', ['request' => $response]);
 
         return $dispatchableService;
 

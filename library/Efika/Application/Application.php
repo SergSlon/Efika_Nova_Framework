@@ -12,6 +12,7 @@ use Efika\Config\Config;
 use Efika\Di\DiContainer;
 use Efika\EventManager\EventManagerTrait;
 use Efika\EventManager\EventResponse;
+use Efika\EventManager\EventResponseInterface;
 use InvalidArgumentException;
 
 /**
@@ -131,7 +132,8 @@ class Application implements ApplicationInterface
     public function executeApplicationEvent($id, $arguments, $callback)
     {
 
-        $eventObject = $this->getEventObject();
+        $previousEventResponse = $this->getPreviousEventResponse();
+        $eventObject = $previousEventResponse !== null && $previousEventResponse instanceof EventResponseInterface ? $previousEventResponse->getEvent() : $this->getEventObject();
 
         $eventObject->setName($id);
         $eventObject->setTarget($this);

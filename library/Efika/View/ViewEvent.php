@@ -15,7 +15,8 @@ class ViewEvent extends Event {
     private $viewModel = null;
     private $resolver = null;
     private $renderer = null;
-    private $router = null;
+    private $resolvedView = null;
+    private $renderedContent = null;
 
     /**
      * @param \Efika\View\ViewRendererInterface|null $renderStrategy
@@ -26,7 +27,7 @@ class ViewEvent extends Event {
     }
 
     /**
-     * @return null
+     * @return ViewRendererInterface
      */
     public function getRenderer()
     {
@@ -42,7 +43,7 @@ class ViewEvent extends Event {
     }
 
     /**
-     * @return null
+     * @return ViewResolverInterface
      */
     public function getResolver()
     {
@@ -50,28 +51,51 @@ class ViewEvent extends Event {
     }
 
     /**
-     * @param \Efika\Application\Router\RouterInterface|null $router
+     * @param \Efika\View\ViewModelInterface|null $viewModel
      */
-    public function setRouter(RouterInterface $router)
+    public function setViewModel(ViewModelInterface $viewModel)
     {
-        $this->router = $router;
+        $this->viewModel = $viewModel;
     }
 
     /**
-     * @return null
-     */
-    public function getRouter()
-    {
-        return $this->router;
-    }
-
-    /**
-     * @return null
+     * @return ViewModelInterface
      */
     public function getViewModel()
     {
-        return $this->getTarget()->getViewModel();
+        return $this->viewModel;
     }
 
+    /**
+     * @param null $renderedContent
+     */
+    public function setRenderedContent($renderedContent)
+    {
+        $this->renderedContent = $renderedContent;
+    }
+
+    /**
+     * @return null
+     */
+    public function getRenderedContent()
+    {
+        return $this->renderedContent;
+    }
+
+    /**
+     * @param null $resolvedView
+     */
+    public function setResolvedView($resolvedView)
+    {
+        $this->resolvedView = $resolvedView;
+    }
+
+    /**
+     * @return null
+     */
+    public function getResolvedView()
+    {
+        return $this->resolvedView;
+    }
 
 }
