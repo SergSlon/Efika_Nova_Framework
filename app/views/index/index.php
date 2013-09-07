@@ -5,3 +5,5 @@
  */
 
 echo 'hello world!!!!';
+
+var_dump($vars);

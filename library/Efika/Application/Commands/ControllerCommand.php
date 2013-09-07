@@ -64,10 +64,20 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
 
             //process result
             if(is_array($result) || $result === null){
-                $collection = new ViewVarCollection($result === null ? array() : $result);
                 $result = new ViewModel();
+            }
+
+            if(is_string($result)){
+                $result = new HttpContent([$result]);
+            }
+
+            $view = $this->getView();
+            if($result instanceof ViewModelInterface){
+                $collection = new ViewVarCollection($result === null ? array() : $result);
                 $result->setVarCollection($collection);
-                $result->setViewPath($this->getDefaultViewPath());
+                if($result->getViewPath() === null){
+                    $result->setViewPath($this->getDefaultViewPath());
+                }
 
                 $viewId = $this->getViewId();
 
@@ -77,14 +87,6 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
                 }
 
                 $result->setView($viewId);
-            }
-
-            if(is_string($result)){
-                $result = new HttpContent([$result]);
-            }
-
-            $view = $this->getView();
-            if($result instanceof ViewModelInterface){
                 $view->setViewModel($result);
             }
 
