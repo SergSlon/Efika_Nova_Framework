@@ -31,7 +31,23 @@ class ViewResolver implements ViewResolverInterface, ViewEngineAwareInterface{
         return $this->engine;
     }
 
-    protected function fallbackEngine($view, $path){
+    /**
+     * @param $viewModel ViewModel
+     * @return string
+     * @throws ViewResolverException
+     */
+    protected function fallbackEngine($viewModel){
+
+        $path = $viewModel->getViewPath();
+        $view = $viewModel->getView();
+
+        $childs = $viewModel->getChilds();
+
+        if($childs > 1){
+            foreach($childs as $childModel){
+                $this->resolve($childModel);
+            }
+        }
 
         $filename = sprintf('%s/%s.%s', $path, $view, ViewInterface::DEFAULT_VIEW_FILE_EXTENSION);
 
@@ -39,22 +55,21 @@ class ViewResolver implements ViewResolverInterface, ViewEngineAwareInterface{
             throw new ViewResolverException(sprintf('Can not resolve view "%s"', $filename));
         }
 
-        return $filename;
+        $viewModel->setResolvedViewPath($filename);
     }
 
     /**
      * resolves template in path
-     * @param $view
-     * @param $path
+     * @param $viewModel ViewModel
      * @return mixed
      */
-    public function resolve($view, $path)
+    public function resolve($viewModel)
     {
         $engine = $this->getEngine();
         if($engine !== null){
-            return $engine->resolve($view, $path);
+            return $engine->resolve($viewModel);
         }
 
-        return $this->fallbackEngine($view,$path);
+        $this->fallbackEngine($viewModel);
     }
 }

@@ -7,14 +7,19 @@
 namespace Efika\View;
 
 
+use Efika\Common\Collection;
+use Efika\Common\CollectionInterface;
 use Efika\Di\DiContainer;
 use Efika\Di\DiException;
 use Exception;
 
-class ViewModel implements ViewModelInterface{
+class ViewModel implements ViewModelInterface
+{
+
+    const VIRTUAL_VAR_COLLECTION_ID = 'Efika\View\ViewVarCollection';
 
     /**
-     * @var ViewVarCollection
+     * @var CollectionInterface
      */
     private $vars = null;
 
@@ -35,13 +40,40 @@ class ViewModel implements ViewModelInterface{
      */
     private $viewFileExtension = null;
 
-    public function viewHelper($id){
+    /**
+     * @var \Efika\Common\Collection|null
+     */
+    private $childs = null;
+
+    private $renderedContent = '';
+
+    private $resolvedViewPath = null;
+
+    public function __construct()
+    {
+        $di = DiContainer::getInstance();
+        $id = self::VIRTUAL_VAR_COLLECTION_ID;
+        try {
+            $service = $di->getService($id);
+        } catch (DiException $e) {
+            try {
+                $service = $di->createService(new Collection(), $id);
+            } catch (DiException $e) {
+                throw new ViewHelperException(sprintf('Unable to load Collection "%s"', $id), 0, $e);
+            }
+        }
+        $this->vars = $service->makeInstance();
+        $this->childs = new Collection();
+    }
+
+    public function viewHelper($id)
+    {
         $di = DiContainer::getInstance();
         try {
             $service = $di->getService($id);
             return $service->applyInstance();
-        } catch(DiException $e){
-            throw new ViewHelperException(sprintf('Unable to load Helper "%s"', $id),0,$e);
+        } catch (DiException $e) {
+            throw new ViewHelperException(sprintf('Unable to load Helper "%s"', $id), 0, $e);
         }
     }
 
@@ -70,7 +102,7 @@ class ViewModel implements ViewModelInterface{
      * @param string $extension
      * @return mixed
      */
-    public function setView($file,$extension=ViewInterface::DEFAULT_VIEW_FILE_EXTENSION)
+    public function setView($file, $extension = ViewInterface::DEFAULT_VIEW_FILE_EXTENSION)
     {
         $this->view = $file;
         $this->viewFileExtension = $extension;
@@ -92,7 +124,7 @@ class ViewModel implements ViewModelInterface{
      */
     public function assignVar($name, $value)
     {
-        $this->getVarCollection()->offsetSet($name, $value);
+        $this->getVarCollection()->set($name, $value);
     }
 
     /**
@@ -102,7 +134,7 @@ class ViewModel implements ViewModelInterface{
      */
     public function revokeVar($name)
     {
-        $this->getVarCollection()->offsetUnset($name);
+        $this->getVarCollection()->remove($name);
     }
 
     /**
@@ -115,15 +147,10 @@ class ViewModel implements ViewModelInterface{
 
     /**
      * If no varCollection has been set, the varCollection will get by DI
-     * @return ViewVarCollection
+     * @return Collection
      */
     public function getVarCollection()
     {
-        if($this->vars == null){
-            //TODO: add DI Support vor View collection
-            $this->vars = new ViewVarCollection();
-        }
-
         return $this->vars;
     }
 
@@ -134,8 +161,23 @@ class ViewModel implements ViewModelInterface{
      * @return $this
      * @throws \Exception
      */
-    public function addChildren($id, ViewModelInterface $model){
-        $this->getVarCollection()->addChildren($id,$model);
+    public function addChildren($id, ViewModelInterface $model)
+    {
+        if($model->getViewPath() === null){
+            $model->setViewPath($this->getViewPath());
+        }
+
+        if($model->getView() === null){
+            throw new ViewException(sprintf('Viewmodel %s child\'s need to have specific view!', $id));
+        }
+        $this->childs->set($id,$model);
+    }
+
+    /**
+     * @return array
+     */
+    public function getChilds(){
+        return $this->childs->getAll();
     }
 
     /**
@@ -153,7 +195,7 @@ class ViewModel implements ViewModelInterface{
      */
     public function __get($name)
     {
-        return $this->getVarCollection()->offsetGet($name);
+        return $this->getVarCollection()->get($name);
     }
 
 //    /**
@@ -168,9 +210,52 @@ class ViewModel implements ViewModelInterface{
     /**
      * @return array
      */
-    public function toArray(){
-        return $this->getVarCollection()->getArrayCopy();
+    public function toArray()
+    {
+        return $this->getVarCollection()->getAll();
     }
 
+    /**
+     * @param null $resolvedViewPath
+     */
+    public function setResolvedViewPath($resolvedViewPath)
+    {
+        $this->resolvedViewPath = $resolvedViewPath;
+    }
+
+    /**
+     * @return null
+     */
+    public function getResolvedViewPath()
+    {
+        return $this->resolvedViewPath;
+    }
+
+    /**
+     * @param null $renderedContent
+     */
+    public function setRenderedContent($renderedContent)
+    {
+        $this->renderedContent = $renderedContent;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRenderedContent()
+    {
+        return $this->renderedContent;
+    }
+
+    /**
+     * @return string
+     */
+    public function toString(){
+        return $this->getRenderedContent();
+    }
+
+    public function __toString(){
+        return $this->toString();
+    }
 
 }

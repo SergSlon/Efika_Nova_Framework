@@ -15,9 +15,26 @@ class IndexController extends ControllerCommand{
 
     public function indexAction(){
         $viewModel = new ViewModel();
-        $viewModel->assignVar('Masura', 'plasterium');
+
+        $detailView = new ViewModel();
+        $detailView->setViewPath($this->getDefaultViewPath());
+        $detailView->setView('index/detail');
+        $detailView->assignVar('container_title', 'Detail container');
+
+        $panelView = new ViewModel();
+        $panelView->setViewPath($this->getDefaultViewPath());
+        $panelView->setView('someview');
+        $panelView->assignVar('title', 'Panel container');
+        $panelView->assignVar('subtitle', 'A panel container in someview');
+        $panelView->assignVar('copyright', 'me &copy;');
+        $panelView->addChildren('detail', $detailView);
+
+        $viewModel->assignVar('title', 'Efika Nova Framework');
+        $viewModel->assignVar('content', 'Hello world!');
+        $viewModel->addChildren('panel', $panelView);
 //        return new HttpContent(['Hello World',"\n",'Welcome!']);
 //        return 'hello world!';
+        
         return $viewModel;
     }
 

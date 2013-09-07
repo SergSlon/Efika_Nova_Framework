@@ -11,13 +11,13 @@
 <head><title></title></head>
 <body>
 <header>
-    <h1><?php echo $this->title ?></h1>
-    <h2><?php echo $this->subtitle ?></h2>
+    <h1><?php echo $title ?></h1>
+    <h2><?php echo $subtitle ?></h2>
     <nav>
         <ul>
-            <?php foreach($this->navigation as $item): ?>
-                <li><a href="<?php echo $item->link ?>"><?php echo $item->name ?></a></li>
-            <?php endforeach; ?>
+<!--            --><?php //foreach($this->navigation as $item): ?>
+<!--                <li><a href="--><?php //echo $item->link ?><!--">--><?php //echo $item->name ?><!--</a></li>-->
+<!--            --><?php //endforeach; ?>
         </ul>
     </nav>
 </header>
@@ -27,12 +27,12 @@
     </section>
     <section>
         <p>
-            asödjföasjöfjasöjdföjas
+            <?php echo $detail ?>
         </p>
     </section>
 </article>
 <footer>
-    <p><?php $this->copyright ?></p>
+    <p><?php echo $copyright ?></p>
 </footer>
 </body>
 </html>

@@ -55,10 +55,7 @@ class ViewEventAggregate implements EventHandlerAggregateInterface{
     public function onViewResolve(ViewEvent $event){
         $viewModel = $event->getViewModel();
         $resolver = $event->getResolver();
-
-        $resolvedView = $resolver->resolve($viewModel->getView(), $viewModel->getViewPath());
-
-        $event->setResolvedView($resolvedView);
+        $resolver->resolve($viewModel);
     }
 
     /**
@@ -68,11 +65,9 @@ class ViewEventAggregate implements EventHandlerAggregateInterface{
         $renderer = $event->getRenderer();
         $viewModel = $event->getViewModel();
 
+//        $renderer->setResolvedView($viewModel->getResolvedViewPath());
+        $renderer->render($viewModel);
 
-        $resolvedView = $event->getResolvedView();
-        $renderer->setResolvedView($resolvedView);
-        $content = $renderer->render($viewModel);
-
-        $event->setRenderedContent($content);
+        $event->setRenderedContent($viewModel->getRenderedContent());
     }
 }

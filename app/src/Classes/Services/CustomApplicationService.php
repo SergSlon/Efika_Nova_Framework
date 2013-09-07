@@ -68,7 +68,7 @@ class CustomApplicationService implements EventHandlerAggregateInterface, Applic
     {
         $this->setApp($app);
         $this->setArguments($arguments);
-        Logger::getInstance()->scope(self::LOGGER_SCOPE)->addMessage('service registred');
+        Logger::getInstance()->scope(self::LOGGER_SCOPE)->info('service registred');
     }
 
     /**
@@ -77,7 +77,7 @@ class CustomApplicationService implements EventHandlerAggregateInterface, Applic
     public function connect()
     {
         $this->getApp()->attachEventHandlerAggregate($this);
-        Logger::getInstance()->scope(self::LOGGER_SCOPE)->addMessage('service connected');
+        Logger::getInstance()->scope(self::LOGGER_SCOPE)->info('service connected');
     }
 
     /**

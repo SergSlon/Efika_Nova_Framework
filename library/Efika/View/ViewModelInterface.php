@@ -5,6 +5,7 @@
  */
 
 namespace Efika\View;
+use Efika\Common\Collection;
 
 /**
  * manage view-data
@@ -67,7 +68,7 @@ interface ViewModelInterface
     /**
      * If no varCollection has been set, the varCollection will get by DI
      * @abstract
-     * @return ViewVarCollection
+     * @return Collection
      */
     public function getVarCollection();
 

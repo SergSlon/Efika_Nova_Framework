@@ -16,7 +16,6 @@ use Efika\Http\Response\HttpContent;
 use Efika\View\ViewInterface;
 use Efika\View\ViewModel;
 use Efika\View\ViewModelInterface;
-use Efika\View\ViewVarCollection;
 
 class ControllerCommand implements DispatchableInterface, ParameterInterface {
 
@@ -73,8 +72,8 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
 
             $view = $this->getView();
             if($result instanceof ViewModelInterface){
-                $collection = new ViewVarCollection($result === null ? array() : $result);
-                $result->setVarCollection($collection);
+//                $collection = new ViewVarCollection($result === null ? array() : $result);
+//                $result->setVarCollection($collection);
                 if($result->getViewPath() === null){
                     $result->setViewPath($this->getDefaultViewPath());
                 }
@@ -259,7 +258,7 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
     }
 
     /**
-     * @return \Efika\View\ViewInterface|null
+     * @return \Efika\View\ViewInterface|\Efika\View\View|null
      */
     public function getView()
     {

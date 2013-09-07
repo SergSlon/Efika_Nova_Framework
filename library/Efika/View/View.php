@@ -135,13 +135,13 @@ class View implements ViewInterface, ViewModelAwareInterface
             $this->render($callback);
 
         } catch (ViewResolverException $e) {
-//            $this->getLogger()->addMessage('Exception: ' . $e->getMessage());
+//            $this->getLogger()->info('Exception: ' . $e->getMessage());
             var_dump($e);
         } catch (ViewRendererException $e) {
-//            $this->getLogger()->addMessage('Exception: ' . $e->getMessage());
+//            $this->getLogger()->info('Exception: ' . $e->getMessage());
             var_dump($e);
         } catch (ViewException $e) {
-//            $this->getLogger()->addMessage('Exception: ' . $e->getMessage());
+//            $this->getLogger()->info('Exception: ' . $e->getMessage());
             var_dump($e);
         }
 

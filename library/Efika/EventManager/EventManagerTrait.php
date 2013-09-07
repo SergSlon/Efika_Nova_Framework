@@ -124,7 +124,7 @@ trait EventManagerTrait
 
         $this->setEventHandler($id,$callback,$priority);
 
-        Logger::getInstance()->scope($this->getLoggerScope())->addMessage('(attach to) ' . $id);
+        Logger::getInstance()->scope($this->getLoggerScope())->info('(attach to) ' . $id);
 
         return $this;
     }
@@ -220,7 +220,7 @@ trait EventManagerTrait
                 }
             }
 
-            Logger::getInstance()->scope($this->getLoggerScope())->addMessage('(trigger) ' . $e->getName() . ' (Elements: ' . count($responses) . ')' ,$e);
+            Logger::getInstance()->scope($this->getLoggerScope())->info('(trigger) ' . $e->getName() . ' (Elements: ' . count($responses) . ')' ,$e);
         }
 
         return $responses;

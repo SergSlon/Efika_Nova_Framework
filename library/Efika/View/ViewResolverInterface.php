@@ -15,9 +15,8 @@ interface ViewResolverInterface
     /**
      * resolves template in path
      * @abstract
-     * @param $view
-     * @param $path
+     * @param $viewModel
      * @return mixed
      */
-    public function resolve($view,$path);
+    public function resolve($viewModel);
 }

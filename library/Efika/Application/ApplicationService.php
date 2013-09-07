@@ -44,7 +44,7 @@ class ApplicationService implements ApplicationServiceInterface, EventHandlerAgg
     {
         $this->setParentApplication($app);
         $this->setArguments($arguments);
-        $this->getLogger()->addMessage('application service registred');
+        $this->getLogger()->info('application service registred');
     }
 
     /**
@@ -53,7 +53,7 @@ class ApplicationService implements ApplicationServiceInterface, EventHandlerAgg
     public function connect()
     {
         $this->getParentApplication()->attachEventHandlerAggregate($this);
-        $this->getLogger()->addMessage('application service connected');
+        $this->getLogger()->info('application service connected');
     }
 
     /**
@@ -114,7 +114,7 @@ class ApplicationService implements ApplicationServiceInterface, EventHandlerAgg
      * @param ApplicationEvent $event
      */
     public function onApplicationPreProcess(ApplicationEvent $event){
-        $this->getLogger()->addMessage('Preprocess application');
+        $this->getLogger()->info('Preprocess application');
 
     }
 
@@ -122,7 +122,7 @@ class ApplicationService implements ApplicationServiceInterface, EventHandlerAgg
      * @param ApplicationEvent $event
      */
     public function onApplicationProcess(ApplicationEvent $event){
-        $this->getLogger()->addMessage('process application');
+        $this->getLogger()->info('process application');
 
     }
 
@@ -130,14 +130,14 @@ class ApplicationService implements ApplicationServiceInterface, EventHandlerAgg
      * @param ApplicationEvent $event
      */
     public function onApplicationPostProcess(ApplicationEvent $event){
-        $this->getLogger()->addMessage('post process application');
+        $this->getLogger()->info('post process application');
     }
 
     /**
      * @param ApplicationEvent $event
      */
     public function onApplicationComplete(ApplicationEvent $event){
-        $this->getLogger()->addMessage('complete application');
+        $this->getLogger()->info('complete application');
     }
 
 

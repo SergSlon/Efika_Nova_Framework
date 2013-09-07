@@ -150,7 +150,7 @@ class Application implements ApplicationInterface
     public function configure()
     {
         if ($this->getStatus() == self::STATUS_FRESH) {
-            $this->getLogger()->addMessage('configure application');
+            $this->getLogger()->info('configure application');
             $config = $this->getConfig();
 
             if($config->offsetExists('events')){
@@ -190,8 +190,8 @@ class Application implements ApplicationInterface
     public function init(callable $callback)
     {
         if ($this->getStatus() == self::STATUS_CONFIGURED) {
-            $this->getLogger()->addMessage('initialize application');
-            $this->getLogger()->addMessage('execute initialize events');
+            $this->getLogger()->info('initialize application');
+            $this->getLogger()->info('execute initialize events');
 
             $this->executeApplicationEvent(self::ON_INIT, ['config'=>$this->getConfig()], $callback);
 
@@ -212,13 +212,13 @@ class Application implements ApplicationInterface
     {
         if ($this->getStatus() == self::STATUS_INITIALIZED) {
 
-            $this->getLogger()->addMessage('post-process application');
+            $this->getLogger()->info('post-process application');
             $this->executeApplicationEvent(self::ON_PREPROCESS, [], $callback);
 
-            $this->getLogger()->addMessage('process application');
+            $this->getLogger()->info('process application');
             $this->executeApplicationEvent(self::ON_PROCESS, [], $callback);
 
-            $this->getLogger()->addMessage('pre-process application');
+            $this->getLogger()->info('pre-process application');
             $this->executeApplicationEvent(self::ON_POSTPROCESS, [], $callback);
         } else {
             throw new ApplicationException('Status is not initialized');
@@ -238,7 +238,7 @@ class Application implements ApplicationInterface
     {
         if ($this->getStatus() == self::STATUS_PROCESSED) {
 
-            $this->getLogger()->addMessage('complete application');
+            $this->getLogger()->info('complete application');
             $this->executeApplicationEvent(self::ON_COMPLETE, [], $callback);
         } else {
             throw new ApplicationException('Status is not processed');
@@ -255,7 +255,7 @@ class Application implements ApplicationInterface
     {
         $executionResult = false;
 
-        $this->getLogger()->addMessage('start application execution');
+        $this->getLogger()->info('start application execution');
 
         try {
             if ($this->getStatus() == self::STATUS_CONFIGURED) {
@@ -274,14 +274,14 @@ class Application implements ApplicationInterface
                 $this->process($callback);
                 $this->complete($callback);
 
-                $this->getLogger()->addMessage('finalize application execution');
+                $this->getLogger()->info('finalize application execution');
                 $executionResult = true;
             } else {
-                $this->getLogger()->addMessage('abort application execution');
+                $this->getLogger()->info('abort application execution');
             }
 
         } catch (ApplicationException $e) {
-            $this->getLogger()->addMessage('Exception: ' . $e->getMessage());
+            $this->getLogger()->info('Exception: ' . $e->getMessage());
         }
 
         return $executionResult;

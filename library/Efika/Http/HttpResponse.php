@@ -10,6 +10,8 @@ namespace Efika\Http;
 class HttpResponse implements HttpResponseInterface
 {
 
+    const DEFAULT_ENCODING = 'utf-8';
+
     private $responseCode = 200;
     private $responseStatusMessages = [
         // INFORMATIONAL CODES
@@ -81,6 +83,8 @@ class HttpResponse implements HttpResponseInterface
      */
     private $httpMessage = null;
 
+    private $outputEncoding = self::DEFAULT_ENCODING;
+
 
     /**
      * @param \Efika\Http\HttpMessage|\Efika\Http\HttpMessageInterface $httpMessage
@@ -136,6 +140,22 @@ class HttpResponse implements HttpResponseInterface
     public function getHttpMessage()
     {
         return $this->httpMessage;
+    }
+
+    /**
+     * @param string $outputEncoding
+     */
+    public function setOutputEncoding($outputEncoding)
+    {
+        $this->outputEncoding = $outputEncoding;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOutputEncoding()
+    {
+        return $this->outputEncoding;
     }
 
 }

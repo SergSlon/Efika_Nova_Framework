@@ -59,7 +59,7 @@ class ViewEvent extends Event {
     }
 
     /**
-     * @return ViewModelInterface
+     * @return ViewModelInterface|ViewModel
      */
     public function getViewModel()
     {

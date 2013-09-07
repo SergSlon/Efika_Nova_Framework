@@ -19,23 +19,34 @@ class ViewRenderer implements ViewRendererInterface, ViewEngineAwareInterface{
 
     /**
      * TODO: Add recursive rendering of childviews (partitials)
-     * @param ViewModelInterface $viewModel
+     * @param ViewModelInterface|ViewModel $viewModel
      * @return mixed
      */
     protected function fallbackEngine(ViewModelInterface $viewModel){
+        $childs = $viewModel->getChilds();
 
-        $______filename = $this->getResolvedView();
-        $vars = $viewModel->getVarCollection()->getArrayCopy();
+        if($childs > 1){
+            foreach($childs as $childModel){
+                $this->render($childModel);
+            }
+        }
+
+        $______filename = $viewModel->getResolvedViewPath();
+        $vars = array_merge($viewModel->getVarCollection()->getAll(), $childs);
 
         $contentCapsule = function () use ($viewModel, $vars, $______filename){
             ob_start();
             ob_implicit_flush(false);
+            extract($vars, EXTR_SKIP);
+
             require($______filename);
 
             return ob_get_clean();
         };
 
-        return $contentCapsule();
+        $content = $contentCapsule();
+
+        $viewModel->setRenderedContent($content);
     }
 
     public function setResolvedView($view)
@@ -60,7 +71,6 @@ class ViewRenderer implements ViewRendererInterface, ViewEngineAwareInterface{
     {
         $engine = $this->getEngine();
         if($engine !== null){
-            $engine->setResolvedView($this->getResolvedView());
             return $engine->render($viewModel);
         }
 
