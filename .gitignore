@@ -1,2 +1,4 @@
 .idea/
 debugging/
+composer.phar
+composer.lock
