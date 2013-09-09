@@ -4,15 +4,20 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace Efika\View;
+namespace Efika\View\Engines;
 
 
+use Efika\View\ViewEngineAwareInterface;
+use Efika\View\ViewModel;
+use Efika\View\ViewModelInterface;
+use Efika\View\Engines\RendererEngineInterface;
+use Efika\View\Engines\ResolverEngineInterface;
 use Exception;
 
-class ViewRenderer implements ViewRendererInterface, ViewEngineAwareInterface{
+class PhpRenderEngine implements RendererEngineInterface, ViewEngineAwareInterface{
 
     /**
-     * @var null|ViewRendererInterface
+     * @var null|RendererEngineInterface
      */
     private $engine = null;
     private $resolvedView = null;
@@ -78,19 +83,19 @@ class ViewRenderer implements ViewRendererInterface, ViewEngineAwareInterface{
     }
 
     /**
-     * @param ViewRendererInterface|ViewResolverInterface $engine
+     * @param RendererEngineInterface|ResolverEngineInterface $engine
      * @return null|void
      * @throws \Exception
      */
     public function setEngine($engine){
-        if(!($engine instanceof ViewRendererInterface)){
-            throw new Exception(sprintf('given engine needs to be an instance of %s\\ViewRendererInterface', __NAMESPACE__));
+        if(!($engine instanceof RendererEngineInterface)){
+            throw new Exception(sprintf('given engine needs to be an instance of %s\\RendererEngineInterface', __NAMESPACE__));
         }
         $this->engine = $engine;
     }
 
     /**
-     * @return null|ViewRendererInterface
+     * @return null|RendererEngineInterface
      */
     public function getEngine()
     {

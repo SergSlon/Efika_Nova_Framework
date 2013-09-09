@@ -13,6 +13,8 @@ use Efika\EventManager\EventInterface;
 use Efika\EventManager\EventManagerTrait;
 use Efika\EventManager\EventResponse;
 use Efika\EventManager\EventResponseInterface;
+use Efika\View\Engines\RendererEngineException;
+use Efika\View\Engines\ResolverEngineException;
 
 class View implements ViewInterface, ViewModelAwareInterface
 {
@@ -134,10 +136,10 @@ class View implements ViewInterface, ViewModelAwareInterface
             $this->resolve($callback);
             $this->render($callback);
 
-        } catch (ViewResolverException $e) {
+        } catch (ResolverEngineException $e) {
 //            $this->getLogger()->info('Exception: ' . $e->getMessage());
             var_dump($e);
-        } catch (ViewRendererException $e) {
+        } catch (RendererEngineException $e) {
 //            $this->getLogger()->info('Exception: ' . $e->getMessage());
             var_dump($e);
         } catch (ViewException $e) {

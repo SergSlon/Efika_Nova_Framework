@@ -7,6 +7,7 @@
 namespace Efika\Application\Dispatcher;
 
 use Efika\Loader\StandardAutoloader;
+use Efika\View\View;
 
 class MvcDispatcher implements DispatcherInterface
 {
@@ -55,10 +56,10 @@ class MvcDispatcher implements DispatcherInterface
                 [];
 
 
-        $renderer = $this->getClassAsService('Efika\View\ViewRenderer')->applyInstance();
-        $resolver = $this->getClassAsService('Efika\View\ViewResolver')->applyInstance();
+        $renderer = $this->getClassAsService(View::DEFAULT_RENDERER)->applyInstance();
+        $resolver = $this->getClassAsService(View::DEFAULT_RESOLVER)->applyInstance();
 
-        $viewEvent = $this->getClassAsService('Efika\View\ViewEvent')->applyInstance();
+        $viewEvent = $this->getClassAsService(View::DEFAULT_EVENT)->applyInstance();
         $viewEvent->setRenderer($renderer);
         $viewEvent->setResolver($resolver);
 

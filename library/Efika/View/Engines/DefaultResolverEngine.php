@@ -4,27 +4,32 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace Efika\View;
+namespace Efika\View\Engines;
 
 
 use Efika\EventManager\Exception;
+use Efika\View\ViewEngineAwareInterface;
+use Efika\View\ViewInterface;
+use Efika\View\ViewModel;
+use Efika\View\Engines\ResolverEngineException;
+use Efika\View\Engines\ResolverEngineInterface;
 
-class ViewResolver implements ViewResolverInterface, ViewEngineAwareInterface{
+class DefaultResolverEngine implements ResolverEngineInterface, ViewEngineAwareInterface{
 
     /**
-     * @var null|ViewResolverInterface
+     * @var null|ResolverEngineInterface
      */
     private $engine = null;
 
     public function setEngine($engine){
-        if(!($engine instanceof ViewResolverInterface)){
-            throw new Exception(sprintf('given engine needs to be an instance of %s\\ViewResolverInterface', __NAMESPACE__));
+        if(!($engine instanceof ResolverEngineInterface)){
+            throw new Exception(sprintf('given engine needs to be an instance of %s\\ResolverEngineInterface', __NAMESPACE__));
         }
         $this->engine = $engine;
     }
 
     /**
-     * @return null|ViewResolverInterface
+     * @return null|ResolverEngineInterface
      */
     public function getEngine()
     {
@@ -34,7 +39,7 @@ class ViewResolver implements ViewResolverInterface, ViewEngineAwareInterface{
     /**
      * @param $viewModel ViewModel
      * @return string
-     * @throws ViewResolverException
+     * @throws ResolverEngineException
      */
     protected function fallbackEngine($viewModel){
 
@@ -52,7 +57,7 @@ class ViewResolver implements ViewResolverInterface, ViewEngineAwareInterface{
         $filename = sprintf('%s/%s.%s', $path, $view, ViewInterface::DEFAULT_VIEW_FILE_EXTENSION);
 
         if(!is_file($filename) || !file_exists($filename)){
-            throw new ViewResolverException(sprintf('Can not resolve view "%s"', $filename));
+            throw new ResolverEngineException(sprintf('Can not resolve view "%s"', $filename));
         }
 
         $viewModel->setResolvedViewPath($filename);

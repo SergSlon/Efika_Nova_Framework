@@ -4,9 +4,9 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace Efika\View;
+namespace Efika\View\Engines;
 
 
-class ViewRendererException extends \Exception{
+class ResolverEngineException extends \Exception{
 
 }

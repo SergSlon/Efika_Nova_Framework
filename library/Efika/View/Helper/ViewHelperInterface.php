@@ -4,7 +4,7 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace Efika\View;
+namespace Efika\View\Helper;
 
 /**
  * View helper

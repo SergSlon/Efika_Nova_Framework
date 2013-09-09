@@ -4,12 +4,13 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace Efika\View;
+namespace Efika\View\Engines;
+use Efika\View\ViewModelInterface;
 
 /**
  * renders given view
  */
-interface ViewRendererInterface
+interface RendererEngineInterface
 {
 
     public function setResolvedView($view);

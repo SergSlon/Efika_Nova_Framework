@@ -7,16 +7,19 @@
 namespace Efika\View;
 
 
+use Efika\View\Engines\RendererEngineInterface;
+use Efika\View\Engines\ResolverEngineInterface;
+
 interface ViewEngineAwareInterface {
 
     /**
-     * @param ViewResolverInterface|ViewRendererInterface $engine
+     * @param ResolverEngineInterface|RendererEngineInterface $engine
      * @return null
      */
     public function setEngine($engine);
 
     /**
-     * @return ViewResolverInterface|ViewRendererInterface|null
+     * @return ResolverEngineInterface|RendererEngineInterface|null
      */
     public function getEngine();
 }

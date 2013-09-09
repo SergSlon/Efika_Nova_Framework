@@ -9,6 +9,8 @@ namespace Efika\View;
 
 use Efika\Application\Router\RouterInterface;
 use Efika\EventManager\Event;
+use Efika\View\Engines\RendererEngineInterface;
+use Efika\View\Engines\ResolverEngineInterface;
 
 class ViewEvent extends Event {
 
@@ -19,15 +21,15 @@ class ViewEvent extends Event {
     private $renderedContent = null;
 
     /**
-     * @param \Efika\View\ViewRendererInterface|null $renderStrategy
+     * @param \Efika\View\Engines\RendererEngineInterface|null $renderStrategy
      */
-    public function setRenderer(ViewRendererInterface $renderStrategy)
+    public function setRenderer(RendererEngineInterface $renderStrategy)
     {
         $this->renderer = $renderStrategy;
     }
 
     /**
-     * @return ViewRendererInterface
+     * @return RendererEngineInterface
      */
     public function getRenderer()
     {
@@ -35,15 +37,15 @@ class ViewEvent extends Event {
     }
 
     /**
-     * @param \Efika\View\ViewResolverInterface|null $resolveStrategy
+     * @param \Efika\View\Engines\ResolverEngineInterface|null $resolveStrategy
      */
-    public function setResolver(ViewResolverInterface $resolveStrategy)
+    public function setResolver(ResolverEngineInterface $resolveStrategy)
     {
         $this->resolver = $resolveStrategy;
     }
 
     /**
-     * @return ViewResolverInterface
+     * @return ResolverEngineInterface
      */
     public function getResolver()
     {

@@ -4,12 +4,12 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace Efika\View;
+namespace Efika\View\Engines;
 
 /**
  * Resolves a path to a view
  */
-interface ViewResolverInterface
+interface ResolverEngineInterface
 {
 
     /**

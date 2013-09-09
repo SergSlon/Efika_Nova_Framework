@@ -11,6 +11,7 @@ use Efika\Common\Collection;
 use Efika\Common\CollectionInterface;
 use Efika\Di\DiContainer;
 use Efika\Di\DiException;
+use Efika\View\Helper\ViewHelperException;
 use Exception;
 
 class ViewModel implements ViewModelInterface
@@ -71,6 +72,9 @@ class ViewModel implements ViewModelInterface
         $di = DiContainer::getInstance();
         try {
             $service = $di->getService($id);
+            if(!$service->getReflection()->implementsInterface(View::VIEW_HELPER_INTERFACE)){
+                throw new ViewHelperException(sprintf('Helper "%s" needs to implement %s', $id, View::VIEW_HELPER_INTERFACE));
+            }
             return $service->applyInstance();
         } catch (DiException $e) {
             throw new ViewHelperException(sprintf('Unable to load Helper "%s"', $id), 0, $e);
@@ -78,7 +82,7 @@ class ViewModel implements ViewModelInterface
     }
 
     /**
-     * Uses ViewResolverInterface to resolve und set the view path
+     * Uses ResolverEngineInterface to resolve und set the view path
      * @param $path
      * @return mixed
      */

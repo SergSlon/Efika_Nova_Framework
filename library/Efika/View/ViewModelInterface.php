@@ -17,7 +17,7 @@ interface ViewModelInterface
     public function viewHelper($id);
 
     /**
-     * Uses ViewResolverInterface to resolve und set the view path
+     * Uses ResolverEngineInterface to resolve und set the view path
      * @abstract
      * @param $path
      * @return mixed

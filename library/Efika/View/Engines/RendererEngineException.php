@@ -4,11 +4,9 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace Efika\View;
+namespace Efika\View\Engines;
 
 
-use Exception;
-
-class ViewHelperException extends Exception{
+class RendererEngineException extends \Exception{
 
 }

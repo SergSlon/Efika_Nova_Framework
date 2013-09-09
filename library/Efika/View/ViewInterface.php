@@ -18,8 +18,9 @@ interface ViewInterface extends EventManagerInterface
     const DEFAULT_VIEW_FOLDER = 'views';
     const DEFAULT_EVENT = 'Efika\View\ViewEvent';
     const DEFAULT_EVENT_AGGREGATE = 'Efika\View\ViewEventAggregate';
-    const DEFAULT_RESOLVER = 'Efika\View\ViewResolver';
-    const DEFAULT_RENDERER = 'Efika\View\ViewRenderer';
+    const DEFAULT_RESOLVER = 'Efika\View\Engines\DefaultResolverEngine';
+    const DEFAULT_RENDERER = 'Efika\View\Engines\PhpRenderEngine';
+    const VIEW_HELPER_INTERFACE = 'Efika\View\Helper\ViewHelperInterface';
 
     const ON_RESOLVE_BEFORE = 'view.resolve.before';
     const ON_RESOLVE = 'view.resolve';

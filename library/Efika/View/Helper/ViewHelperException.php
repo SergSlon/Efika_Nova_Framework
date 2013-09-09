@@ -4,9 +4,11 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace Efika\View;
+namespace Efika\View\Helper;
 
 
-class ViewResolverException extends \Exception{
+use Exception;
+
+class ViewHelperException extends Exception{
 
 }
