@@ -61,12 +61,7 @@ class Response extends HttpResponse{
      */
     public function sendBody($return = false)
     {
-        //fix encoding issues
-        mb_internal_encoding("UTF-8");
-        mb_http_output( "UTF-8" );
-        ob_start("mb_output_handler");
-        echo $this->getHttpMessage()->getContent();
-        $content = ob_get_clean();
+        $content = $this->getHttpMessage()->getContent();
 
         if($return){
             return $content;
