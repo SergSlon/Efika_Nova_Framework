@@ -33,8 +33,8 @@ class View implements ViewInterface, ViewModelAwareInterface
         $di = DiContainer::getInstance();
         $event = new ViewEvent();
         $event->setTarget($this);
-//        $event->setRenderer($di->getService(self::DEFAULT_RENDERER)->applyInstance());
-//        $event->setResolver($di->getService(self::DEFAULT_RESOLVER)->applyInstance());
+//        $event->setRenderer($diContainer->getService(self::DEFAULT_RENDERER)->applyInstance());
+//        $event->setResolver($diContainer->getService(self::DEFAULT_RESOLVER)->applyInstance());
         $this->setEventObject($event);
         new ViewEventAggregate();
         $this->attachEventHandlerAggregate($di->getClassAsService(self::DEFAULT_EVENT_AGGREGATE)->applyInstance());

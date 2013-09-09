@@ -58,7 +58,7 @@ if(!($response instanceof HttpResponseInterface)){
 }
 
 //try to append view
-//$view = $di->getClassAsService('Efika\View\View')->applyInstance();
+//$view = $diContainer->getClassAsService('Efika\View\View')->applyInstance();
 //$view->attachEventHandler(View::BEFORE_RESOLVE_VIEW, function($e){
 //    var_dump('YOLO!!!');
 //});

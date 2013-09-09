@@ -47,7 +47,6 @@ class Response extends HttpResponse{
 
         foreach($header->getHeaders() as $headers){
             $string = sprintf('%s%s %s', $headers->getName(), $headers->getDelimiter(), $headers->getValue());
-            var_dump($string);
             $result[$headers->getName()] = header($string);
         }
 
