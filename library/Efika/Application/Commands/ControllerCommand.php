@@ -12,6 +12,8 @@ use Efika\Application\Router\Router;
 use Efika\Http\HttpException;
 use Efika\Http\HttpRequestInterface;
 use Efika\Http\HttpResponseInterface;
+use Efika\Http\PhpEnvironment\Request;
+use Efika\Http\PhpEnvironment\Response;
 use Efika\Http\Response\HttpContent;
 use Efika\View\ViewInterface;
 use Efika\View\ViewModel;
@@ -49,9 +51,11 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
     }
 
     /**
+     * @param \Efika\Http\PhpEnvironment\Request $request
+     * @param \Efika\Http\PhpEnvironment\Response $response
      * @return ViewModelInterface|HttpResponseInterface|false|null
      */
-    public function dispatch()
+    public function dispatch(Request $request, Response $response)
     {
 
         $response = $this->getResponse();

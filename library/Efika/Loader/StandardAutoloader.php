@@ -6,7 +6,10 @@
 
 namespace Efika\Loader;
 
+use Efika\Common\SingletonTrait;
+
 require_once 'SplLoader.php';
+require_once __DIR__ . '/../Common/SingletonTrait.php';
 
 /**
  * PSR-0 compliant autoloader
@@ -29,6 +32,11 @@ require_once 'SplLoader.php';
  */
 class StandardAutoloader implements SplLoader
 {
+
+    use SingletonTrait {
+        __construct as public;
+        __clone as public;
+    }
 
     const NS_SEPERATOR = '\\';
     const PREFIX_SEPERATOR = '_';

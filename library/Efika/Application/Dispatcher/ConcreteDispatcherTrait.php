@@ -81,7 +81,7 @@ trait ConcreteDispatcherTrait {
         $dispatchableService = $this->createDispatchable();
         $dispatchable = $dispatchableService->makeInstance();
         $this->setDispatchableInstance($dispatchable);
-        $this->setDispatchableResult($dispatchable->dispatch());
+        $this->setDispatchableResult($dispatchable->dispatch($this->getRequest(), $this->getResponse()));
     }
 
     /**

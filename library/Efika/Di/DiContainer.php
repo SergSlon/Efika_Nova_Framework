@@ -87,17 +87,18 @@ class DiContainer implements DiContainerInterface
 
     /**
      * Returns class as service. create service when service does not exist
-     * @param string|object $class
+     * @param object|string $id
+     * @param null|object $object
      * @return DiService
      */
-    public function getClassAsService($class)
+    public function getClassAsService($id, $object = null)
     {
         $service = null;
 
         try {
-            $service = $this->getService($class);
+            $service = $this->getService($id);
         } catch (DiException $e) {
-            $service = $this->createService($class);
+            $service = is_object($object) ? $this->createService($object, $id) : $this->createService($id);
         }
 
         return $service;

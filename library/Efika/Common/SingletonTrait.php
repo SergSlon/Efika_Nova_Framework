@@ -31,7 +31,7 @@ trait SingletonTrait
      * Contains object instance
      * @var null
      */
-    public static $instance = null;
+    private static $instance = null;
 
     /**
      * Returns a instance of an object

@@ -11,6 +11,9 @@ class HttpResponse implements HttpResponseInterface
 {
 
     const DEFAULT_ENCODING = 'utf-8';
+    const X_FRAME_OPTIONS = 'X-Frame-Options';
+    const X_XSS_PROTECTION = 'X-XSS-PROTECTION';
+    const X_CONTENT_TYPE_OPTIONS = 'X-CONTENT-TYPE-OPTIONS';
 
     private $responseCode = 200;
     private $responseStatusMessages = [
@@ -111,7 +114,7 @@ class HttpResponse implements HttpResponseInterface
      */
     public function setResponseCode($code)
     {
-        if(!array_key_exists($code,$this->responseStatusMessages) || !is_numeric($code)){
+        if (!array_key_exists($code, $this->responseStatusMessages) || !is_numeric($code)) {
             $code = is_scalar($code) ? $code : gettype($code);
             throw new \InvalidArgumentException(sprintf(
                 'Invalid status code provided: "%s"',
@@ -158,4 +161,31 @@ class HttpResponse implements HttpResponseInterface
         return $this->outputEncoding;
     }
 
+    public function acivateXFrameOptions($boolean = true, $option = 'deny')
+    {
+        $name = self::X_FRAME_OPTIONS;
+        $this->applyHeader($boolean, $name, $option);
+    }
+
+    public function acivateXXSSProtection($boolean = true, $option = '1; mode=block')
+    {
+        $name = self::X_XSS_PROTECTION;
+        $this->applyHeader($boolean, $name, $option);
+    }
+
+    public function acivateXContentTypeOptions($boolean = true, $option = 'nosniff')
+    {
+        $name = self::X_CONTENT_TYPE_OPTIONS;
+        $this->applyHeader($boolean, $name, $option);
+    }
+
+    protected function applyHeader($boolean = true, $name = null, $option = null)
+    {
+        $header = $this->getHttpMessage()->getHeader();
+        if ($boolean) {
+            $header->add($name, $option);
+        } else {
+            $header->remove($name);
+        }
+    }
 }

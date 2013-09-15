@@ -8,12 +8,14 @@ namespace Efika\Application\Commands;
 
 
 use Efika\Application\Dispatcher\DispatchableInterface;
+use Efika\Http\PhpEnvironment\Request;
+use Efika\Http\PhpEnvironment\Response;
 
 class DefaultCommand implements DispatchableInterface, ParameterInterface{
 
     protected $params = [];
 
-    public function dispatch()
+    public function dispatch(Request $request, Response $response)
     {
 
     }

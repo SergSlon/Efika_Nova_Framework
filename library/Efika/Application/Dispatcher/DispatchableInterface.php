@@ -7,15 +7,17 @@
 namespace Efika\Application\Dispatcher;
 use Efika\Http\HttpRequestInterface;
 use Efika\Http\HttpResponseInterface;
+use Efika\Http\PhpEnvironment\Request;
+use Efika\Http\PhpEnvironment\Response;
 
 /**
  * TODO: Rename to DispatchableInterface
  */
 interface DispatchableInterface {
     /**
-     * @internal param \Efika\Http\HttpRequestInterface $request
-     * @internal param \Efika\Http\HttpResponseInterface $response
+     * @param \Efika\Http\PhpEnvironment\Request $request
+     * @param \Efika\Http\PhpEnvironment\Response $response
      * @return void
      */
-    public function dispatch();
+    public function dispatch(Request $request, Response $response);
 }

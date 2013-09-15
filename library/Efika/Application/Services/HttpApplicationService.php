@@ -41,7 +41,9 @@ class HttpApplicationService extends ApplicationService{
     /**
      * @param ApplicationEvent $event
      */
-    public function onApplicationPreProcess(ApplicationEvent $event){}
+    public function onApplicationPreProcess(ApplicationEvent $event){
+
+    }
 
     /**
      * @param ApplicationEvent $event
