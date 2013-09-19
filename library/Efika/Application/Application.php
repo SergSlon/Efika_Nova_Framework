@@ -125,6 +125,27 @@ class Application implements ApplicationInterface
     }
 
     /**
+     * @param $requiredStatus
+     * @param $nextStatus
+     * @param callable $taskCallback
+     * @throws ApplicationException
+     * @return $this
+     */
+    protected function executeApplicationTask($requiredStatus, $nextStatus, $taskCallback)
+    {
+        if ($this->getStatus() == $requiredStatus) {
+
+            $taskCallback();
+
+        } else {
+            throw new ApplicationException(sprintf('Unexpected Status "%s"! Status "%s" required!', $requiredStatus, $this->getStatus()));
+        }
+
+        $this->setStatus($nextStatus);
+        return $this;
+    }
+
+    /**
      * @param $id
      * @param $arguments
      * @param $callback
@@ -142,28 +163,6 @@ class Application implements ApplicationInterface
         $this->setPreviousEventResponse($this->triggerEvent($eventObject, $callback));
     }
 
-    /**
-     * init config
-     * @throws ApplicationException
-     * @return $this
-     */
-    public function configure()
-    {
-        if ($this->getStatus() == self::STATUS_FRESH) {
-            $this->getLogger()->info('configure application');
-            $config = $this->getConfig();
-
-            if($config->offsetExists('events')){
-                $this->attachEventHandler($config->offsetGet('events')->toArray());
-            }
-
-        } else {
-            throw new ApplicationException('Status is not fresh');
-        }
-
-        $this->setStatus(self::STATUS_CONFIGURED);
-        return $this;
-    }
 
     /**
      * @return Logger
@@ -174,6 +173,7 @@ class Application implements ApplicationInterface
     }
 
     /**
+     * @param \Efika\Common\Logger $logger
      * @param Logger $logger
      */
     public function setLogger(Logger $logger)
@@ -182,70 +182,82 @@ class Application implements ApplicationInterface
     }
 
     /**
-     * @param callable $callback
+     * init config
+     * @throws ApplicationException
+     * @return $this
+     */
+    public function configure()
+    {
+        return $this->executeApplicationTask(self::STATUS_FRESH, self::STATUS_CONFIGURED, function() {
+            $this->getLogger()->info('configure application');
+            $config = $this->getConfig();
+
+            if ($config->offsetExists('events')) {
+                $this->attachEventHandler($config->offsetGet('events')->toArray());
+            }
+        });
+    }
+
+    /**
+     * @param callable $eventCallback
      * @throws ApplicationException
      * @internal param array $args
      * @return $this
      */
-    public function init(callable $callback)
+    public function init(callable $eventCallback)
     {
-        if ($this->getStatus() == self::STATUS_CONFIGURED) {
+        return $this->executeApplicationTask(self::STATUS_CONFIGURED, self::STATUS_INITIALIZED, function() use($eventCallback) {
             $this->getLogger()->info('initialize application');
             $this->getLogger()->info('execute initialize events');
 
-            $this->executeApplicationEvent(self::ON_INIT, ['config'=>$this->getConfig()], $callback);
-
-        } else {
-            throw new ApplicationException('Status is not configured');
-        }
-
-        $this->setStatus(self::STATUS_INITIALIZED);
-        return $this;
+            $this->executeApplicationEvent(self::ON_INIT, ['config' => $this->getConfig()], $eventCallback);
+        });
     }
 
     /**
-     * @param callable $callback
+     * @param callable $eventCallback
+     * @throws ApplicationException
+     * @internal param callable $callback
+     * @return $this
+     */
+    public function route(callable $eventCallback)
+    {
+
+        return $this->executeApplicationTask(self::STATUS_INITIALIZED, self::STATUS_ROUTED, function() use($eventCallback) {
+            $this->getLogger()->info('route application');
+            $this->executeApplicationEvent(self::ON_ROUTE, [], $eventCallback);
+        });
+
+    }
+
+    /**
+     * @param callable $eventCallback
      * @throws ApplicationException
      * @return $this
      */
-    public function process(callable $callback)
+    public function dispatch(callable $eventCallback)
     {
-        if ($this->getStatus() == self::STATUS_INITIALIZED) {
 
-            $this->getLogger()->info('post-process application');
-            $this->executeApplicationEvent(self::ON_PREPROCESS, [], $callback);
+        return $this->executeApplicationTask(self::STATUS_ROUTED, self::STATUS_DISPATCHED, function() use($eventCallback) {
+            $this->getLogger()->info('dispatch application');
+            $this->executeApplicationEvent(self::ON_DISPATCH, [], $eventCallback);
+        });
 
-            $this->getLogger()->info('process application');
-            $this->executeApplicationEvent(self::ON_PROCESS, [], $callback);
-
-            $this->getLogger()->info('pre-process application');
-            $this->executeApplicationEvent(self::ON_POSTPROCESS, [], $callback);
-        } else {
-            throw new ApplicationException('Status is not initialized');
-        }
-
-        $this->setStatus(self::STATUS_PROCESSED);
-        return $this;
     }
 
     /**
      * triggers application.complete event handler
-     * @param callable $callback
+     * @param callable $eventCallback
      * @throws ApplicationException
      * @return $this
      */
-    public function complete(callable $callback)
+    public function complete(callable $eventCallback)
     {
-        if ($this->getStatus() == self::STATUS_PROCESSED) {
 
+        return $this->executeApplicationTask(self::STATUS_DISPATCHED, self::STATUS_COMPLETED, function() use($eventCallback) {
             $this->getLogger()->info('complete application');
-            $this->executeApplicationEvent(self::ON_COMPLETE, [], $callback);
-        } else {
-            throw new ApplicationException('Status is not processed');
-        }
-
-        $this->setStatus(self::STATUS_COMPLETED);
-        return $this;
+            $this->executeApplicationEvent(self::ON_COMPLETE, [], $eventCallback);
+        });
     }
 
     /**
@@ -271,7 +283,8 @@ class Application implements ApplicationInterface
                 };
 
                 $this->init($callback);
-                $this->process($callback);
+                $this->route($callback);
+                $this->dispatch($callback);
                 $this->complete($callback);
 
                 $this->getLogger()->info('finalize application execution');

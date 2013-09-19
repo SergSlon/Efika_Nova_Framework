@@ -35,7 +35,6 @@ class Router implements RouterInterface
      */
     protected $dispatchMode = null;
 
-
     /**
      *
      */

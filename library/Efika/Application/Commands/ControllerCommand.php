@@ -50,6 +50,18 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
         return sprintf('%s/%s', $this->getControllerId() , $this->getActionId());
     }
 
+    public function forward($route, Request $request = null, Response $response = null){
+
+    }
+
+    public function addPreFilter($callback){
+
+    }
+
+    public function addPostFilter($callback){
+
+    }
+
     /**
      * @param \Efika\Http\PhpEnvironment\Request $request
      * @param \Efika\Http\PhpEnvironment\Response $response
@@ -65,7 +77,7 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
             // Execute Action
             $result = call_user_func(array($this,$this->resolveActionMethod()));
 
-            //process result
+            //route result
             if(is_array($result) || $result === null){
                 $result = new ViewModel();
             }

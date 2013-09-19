@@ -74,9 +74,8 @@ class ApplicationService implements ApplicationServiceInterface, EventHandlerAgg
     public function attach($parent)
     {
         $parent->attachEventHandler(ApplicationInterface::ON_INIT, array($this,'onApplicationInit'));
-        $parent->attachEventHandler(ApplicationInterface::ON_PREPROCESS, array($this,'onApplicationPreProcess'));
-        $parent->attachEventHandler(ApplicationInterface::ON_PROCESS, array($this,'onApplicationProcess'));
-        $parent->attachEventHandler(ApplicationInterface::ON_POSTPROCESS, array($this,'onApplicationPostProcess'));
+        $parent->attachEventHandler(ApplicationInterface::ON_ROUTE, array($this,'onApplicationPreProcess'));
+        $parent->attachEventHandler(ApplicationInterface::ON_DISPATCH, array($this,'onApplicationProcess'));
         $parent->attachEventHandler(ApplicationInterface::ON_COMPLETE, array($this,'onApplicationComplete'));
     }
 
@@ -122,7 +121,7 @@ class ApplicationService implements ApplicationServiceInterface, EventHandlerAgg
      * @param ApplicationEvent $event
      */
     public function onApplicationProcess(ApplicationEvent $event){
-        $this->getLogger()->info('process application');
+        $this->getLogger()->info('route application');
 
     }
 
@@ -130,7 +129,7 @@ class ApplicationService implements ApplicationServiceInterface, EventHandlerAgg
      * @param ApplicationEvent $event
      */
     public function onApplicationPostProcess(ApplicationEvent $event){
-        $this->getLogger()->info('post process application');
+        $this->getLogger()->info('post route application');
     }
 
     /**

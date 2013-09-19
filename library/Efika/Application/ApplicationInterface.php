@@ -25,15 +25,11 @@ interface ApplicationInterface extends EventManagerInterface
     /**
      *
      */
-    const ON_PREPROCESS = 'application.preprocess';
+    const ON_ROUTE = 'application.route';
     /**
      *
      */
-    const ON_PROCESS = 'application.process';
-    /**
-     *
-     */
-    const ON_POSTPROCESS = 'application.postprocess';
+    const ON_DISPATCH = 'application.dispatch';
     /**
      *
      */
@@ -57,11 +53,15 @@ interface ApplicationInterface extends EventManagerInterface
     /**
      *
      */
-    const STATUS_PROCESSED = 8;
+    const STATUS_ROUTED = 8;
     /**
      *
      */
-    const STATUS_COMPLETED = 16;
+    const STATUS_DISPATCHED = 16;
+    /**
+     *
+     */
+    const STATUS_COMPLETED = 32;
 
     /**
      * init config
@@ -73,7 +73,7 @@ interface ApplicationInterface extends EventManagerInterface
      * @param $config
      * @return mixed
      */
-    public function setConfig(array $config=[]);
+    public function setConfig(array $config = []);
 
     /**
      * trigger events
