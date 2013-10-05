@@ -73,17 +73,20 @@ class MvcDispatcher implements DispatcherInterface
 
 //        $view->setEventObject($viewEvent);
 
+        //configure dispatchable
+        if($dispatchableService->getReflection()->implementsInterface('Efika\Application\Commands\Plugins\PluginAwareInterface')){
+            $dispatchableService->inject('setPluginManager', ['pluginManager' => DiContainer::getInstance()->getClassAsService('Efika\Application\Commands\Plugins\PluginManager')->makeInstance()]);
+        }
+
         $dispatchableService->inject('setRouter', ['router' => $this->getRouter()])
             ->inject('setParams', ['params' => $params])
             ->inject('setActionId', ['actionId' => $result->offsetGet('actionId')])
             ->inject('setControllerId', ['controllerId' => $result->offsetGet($this->getClassParamKeyword())])
             ->inject('setView', ['view' => $view])
             ->inject('setRequest', ['response' => $request])
-            ->inject('setResponse', ['request' => $response]);
+            ->inject('setResponse', ['request' => $response])
+            ->inject('init');
 
-        if($dispatchableService->getReflection()->implementsInterface('Efika\Application\Commands\Plugins\PluginAwareInterface')){
-            $dispatchableService->inject('setPluginManager', ['pluginManager' => DiContainer::getInstance()->getClassAsService('Efika\Application\Commands\Plugins\PluginManager')->makeInstance()]);
-        }
 
         return $dispatchableService;
 

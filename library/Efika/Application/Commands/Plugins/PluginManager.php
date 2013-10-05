@@ -15,9 +15,9 @@ class PluginManager {
 
     private $plugins = [];
 
-    public function register($name, $callback){
+    public function register($name, $callback=null){
         $di = DiContainer::getInstance();
-        $service = $di->getClassAsService($name,$callback);
+        $service = $di->getClassAsService($callback);
         if(!$service->getReflection()->implementsInterface(self::PLUGIN_INTERFACE)){
             throw new InvalidPluginException('Plugin need to implement %s', self::PLUGIN_INTERFACE);
         }

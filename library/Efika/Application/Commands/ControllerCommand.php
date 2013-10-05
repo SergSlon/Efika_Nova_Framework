@@ -296,11 +296,17 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface, Pl
         return $this->defaultViewPath;
     }
 
+    /**
+     * @return PluginManager
+     */
     public function getPluginManager()
     {
         return $this->pluginManager;
     }
 
+    /**
+     * @param PluginManager $pluginManager
+     */
     public function setPluginManager(PluginManager $pluginManager)
     {
         $this->pluginManager = $pluginManager;

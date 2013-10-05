@@ -16,6 +16,10 @@ class DefaultCommand implements DispatchableInterface, ParameterInterface{
 
     protected $params = [];
 
+    public function init(){
+
+    }
+
     public function dispatch(Request $request, Response $response)
     {
 
