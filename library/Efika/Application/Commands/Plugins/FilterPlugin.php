@@ -11,13 +11,15 @@ use Efika\Application\Dispatcher\DispatchableInterface;
 
 class FilterPlugin implements PluginInterface{
 
+    private $command = null;
+
     /**
      * @param DispatchableInterface $command
      * @return mixed
      */
     public function setCommand(DispatchableInterface $command)
     {
-        // TODO: Implement setCommand() method.
+        $this->command = $command;
     }
 
     /**
@@ -25,6 +27,6 @@ class FilterPlugin implements PluginInterface{
      */
     public function getCommand()
     {
-        // TODO: Implement getCommand() method.
+        return $this->command;
     }
 }

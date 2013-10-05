@@ -14,6 +14,7 @@ class PluginManager {
     const PLUGIN_INTERFACE = 'Efika\Application\Commands\Plugins\PluginInterface';
 
     private $plugins = [];
+    private $parentCommand = null;
 
     public function register($name, $callback=null){
         $di = DiContainer::getInstance();
@@ -21,6 +22,7 @@ class PluginManager {
         if(!$service->getReflection()->implementsInterface(self::PLUGIN_INTERFACE)){
             throw new InvalidPluginException('Plugin need to implement %s', self::PLUGIN_INTERFACE);
         }
+        $service->inject('setCommand', [$this->getParentCommand()]);
         $this->plugins[$name] = $service;
     }
 
@@ -47,6 +49,22 @@ class PluginManager {
 
     public function __call($name, $args = []){
         return $this->call($name, $args);
+    }
+
+    /**
+     * @param null $parentCommand
+     */
+    public function setParentCommand($parentCommand)
+    {
+        $this->parentCommand = $parentCommand;
+    }
+
+    /**
+     * @return null
+     */
+    public function getParentCommand()
+    {
+        return $this->parentCommand;
     }
 
 }

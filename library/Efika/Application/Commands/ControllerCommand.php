@@ -309,6 +309,7 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface, Pl
      */
     public function setPluginManager(PluginManager $pluginManager)
     {
+        $pluginManager->setParentCommand($this);
         $this->pluginManager = $pluginManager;
     }
 }
