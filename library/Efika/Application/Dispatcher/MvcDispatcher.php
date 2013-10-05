@@ -6,6 +6,7 @@
 
 namespace Efika\Application\Dispatcher;
 
+use Efika\Di\DiContainer;
 use Efika\Loader\StandardAutoloader;
 use Efika\View\View;
 
@@ -79,6 +80,10 @@ class MvcDispatcher implements DispatcherInterface
             ->inject('setView', ['view' => $view])
             ->inject('setRequest', ['response' => $request])
             ->inject('setResponse', ['request' => $response]);
+
+        if($dispatchableService->getReflection()->implementsInterface('Efika\Application\Commands\Plugins\PluginAwareInterface')){
+            $dispatchableService->inject('setPluginManager', ['pluginManager' => DiContainer::getInstance()->getClassAsService('Efika\Application\Commands\Plugins\PluginManager')->makeInstance()]);
+        }
 
         return $dispatchableService;
 

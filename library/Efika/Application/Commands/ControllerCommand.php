@@ -7,8 +7,12 @@
 namespace Efika\Application\Commands;
 
 
+use Efika\Application\Commands\Plugins\PluginAwareInterface;
+use Efika\Application\Commands\Plugins\PluginManager;
 use Efika\Application\Dispatcher\DispatchableInterface;
 use Efika\Application\Router\Router;
+use Efika\Common\ParameterInterface;
+use Efika\Di\DiContainer;
 use Efika\Http\HttpException;
 use Efika\Http\HttpRequestInterface;
 use Efika\Http\HttpResponseInterface;
@@ -19,7 +23,7 @@ use Efika\View\ViewInterface;
 use Efika\View\ViewModel;
 use Efika\View\ViewModelInterface;
 
-class ControllerCommand implements DispatchableInterface, ParameterInterface {
+class ControllerCommand implements DispatchableInterface, ParameterInterface, PluginAwareInterface {
 
     const DEFAULT_ACTION_PATTERN = '%actionId%Action'; //:actionId = placeholder
     const DEFAULT_ACTION_PLACEHOLDER = '%actionId%';
@@ -31,7 +35,7 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
     protected $response = null;
     protected $router = null;
     protected $params = null;
-    protected $plugins = null;
+    protected $pluginManager = null;
     protected $view = null;
     protected $defaultViewPath = null;
 
@@ -48,18 +52,6 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
 
     protected function generateViewId(){
         return sprintf('%s/%s', $this->getControllerId() , $this->getActionId());
-    }
-
-    public function forward($route, Request $request = null, Response $response = null){
-
-    }
-
-    public function addPreFilter($callback){
-
-    }
-
-    public function addPostFilter($callback){
-
     }
 
     /**
@@ -151,22 +143,6 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
     public function getParams()
     {
         return $this->params;
-    }
-
-    /**
-     * @param null $plugins
-     */
-    public function setPlugins($plugins)
-    {
-        $this->plugins = $plugins;
-    }
-
-    /**
-     * @return null
-     */
-    public function getPlugins()
-    {
-        return $this->plugins;
     }
 
     /**
@@ -320,4 +296,13 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface {
         return $this->defaultViewPath;
     }
 
+    public function getPluginManager()
+    {
+        return $this->pluginManager;
+    }
+
+    public function setPluginManager(PluginManager $pluginManager)
+    {
+        $this->pluginManager = $pluginManager;
+    }
 }

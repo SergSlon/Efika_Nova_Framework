@@ -47,7 +47,7 @@ class DispatcherFactory
 
     /**
      * @param $mode
-     * @return mixed
+     * @return DispatcherInterface|MvcDispatcher|CommandDispatcher
      */
     public static function factory($mode)
     {

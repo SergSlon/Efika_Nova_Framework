@@ -8,6 +8,7 @@ namespace Efika\Application\Commands;
 
 
 use Efika\Application\Dispatcher\DispatchableInterface;
+use Efika\Common\ParameterInterface;
 use Efika\Http\PhpEnvironment\Request;
 use Efika\Http\PhpEnvironment\Response;
 
