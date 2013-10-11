@@ -4,16 +4,39 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-require_once dirname(__FILE__) . '/env.php';
-$defaultConfig = require_once dirname(__FILE__) . '/config.default.php';
-$enviromentConfigFile = dirname(__FILE__) . '/config.' . EFIKA_ENVIROMENT . '.php';
-$enviroments = ['production','developent','test'];
-
-if(
-    in_array(EFIKA_ENVIROMENT,$enviroments) &&
-    file_exists($enviromentConfigFile)
-){
-    $enviromentConfig = require_once $enviromentConfigFile;
-}
-
-return array_merge_recursive($defaultConfig, $enviromentConfig);
+return [
+    'appNs' => 'WebApplication',
+    'autoloader' => [
+        'Efika\\' => dirname(__FILE__) . '/../../library/Efika/',
+        'WebApplication\\' => dirname(__FILE__) . '/../src/Classes/',
+    ],
+    'events' => [
+        'application.init' => function ($e) {
+            //do something
+        }
+    ],
+    'modules' => [],
+    'router' => [
+        '/cmd/(?P<command>\w+)' => [
+            'route' => [
+                'params' => 'user/foo/group/bar'
+            ],
+            'dispatchMode' => 'cmd',
+        ],
+        '/cmd/(?P<command>\w+)/(?P<params>[a-zA-Z0-9_/\-]+)' => [
+            'route' => ':command/:params',
+            'dispatchMode' => 'cmd',
+        ],
+        '/(?P<controller>\w+)/(?P<actionId>\w+)(/(?P<params>[a-zA-Z0-9_/]+)?)?' => [
+            'route' => [
+                'route' => ':controller/:actionId/:params',
+            ],
+            'dispatchMode' => 'mvc',
+        ],
+//        '(/)?' => [
+//            'controller' => 'index',
+//            'actionId' => 'index',
+//            'dispatchMode' => 'mvc',
+//        ],
+    ],
+];
