@@ -4,19 +4,23 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace Efika\Application;
+namespace Efika\Application\Modules;
 
 
+use Efika\Application\Application;
+use Efika\Application\ApplicationEvent;
+use Efika\Application\ApplicationInterface;
+use Efika\Application\Modules\ModuleInterface;
 use Efika\Application\Router\Router;
 use Efika\Common\Logger;
 use Efika\Di\DiContainer;
 use Efika\EventManager\EventHandlerAggregateInterface;
 
 /**
- * Class ApplicationService
+ * Class ApplicationModule
  * @package Efika\Application
  */
-class ApplicationService implements ApplicationServiceInterface, EventHandlerAggregateInterface{
+class ApplicationModule implements ModuleInterface, EventHandlerAggregateInterface{
 
     /**
      *

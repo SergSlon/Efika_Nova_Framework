@@ -18,7 +18,7 @@ class IndexController extends ControllerCommand{
     }
 
     public function indexAction(){
-        var_dump($this->getPluginManager()->filter()->getCommand());
+//        var_dump($this->getPluginManager()->filter()->getCommand());
         $viewModel = new ViewModel();
 
         $detailView = new ViewModel();

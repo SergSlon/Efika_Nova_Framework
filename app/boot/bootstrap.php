@@ -4,7 +4,7 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-use Efika\Application\ApplicationService;
+use Efika\Application\Modules\ApplicationModule;
 use Efika\Loader\StandardAutoloader;
 use Efika\Application\Application as WebApp;
 use WebApplication\Services\CustomApplicationService;
@@ -27,12 +27,12 @@ $app = WebApp::getInstance();
 $app->setConfig($config);
 $app->configure();
 
-//$app->registerService('ApplicationService', new ApplicationService());
-$app->registerService('HttpApplicationService', new \Efika\Application\Services\HttpApplicationService());
-$app->registerService('CustomApplicationService', new CustomApplicationService());
+//$app->registerModule('ApplicationModule', new ApplicationModule());
+$app->registerModule('HttpApplicationModule', new \Efika\Application\Modules\HttpApplicationModule());
+$app->registerModule('CustomApplicationService', new CustomApplicationService());
 
-//$app->connectService('ApplicationService');
-$app->connectService('HttpApplicationService');
-$app->connectService('CustomApplicationService');
+//$app->connectModule('ApplicationModule');
+$app->connectModule('HttpApplicationModule');
+$app->connectModule('CustomApplicationService');
 
 $app->execute();

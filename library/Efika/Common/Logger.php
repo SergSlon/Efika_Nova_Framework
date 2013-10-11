@@ -52,45 +52,26 @@ class Logger
      * @param null $line
      * @return $this
      */
-    public function info($message, $object = null, $file = null, $line = null)
+    public function info($message)
     {
-        $data = [
-            'message' => $message,
-            'object' => $object,
-            'file' => $file,
-            'line' => $line,
-            'scope' => $this->getScopeId(),
-        ];
-
-        self::addMessageRaw($data, self::MESSAGE_TYPE_INFO);
-
+        self::addMessageRaw($message, self::MESSAGE_TYPE_INFO, $this->getScopeId());
         return $this;
-
     }
 
+
     /**
-     * @param $data
+     * @param $message
      * @param $type
-     * @internal param $instance
+     * @param $scope
      * @return $this
      */
-    public static function addMessageRaw($data, $type)
+    public static function addMessageRaw($message, $type, $scope)
     {
-        if(!array_key_exists('duration',$data)){
-            $time = microtime(true);
 
-            $data['duration'] = count(self::$messageCollection) > 0 ? $time - self::$duration : 0;
-
-            self::$duration = $time;
-        }
-
-        if(!array_key_exists('memory_usage',$data)){
-            $memory = memory_get_usage();
-
-            $data['memory_usage'] = count(self::$messageCollection) > 0 ? $memory - self::$memory : 0;
-
-            self::$memory = $memory;
-        }
+        $data = [
+            'message' => $message,
+            'scope' => $scope
+        ];
 
         self::$messageCollection[$type][] = $data;
     }
@@ -124,24 +105,10 @@ class Logger
             $lines[] = sprintf('<b>%s</b>',$key);
             foreach($items as $lineElement){
                 $lines[] = sprintf(
-                    '%s: %s (Duration: %s sec) (Memory: %s  kb)',
+                    '%s: %s',
                     $lineElement['scope'],
-                    $lineElement['message'],
-                    substr($lineElement['duration']*1000,0,8),
-                    substr($lineElement['memory_usage']*1024,0,8)
+                    $lineElement['message']
                 );
-//                $line = $lineElement['scope'];
-//                $line .= ': ';
-//                $line .= $lineElement['message'];
-//                $line .= ' (Duration: ';
-//                $line .= substr($lineElement['duration']*1000,0,8);
-//                $line .= ' sec)';
-//                $line .= '(Memory: ';
-//                $line .= substr($lineElement['memory_usage']*1024,0,8);
-//                $line .= ' kb)';
-
-//                $lines[] = $line;
-
             }
         }
 

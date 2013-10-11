@@ -21,7 +21,7 @@ class DiContainer implements DiContainerInterface
     }
 
     /**
-     * Collection of services
+     * Collection of modules
      * @var array
      */
     protected $services = [];

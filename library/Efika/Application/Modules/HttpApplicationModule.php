@@ -4,16 +4,16 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace Efika\Application\Services;
+namespace Efika\Application\Modules;
 
 
 use Efika\Application\ApplicationEvent;
-use Efika\Application\ApplicationService;
+use Efika\Application\Modules\ApplicationModule;
 use Efika\Application\Dispatcher\DispatcherFactory;
 use Efika\Http\HttpRequestInterface;
 use Efika\Http\HttpResponseInterface;
 
-class HttpApplicationService extends ApplicationService{
+class HttpApplicationModule extends ApplicationModule{
 
     const LOGGER_SCOPE = 'httpapplication.service';
 

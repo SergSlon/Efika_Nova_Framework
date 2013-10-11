@@ -6,9 +6,12 @@
 
 namespace Efika\Application;
 
+use Efika\Application\Modules\ModuleAwareTrait;
 use Efika\Common\Logger;
+use Efika\Common\LoggerAwareTrait;
 use Efika\Common\SingletonTrait;
 use Efika\Config\Config;
+use Efika\Config\ConfigAwareTrait;
 use Efika\Di\DiContainer;
 use Efika\EventManager\EventManagerTrait;
 use Efika\EventManager\EventResponse;
@@ -23,7 +26,9 @@ class Application implements ApplicationInterface
 {
 
     use EventManagerTrait;
-
+    use ModuleAwareTrait;
+    use LoggerAwareTrait;
+    use ConfigAwareTrait;
     use SingletonTrait {
         SingletonTrait::getInstance as TRAITgetInstance;
     }
@@ -34,24 +39,9 @@ class Application implements ApplicationInterface
     private $status = self::STATUS_FRESH;
 
     /**
-     * @var array
-     */
-    private $services = [];
-
-    /**
-     * @var Logger
-     */
-    private $logger = null;
-
-    /**
      * @var EventResponse
      */
     private $previousEventResponse = null;
-
-    /**
-     * @var array
-     */
-    private $config = [];
 
     /**
      * @var array
@@ -77,51 +67,6 @@ class Application implements ApplicationInterface
         $eventObject = $di->getClassAsService('Efika\Application\ApplicationEvent')->applyInstance();
         $this->setEventObject($eventObject);
 
-    }
-
-    /**
-     * @param $id
-     * @param \Efika\Application\ApplicationServiceInterface $instance
-     * @param array $attributes
-     * @return bool
-     */
-    public function registerService($id, ApplicationServiceInterface $instance, $attributes = [])
-    {
-
-        if (!array_key_exists($id, $this->getServices())) {
-            $instance->register($this, $attributes);
-            $this->services[$id] = $instance;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @param $id
-     * @return bool
-     */
-    public function connectService($id)
-    {
-        if (array_key_exists($id, $this->getServices())) {
-
-            /**
-             * @var ApplicationServiceInterface
-             */
-            $service = $this->services[$id];
-            $service->connect();
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function getServices()
-    {
-        return $this->services;
     }
 
     /**
@@ -163,24 +108,6 @@ class Application implements ApplicationInterface
         $this->setPreviousEventResponse($this->triggerEvent($eventObject, $callback));
     }
 
-
-    /**
-     * @return Logger
-     */
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    /**
-     * @param \Efika\Common\Logger $logger
-     * @param Logger $logger
-     */
-    public function setLogger(Logger $logger)
-    {
-        $this->logger = $logger;
-    }
-
     /**
      * init config
      * @throws ApplicationException
@@ -188,7 +115,7 @@ class Application implements ApplicationInterface
      */
     public function configure()
     {
-        return $this->executeApplicationTask(self::STATUS_FRESH, self::STATUS_CONFIGURED, function() {
+        return $this->executeApplicationTask(self::STATUS_FRESH, self::STATUS_CONFIGURED, function () {
             $this->getLogger()->info('configure application');
             $config = $this->getConfig();
 
@@ -206,7 +133,7 @@ class Application implements ApplicationInterface
      */
     public function init(callable $eventCallback)
     {
-        return $this->executeApplicationTask(self::STATUS_CONFIGURED, self::STATUS_INITIALIZED, function() use($eventCallback) {
+        return $this->executeApplicationTask(self::STATUS_CONFIGURED, self::STATUS_INITIALIZED, function () use ($eventCallback) {
             $this->getLogger()->info('initialize application');
             $this->getLogger()->info('execute initialize events');
 
@@ -223,7 +150,7 @@ class Application implements ApplicationInterface
     public function route(callable $eventCallback)
     {
 
-        return $this->executeApplicationTask(self::STATUS_INITIALIZED, self::STATUS_ROUTED, function() use($eventCallback) {
+        return $this->executeApplicationTask(self::STATUS_INITIALIZED, self::STATUS_ROUTED, function () use ($eventCallback) {
             $this->getLogger()->info('route application');
             $this->executeApplicationEvent(self::ON_ROUTE, [], $eventCallback);
         });
@@ -238,7 +165,7 @@ class Application implements ApplicationInterface
     public function dispatch(callable $eventCallback)
     {
 
-        return $this->executeApplicationTask(self::STATUS_ROUTED, self::STATUS_DISPATCHED, function() use($eventCallback) {
+        return $this->executeApplicationTask(self::STATUS_ROUTED, self::STATUS_DISPATCHED, function () use ($eventCallback) {
             $this->getLogger()->info('dispatch application');
             $this->executeApplicationEvent(self::ON_DISPATCH, [], $eventCallback);
         });
@@ -254,7 +181,7 @@ class Application implements ApplicationInterface
     public function complete(callable $eventCallback)
     {
 
-        return $this->executeApplicationTask(self::STATUS_DISPATCHED, self::STATUS_COMPLETED, function() use($eventCallback) {
+        return $this->executeApplicationTask(self::STATUS_DISPATCHED, self::STATUS_COMPLETED, function () use ($eventCallback) {
             $this->getLogger()->info('complete application');
             $this->executeApplicationEvent(self::ON_COMPLETE, [], $eventCallback);
         });
@@ -364,29 +291,5 @@ class Application implements ApplicationInterface
     protected function setApplicationConfig($appConfig)
     {
         $this->applicationConfig = $appConfig;
-    }
-
-    /**
-     * @return Config
-     */
-    public function getConfig()
-    {
-        if (!($this->config instanceof Config)) {
-            $this->setConfig();
-        }
-        return $this->config;
-    }
-
-    /**
-     * @param null $config
-     * @return mixed|void
-     */
-    public function setConfig(array $config = [])
-    {
-        if (!($config instanceof Config)) {
-            $this->config = new Config($config);
-        } else {
-            $this->config = $config;
-        }
     }
 }

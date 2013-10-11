@@ -8,12 +8,12 @@ namespace WebApplication\Services;
 
 use Efika\Application\Application as WebApp;
 use Efika\Application\ApplicationInterface;
-use Efika\Application\ApplicationServiceInterface;
+use Efika\Application\Modules\ModuleInterface;
 use Efika\Common\Logger;
 use Efika\EventManager\EventHandlerAggregateInterface;
 use Efika\EventManager\EventInterface;
 
-class CustomApplicationService implements EventHandlerAggregateInterface, ApplicationServiceInterface
+class CustomApplicationService implements EventHandlerAggregateInterface, ModuleInterface
 {
 
     const LOGGER_SCOPE = 'application.customService';
