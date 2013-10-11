@@ -54,8 +54,6 @@ class HttpApplicationModule extends ApplicationModule{
         $response = $event->getResponse();
         $query = $request->getQuery();
 
-
-
         $route = is_array($query) && array_key_exists('r', $query) && strlen($query['r']) > 0 ? $query['r'] : null;
         $router->match($route);
 

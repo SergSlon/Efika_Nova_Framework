@@ -10,20 +10,29 @@ namespace Efika\Application\Commands;
 use Efika\Application\Commands\Plugins\PluginAwareInterface;
 use Efika\Application\Commands\Plugins\PluginManager;
 use Efika\Application\Dispatcher\DispatchableInterface;
-use Efika\Application\Router\Router;
+use Efika\Application\Router\RouterAwareTrait;
 use Efika\Common\ParameterInterface;
+use Efika\Common\ParameterTrait;
 use Efika\Di\DiContainer;
 use Efika\Http\HttpException;
-use Efika\Http\HttpRequestInterface;
 use Efika\Http\HttpResponseInterface;
 use Efika\Http\PhpEnvironment\Request;
+use Efika\Http\PhpEnvironment\RequestAwareTrait;
 use Efika\Http\PhpEnvironment\Response;
+use Efika\Http\PhpEnvironment\ResponseAwareTrait;
 use Efika\Http\Response\HttpContent;
+use Efika\View\ViewAwareTrait;
 use Efika\View\ViewInterface;
 use Efika\View\ViewModel;
 use Efika\View\ViewModelInterface;
 
 class ControllerCommand implements DispatchableInterface, ParameterInterface, PluginAwareInterface {
+
+    use RouterAwareTrait;
+    use RequestAwareTrait;
+    use ResponseAwareTrait;
+    use ParameterTrait;
+    use ViewAwareTrait;
 
     const DEFAULT_ACTION_PATTERN = '%actionId%Action'; //:actionId = placeholder
     const DEFAULT_ACTION_PLACEHOLDER = '%actionId%';
@@ -31,12 +40,7 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface, Pl
     protected $actionId = null;
     protected $controllerId = null;
     protected $viewId = null;
-    protected $request = null;
-    protected $response = null;
-    protected $router = null;
-    protected $params = null;
     protected $pluginManager = null;
-    protected $view = null;
     protected $defaultViewPath = null;
 
     protected function resolveActionMethod(){
@@ -55,12 +59,29 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface, Pl
     }
 
     /**
+     * Hook will executed before Controller is dispatching
+     */
+    public function beforeDispatch(){
+
+    }
+
+    /**
+     * Hook will executed after controller is dispatching
+     * @param $response
+     */
+    public function afterDispatch($response){
+
+    }
+
+    /**
      * @param \Efika\Http\PhpEnvironment\Request $request
      * @param \Efika\Http\PhpEnvironment\Response $response
      * @return ViewModelInterface|HttpResponseInterface|false|null
      */
     public function dispatch(Request $request, Response $response)
     {
+
+        $this->beforeDispatch();
 
         $response = $this->getResponse();
         $message = $response->getHttpMessage();
@@ -126,55 +147,9 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface, Pl
             $response->setResponseCode('500');
         }
 
+        $this->afterDispatch($response);
+
         return $response;
-    }
-
-    /**
-     * @param null $params
-     */
-    public function setParams($params)
-    {
-        $this->params = $params;
-    }
-
-    /**
-     * @return null
-     */
-    public function getParams()
-    {
-        return $this->params;
-    }
-
-    /**
-     * @param \Efika\Http\HttpRequestInterface|null $request
-     */
-    public function setRequest(HttpRequestInterface $request)
-    {
-        $this->request = $request;
-    }
-
-    /**
-     * @return null
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * @param \Efika\Application\Router\Router|null $router
-     */
-    public function setRouter(Router $router)
-    {
-        $this->router = $router;
-    }
-
-    /**
-     * @return null
-     */
-    public function getRouter()
-    {
-        return $this->router;
     }
 
     /**
@@ -223,38 +198,6 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface, Pl
     public function getViewId()
     {
         return $this->viewId;
-    }
-
-    /**
-     * @return \Efika\Http\HttpResponseInterface|null
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    /**
-     * @param \Efika\Http\HttpResponseInterface|null $response
-     */
-    public function setResponse(HttpResponseInterface $response = null)
-    {
-        $this->response = $response;
-    }
-
-    /**
-     * @param \Efika\View\ViewInterface|null $view
-     */
-    public function setView(ViewInterface $view)
-    {
-        $this->view = $view;
-    }
-
-    /**
-     * @return \Efika\View\ViewInterface|\Efika\View\View|null
-     */
-    public function getView()
-    {
-        return $this->view;
     }
 
     /**

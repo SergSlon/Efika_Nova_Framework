@@ -9,12 +9,16 @@ namespace Efika\Application;
 
 use ArrayAccess;
 use Efika\Application\Router\Router;
+use Efika\Application\Router\RouterAwareTrait;
 use Efika\Application\Router\RouterInterface;
 use Efika\Config\Config;
 use Efika\Di\DiContainer;
 use Efika\Di\DiContainerInterface;
 use Efika\Di\DiService;
 use Efika\EventManager\Event;
+use Efika\Http\PhpEnvironment\Request;
+use Efika\Http\PhpEnvironment\RequestAwareTrait;
+use Efika\Http\PhpEnvironment\ResponseAwareTrait;
 
 /**
  * Class ApplicationEvent
@@ -22,20 +26,14 @@ use Efika\EventManager\Event;
  */
 class ApplicationEvent extends Event{
 
-    /**
-     * @var Router
-     */
-    public $router = 'Efika\Application\Router\Router';
+    use RouterAwareTrait;
+    use ResponseAwareTrait;
+    use RequestAwareTrait;
 
     /**
      * @var Router
      */
-    public $response = 'Efika\Application\Router\Router';
-
-    /**
-     * @var Router
-     */
-    public $request = 'Efika\Application\Router\Router';
+    const  APPLICATION_ROUTER = 'Efika\Application\Router\Router';
 
     /**
      * @var \ArrayObject
@@ -81,20 +79,12 @@ class ApplicationEvent extends Event{
     }
 
     /**
-     * @param Router|RouterInterface|string $router
-     */
-    public function setRouter($router)
-    {
-        $this->router = $router;
-    }
-
-    /**
      * @return Router|RouterInterface|string
      */
     public function getRouter()
     {
         if(!($this->router instanceof RouterInterface)){
-            $this->setRouter($this->router);
+            $this->setRouter(self::APPLICATION_ROUTER);
         }
         return $this->router;
     }
@@ -151,38 +141,6 @@ class ApplicationEvent extends Event{
     public function getDispatcher()
     {
         return $this->dispatcher;
-    }
-
-    /**
-     * @param \Efika\Application\Router\Router $request
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
-    }
-
-    /**
-     * @return \Efika\Application\Router\Router
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * @param \Efika\Application\Router\Router $response
-     */
-    public function setResponse($response)
-    {
-        $this->response = $response;
-    }
-
-    /**
-     * @return \Efika\Application\Router\Router
-     */
-    public function getResponse()
-    {
-        return $this->response;
     }
 
     /**
