@@ -43,6 +43,11 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface, Pl
     protected $pluginManager = null;
     protected $defaultViewPath = null;
 
+    /**
+     * Resolve and return matching action method
+     * @return mixed
+     * @throws ControllerLogicalException
+     */
     protected function resolveActionMethod(){
         $actionId = $this->getActionId();
         $actionMethod = str_replace(self::DEFAULT_ACTION_PLACEHOLDER,$actionId,self::DEFAULT_ACTION_PATTERN);
@@ -54,8 +59,20 @@ class ControllerCommand implements DispatchableInterface, ParameterInterface, Pl
         return $actionMethod;
     }
 
+    /**
+     * generate common view id
+     * @return string
+     */
     protected function generateViewId(){
         return sprintf('%s/%s', $this->getControllerId() , $this->getActionId());
+    }
+
+
+    /**
+     * Hook will executed before Controller is dispatching
+     */
+    public function init(){
+
     }
 
     /**

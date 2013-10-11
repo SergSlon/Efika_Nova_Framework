@@ -12,6 +12,7 @@ use Efika\Application\Modules\ApplicationModule;
 use Efika\Application\Dispatcher\DispatcherFactory;
 use Efika\Http\HttpRequestInterface;
 use Efika\Http\HttpResponseInterface;
+use Efika\Http\PhpEnvironment\ParameterCollection;
 
 class HttpApplicationModule extends ApplicationModule{
 
@@ -54,7 +55,8 @@ class HttpApplicationModule extends ApplicationModule{
         $response = $event->getResponse();
         $query = $request->getQuery();
 
-        $route = is_array($query) && array_key_exists('r', $query) && strlen($query['r']) > 0 ? $query['r'] : null;
+        $route = $query instanceof ParameterCollection && array_key_exists('r', $query) && strlen($query['r']) > 0 ? $query['r'] : null;
+        var_dump($query);
         $router->match($route);
 
         $dispatcher = DispatcherFactory::factory($router->getDispatchMode());
