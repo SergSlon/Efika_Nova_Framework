@@ -45,16 +45,16 @@ class Router implements RouterInterface
 
     /**
      * Match request with given routes
-     * @param string $request
+     * @param string $wantedRoute
      * @throws RouteNotFoundException
      * @return mixed
      */
-    public function match($request)
+    public function match($wantedRoute)
     {
         $this->result->flush();
         $result = $this->result;
         if ($this->matcherCommand === null) {
-            $result = $this->matcherFallback($request, $result);
+            $result = $this->matcherFallback($wantedRoute, $result);
         } else {
             //Route matcher strategy
             //$routeMatcher = new AnyRouteMatcher($this);
@@ -62,7 +62,7 @@ class Router implements RouterInterface
         }
 
         if($result->count() < 1){
-            throw new RouteNotFoundException('Request route not found',$request);
+            throw new RouteNotFoundException('Request route not found',$wantedRoute);
         }
 
         $this->setResult($result);
@@ -79,12 +79,12 @@ class Router implements RouterInterface
      *  '/(?P<controller>\w+)/(?P<actionId>\w+)/(?P<params>[a-zA-Z0-9_]+)' => ':controller/:actionId/:params',
      *  '/foo/(?P<params>[a-zA-Z0-9_]+)/view' => 'foo/view/:params',
      * )
-     * @param $request
+     * @param $wantedRoute
      * @param RouterResult $result
      * @param string $idDelimiter
      * @return mixed
      */
-    protected function matcherFallback($request, RouterResult $result, $idDelimiter = ':')
+    protected function matcherFallback($wantedRoute, RouterResult $result, $idDelimiter = ':')
     {
         foreach ($this->getRoutes() as $pattern => $routeArray) {
 
@@ -94,7 +94,7 @@ class Router implements RouterInterface
 
             $matched = preg_match(
                 '#^' . $pattern . '$#i',
-                $request,
+                $wantedRoute,
                 $matches
             );
 

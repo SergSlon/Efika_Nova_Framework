@@ -13,8 +13,8 @@ namespace Efika\Application\Router;
  */
 interface RouterInterface {
     /**
-     * @param string $request
+     * @param string $wantedRoute
      * @return mixed
      */
-    public function match($request);
+    public function match($wantedRoute);
 }
