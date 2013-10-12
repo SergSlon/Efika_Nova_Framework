@@ -2,8 +2,6 @@
 debugging/
 composer.phar
 composer.lock
-src/core
-src/core/
 src/packages
 src/packages/
 src/vendor/
