@@ -1,7 +1,7 @@
 {
     "name": "rubymatrix/efika_nova_framework",
     "description": "A high performance and modern package based application development framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": ["framework", "efika"],
     "minimum-stability": "dev",
     "license": "LGPL",
     "authors": [
