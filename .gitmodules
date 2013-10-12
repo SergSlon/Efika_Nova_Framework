@@ -1,1 +1,4 @@
 
+[submodule "src/core"]
+	path = src/core
+	url = git@github.com:rubymatrix/Efika_Core.git
