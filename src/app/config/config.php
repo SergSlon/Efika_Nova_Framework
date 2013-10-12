@@ -7,7 +7,7 @@
 return [
     'appNs' => 'WebApplication',
     'autoloader' => [
-        'Efika\\' => dirname(__FILE__) . '/../../library/Efika/',
+        'Efika\\' => dirname(__FILE__) . '/../../core/src/rubymatrix/Efika/',
         'WebApplication\\' => dirname(__FILE__) . '/../src/Classes/',
     ],
     'events' => [
@@ -33,10 +33,10 @@ return [
             ],
             'dispatchMode' => 'mvc',
         ],
-//        '(/)?' => [
-//            'controller' => 'index',
-//            'actionId' => 'index',
-//            'dispatchMode' => 'mvc',
-//        ],
+        '(/)?' => [
+            'controller' => 'index',
+            'actionId' => 'index',
+            'dispatchMode' => 'mvc',
+        ],
     ],
 ];

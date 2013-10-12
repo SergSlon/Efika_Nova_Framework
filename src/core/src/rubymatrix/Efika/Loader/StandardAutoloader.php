@@ -15,8 +15,8 @@ require_once __DIR__ . '/../Common/SingletonTrait.php';
  * PSR-0 compliant autoloader
  * Example:
  *  (new StandardAutoloader)
- *  ->setNamespace('Efika',__DIR__ . '/../library/Efika')
- *  ->setNamespace('Zend',__DIR__ . '/../library/Zend')
+ *  ->setNamespace('Efika',__DIR__ . '/../src/Efika')
+ *  ->setNamespace('Zend',__DIR__ . '/../src/Zend')
  *  ->register();
  *
  *  OR
@@ -24,8 +24,8 @@ require_once __DIR__ . '/../Common/SingletonTrait.php';
  *  (new StandardAutoloader)
  *  ->setNamespaces(
  *      [
- *          'Efika' => __DIR__ . '/../library/Efika',
- *          'Zend' => __DIR__ . '/../library/Zend'
+ *          'Efika' => __DIR__ . '/../src/Efika',
+ *          'Zend' => __DIR__ . '/../src/Zend'
  *      ]
  *  )
  *  ->register();

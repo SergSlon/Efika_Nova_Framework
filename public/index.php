@@ -6,7 +6,7 @@
 
 use Efika\Common\Logger;
 
-require_once '../app/boot/bootstrap.php';
+require_once '../src/app/boot/bootstrap.php';
 
 echo "<pre>";
 echo "<h2>logger</h2>";

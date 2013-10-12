@@ -4,6 +4,7 @@
     "keywords": ["framework", "efika"],
     "minimum-stability": "dev",
     "license": "LGPL",
+    "vendor-dir" : "src/vendor",
     "authors": [
         {
             "name": "Marco Bunge",

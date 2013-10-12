@@ -7,9 +7,9 @@
 use Efika\Application\Modules\ApplicationModule;
 use Efika\Loader\StandardAutoloader;
 use Efika\Application\Application as WebApp;
-use WebApplication\Services\CustomApplicationService;
+use WebApplication\Modules\CustomApplicationModule;
 
-require_once dirname(__FILE__) . '/../../library/Efika/Loader/StandardAutoloader.php';
+require_once dirname(__FILE__) . '/../../core/src/rubymatrix/Efika/Loader/StandardAutoloader.php';
 
 $config = require_once dirname(__FILE__) . '/../config/config.php';
 
@@ -29,10 +29,10 @@ $app->configure();
 
 //$app->registerModule('ApplicationModule', new ApplicationModule());
 $app->registerModule('HttpApplicationModule', new \Efika\Application\Modules\HttpApplicationModule());
-$app->registerModule('CustomApplicationService', new CustomApplicationService());
+$app->registerModule('CustomApplicationModule', new CustomApplicationModule());
 
 //$app->connectModule('ApplicationModule');
 $app->connectModule('HttpApplicationModule');
-$app->connectModule('CustomApplicationService');
+$app->connectModule('CustomApplicationModule');
 
 $app->execute();

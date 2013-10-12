@@ -4,7 +4,7 @@
  * @copyright 2012 Marco Bunge <efika@rubymatrix.de>
  */
 
-namespace WebApplication\Services;
+namespace WebApplication\Modules;
 
 use Efika\Application\Application as WebApp;
 use Efika\Application\ApplicationInterface;
@@ -13,7 +13,7 @@ use Efika\Common\Logger;
 use Efika\EventManager\EventHandlerAggregateInterface;
 use Efika\EventManager\EventInterface;
 
-class CustomApplicationService implements EventHandlerAggregateInterface, ModuleInterface
+class CustomApplicationModule implements EventHandlerAggregateInterface, ModuleInterface
 {
 
     const LOGGER_SCOPE = 'application.customService';
