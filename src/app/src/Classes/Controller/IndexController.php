@@ -13,7 +13,7 @@ use Efika\View\ViewModel;
 
 class IndexController extends ControllerCommand{
 
-    public function init(){
+    public function onInit(){
         $this->getPluginManager()->register('filter', 'Efika\Application\Commands\Plugins\FilterPlugin');
     }
 
