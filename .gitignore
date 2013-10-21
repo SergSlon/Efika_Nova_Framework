@@ -1,1 +1,7 @@
 .idea/
+debugging/
+composer.phar
+composer.lock
+src/packages
+src/packages/
+src/vendor/

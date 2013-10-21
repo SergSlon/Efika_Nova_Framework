@@ -1,0 +1,17 @@
+{
+    "name": "rubymatrix/efika_nova_framework",
+    "description": "A high performance and modern package based application development framework.",
+    "keywords": ["framework", "efika"],
+    "minimum-stability": "dev",
+    "license": "LGPL",
+    "vendor-dir" : "src/vendor",
+    "authors": [
+        {
+            "name": "Marco Bunge",
+            "email": "zombienoxx@web.de"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    }
+}
